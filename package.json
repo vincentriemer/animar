@@ -2,8 +2,17 @@
   "name": "Animar",
   "version": "0.0.0",
   "description": "The programmer's animation library.",
-  "author": "Vincent Riemer",
+  "author": { "name": "Vincent Riemer",
+              "email": "vincentriemer@gmail.com",
+              "url": "http://vincentriemer.com"
+  },
+  "repository":
+    {
+      "type": "git",
+      "url": "https://github.com/vincentriemer/animar"
+    },
   "license": "MIT",
+  "private": true,
   "browserify": {
     "transform": [
       [
