@@ -1,2 +1,3 @@
-# Animation Library by VinnyR
+# Animar
+#### The programmer's animation library.
 
