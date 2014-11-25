@@ -1,0 +1,5 @@
+[ignore]
+.*/dist/.*
+.*/node_modules/.*
+.*/sass-cache/.*
+[include]
