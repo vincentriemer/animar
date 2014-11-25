@@ -101,6 +101,11 @@ gulp.task('clean', function(cb) {
    del(['dist'], cb);
 });
 
+// Build without watching
+gulp.task('build', ['clean'], function() {
+  gulp.start('pages', 'extras', 'styles', 'scripts');
+});
+
 // Default
 gulp.task('default', ['clean', 'express', 'livereload', 'watch'], function() {
    gulp.start('pages', 'extras', 'styles', 'scripts');
