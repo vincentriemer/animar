@@ -1,13 +1,13 @@
 {
-  "name": "vinnyr-animation",
+  "name": "animar",
   "version": "0.0.0",
-  "description": "Flexible animation library by Vincent Riemer",
+  "description": "The programmer's animation library.",
   "main": "gulpfile.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Vincent Riemer",
-  "license": "None",
+  "license": "MIT",
   "browserify": {
     "transform": [
       [

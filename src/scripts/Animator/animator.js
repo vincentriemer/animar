@@ -1,7 +1,4 @@
-/**
- * Created by vincentriemer on 11/17/14.
- * @flow
- */
+/* @flow */
 
 var Animation = require("./animation");
 var EasingFactory = require("./ease");

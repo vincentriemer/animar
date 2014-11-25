@@ -1,7 +1,4 @@
-/**
- * Created by vincentriemer on 11/23/14.
- * @flow
- */
+/* @flow */
 
 var Helper = {
     isElement: function(o: any): boolean{
