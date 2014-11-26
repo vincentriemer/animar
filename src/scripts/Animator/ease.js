@@ -6,16 +6,20 @@
  */
 var EasingFactory: {linear: Function} = {
 
-    /**
-     * Linear easing function.
-     * @return {Function}
-     */
-    linear: function() {
-       return function(currentIteration: number, startValue: number, changeInValue: number, totalIterations: number): number {
-        return changeInValue * currentIteration / totalIterations + startValue;
-      }
-    }
+  /**
+   * Linear easing function.
+   * @return {Function}
+   */
+  "linear": function() {
+      return function(
+          currentIteration : number,
+          startValue       : number,
+          changeInValue    : number,
+          totalIterations  : number) : number {
 
+        return changeInValue * currentIteration / totalIterations + startValue;
+    }
+  }
 };
 
 module.exports = EasingFactory;

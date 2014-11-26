@@ -2,17 +2,20 @@
   "name": "Animar",
   "version": "0.0.0",
   "description": "The programmer's animation library.",
-  "author": { "name": "Vincent Riemer",
-              "email": "vincentriemer@gmail.com",
-              "url": "http://vincentriemer.com"
+  "author": {
+    "name": "Vincent Riemer",
+    "email": "vincentriemer@gmail.com",
+    "url": "http://vincentriemer.com"
   },
-  "repository":
-    {
-      "type": "git",
-      "url": "https://github.com/vincentriemer/animar"
-    },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vincentriemer/animar"
+  },
   "license": "MIT",
   "private": true,
+  "scripts": {
+    "test": "jest"
+  },
   "browserify": {
     "transform": [
       [
@@ -31,11 +34,11 @@
     "gulp": "^3.8.10",
     "gulp-autoprefixer": "^1.0.1",
     "gulp-flowtype": "^0.3.1",
-    "gulp-jsdoc": "^0.1.4",
     "gulp-minify-css": "^0.3.11",
     "gulp-rename": "^1.2.0",
     "gulp-ruby-sass": "^0.7.1",
     "gulp-uglify": "^1.0.1",
+    "jest-cli": "^0.1.18",
     "reactify": "^0.17.1",
     "tiny-lr": "^0.1.4",
     "vinyl-buffer": "^1.0.0",
