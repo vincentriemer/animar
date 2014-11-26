@@ -3,7 +3,9 @@
 // imports
 var Animation       = require("./animation"),
     EasingFactory   = require("./ease"),
-    AnimatedElement = require("./animated_element");
+    AnimatedElement = require("./animated_element"),
+    Helper         = require("./helper"),
+    Constant       = require("./constants");
 
 type Options = {
 
@@ -17,6 +19,7 @@ type Options = {
 var Animator = function(options?: Options) {
     this.options = options || {};
     this.elementMap = new Map();
+    this.ticking = false;
 };
 
 /**
@@ -49,6 +52,99 @@ Animator.prototype.addAnimation = function(
 
   var newAnimation = new Animation(target, attribute, start, end, duration, ease);
   this.addAnimationToMap(newAnimation);
+  this.requestTick();
+};
+
+Animator.prototype.calculateAnimationValue = function(animations) {
+  var result = 0;
+  animations.forEach(function(value) {
+    result += value.easingFunction(value.currentIteration, value.startValue, value.changeInValue, value.totalIterations);
+  });
+  return result;
+};
+
+Animator.prototype.applyStyle = function(element, attribute, value) {
+  switch(attribute) {
+    case("transform"):
+      Helper.setTransform(element, value);
+      break;
+    default:
+      console.log("[ERROR] Invalid attribute");
+  }
+};
+
+Animator.prototype.renderDOM = function() {
+  var self = this; // maintain reference to Animator instance through the forEach calls
+  var animated = false;
+  self.elementMap.forEach(function(value, key) {
+    var targetElement = key;
+    var transformValue = "";
+    value.attributeMap.forEach(function(value, key) {
+      animated = true;
+      var targetAttribute = key;
+      var targetValue = value.model + self.calculateAnimationValue(value.animations);
+      if (Constant.TRANSFORM_ATTRIBUTES.indexOf(targetAttribute) !== -1) {
+        switch(targetAttribute) {
+          case("translateX"):
+            transformValue += "translateX(" + targetValue + "px) ";
+            break;
+          case("translateY"):
+            transformValue += "translateY(" + targetValue + "px) ";
+            break;
+          case("scaleX"):
+            transformValue += "scaleX(" + targetValue + ") ";
+            break;
+          case("scaleY"):
+            transformValue += "scaleY(" + targetValue + ") ";
+            break;
+          case("rotate"):
+            transformValue += "rotate(" + targetValue + "deg) ";
+            break;
+          default:
+        }
+      } else {
+        self.applyStyle(targetElement, targetAttribute, targetValue);
+      }
+    });
+    if (transformValue !== "") {
+      self.applyStyle(targetElement, "transform", transformValue);
+    }
+  });
+  return animated;
+};
+
+Animator.prototype.stepFrame = function() {
+  this.elementMap.forEach(function(value) {
+    value.attributeMap.forEach(function(value, key, map) {
+      var updatedAnimations = [];
+      value.animations.forEach(function(value, index) {
+        if (value.currentIteration !== value.totalIterations) {
+          value["currentIteration"] += 1;
+          updatedAnimations.push(value);
+        }
+      });
+      if (updatedAnimations.length !== 0) {
+        value.animations = updatedAnimations;
+      } else {
+        map.delete(key);
+      }
+    });
+  });
+};
+
+Animator.prototype.update = function() {
+  var animationsRemaining = this.renderDOM();
+  this.stepFrame();
+
+  this.ticking = false;
+  if (animationsRemaining) { this.requestTick(); }
+};
+
+Animator.prototype.requestTick = function() {
+  if (!this.ticking) {
+    window.requestAnimationFrame(this.update.bind(this));
+    this.ticking = true;
+  }
 };
 
 module.exports = Animator;

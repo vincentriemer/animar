@@ -41,7 +41,6 @@ AnimatedElement.prototype.addAnimation = function(animation) {
 AnimatedElement.prototype.createNewAnimatedAttribute = function(attributeName, start) {
   var newAttributeObject = {
     "model": start,
-    "presentation": start,
     "animations": []
   };
   this.attributeMap.set(attributeName, newAttributeObject);
