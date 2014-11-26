@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/vincentriemer/animar.svg?branch=master)](https://travis-ci.org/vincentriemer/animar)
 # Animar
 ### The programmer's animation library.
 
