@@ -4,26 +4,23 @@
 var Animation       = require("./animation"),
     EasingFactory   = require("./ease"),
     AnimatedElement = require("./animated_element"),
-    Helper         = require("./helper"),
-    Constant       = require("./constants");
-
-type Options = {
-
-};
+    Helper          = require("./helper"),
+    Constant        = require("./constants");
 
 /**
  * The main Animation API.
+ * 
  * @constructor
  * @param {Options} options - the options which configure the animation library.
  */
-var Animator = function(options?: Options) {
-    this.options = options || {};
+var Animator = function() {
     this.elementMap = new Map();
     this.ticking = false;
 };
 
 /**
  * Add an animation object to the map of the states of all the animated objects.
+ * 
  * @param {Animation} animation - the animation to be added.
  */
 Animator.prototype.addAnimationToMap = function(animation) {
@@ -35,6 +32,7 @@ Animator.prototype.addAnimationToMap = function(animation) {
 
 /**
  * Add a new animation to the target and start it immediately
+ * 
  * @param {HTMLElement} target - the target HTML DOM element that will be animated                   
  * @param {string} attribute - the attribute that will be animated
  * @param {number} start - the attribute's starting value                       
@@ -67,6 +65,9 @@ Animator.prototype.applyStyle = function(element, attribute, value) {
   switch(attribute) {
     case("transform"):
       Helper.setTransform(element, value);
+      break;
+    case("opacity"):
+      element.style.opacity = value;
       break;
     default:
       console.log("[ERROR] Invalid attribute");
@@ -114,21 +115,28 @@ Animator.prototype.renderDOM = function() {
 };
 
 Animator.prototype.stepFrame = function() {
-  this.elementMap.forEach(function(value) {
-    value.attributeMap.forEach(function(value, key, map) {
-      var updatedAnimations = [];
-      value.animations.forEach(function(value, index) {
-        if (value.currentIteration !== value.totalIterations) {
-          value["currentIteration"] += 1;
-          updatedAnimations.push(value);
+  var elementMap = this.elementMap;
+  elementMap.forEach(function(value, key) {
+    var attributeMap = value.attributeMap;
+    if (attributeMap.size === 0) { 
+      elementMap.delete(key); 
+    } else {
+      attributeMap.forEach(function(value, key) {
+        var updatedAnimations = [];
+        value.animations.forEach(function(value, index) {
+          if (value.currentIteration !== value.totalIterations) {
+            value["currentIteration"] += 1;
+            updatedAnimations.push(value);
+          }
+        });
+        if (updatedAnimations.length !== 0) {
+          value.animations = updatedAnimations;
+        } else {
+          attributeMap.delete(key);
         }
       });
-      if (updatedAnimations.length !== 0) {
-        value.animations = updatedAnimations;
-      } else {
-        map.delete(key);
-      }
-    });
+      value.attributeMap = attributeMap;
+    }
   });
 };
 
@@ -137,7 +145,7 @@ Animator.prototype.update = function() {
   this.stepFrame();
 
   this.ticking = false;
-  if (animationsRemaining) { this.requestTick(); }
+  if (animationsRemaining) this.requestTick();
 };
 
 Animator.prototype.requestTick = function() {

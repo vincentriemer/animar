@@ -2,6 +2,7 @@
 
 /**
  * The Animation object which holds all the relevant information necessary for an animation.
+ * 
  * @constructor
  * @param {HTMLElement} element - the target HTML DOM element that will be animated
  * @param {string} attribute - the attribute that will be animated
