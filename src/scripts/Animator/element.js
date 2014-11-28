@@ -14,7 +14,7 @@ var Element = function() {
  */
 Element.prototype.addAnimation = function(animation) {
   if (!this.attributeMap.has(animation.attribute)) {
-    this.createNewAnimatedAttribute(animation.attribute, animation.start);
+    this.createAttribute(animation.attribute, animation.start);
   }
 
   var currentAttribute = this.attributeMap.get(animation.attribute),
@@ -38,7 +38,7 @@ Element.prototype.addAnimation = function(animation) {
  * @param  {string} attributeName
  * @param  {number} start
  */
-Element.prototype.createNewAnimatedAttribute = function(attributeName, start) {
+Element.prototype.createAttribute = function(attributeName, start) {
   var newAttributeObject = {
     "model": start,
     "animations": []
