@@ -2,7 +2,7 @@ jest.dontMock('../element');
 
 describe('element', function() {
 
-  it('initalizes with a new map', function() {
+  it('initalizes with an attributeMap', function() {
     var AnimatedElement = require('../element'),
         testElement = new AnimatedElement();
 
