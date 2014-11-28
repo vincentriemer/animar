@@ -4,7 +4,7 @@
  * An object representing the animation properties of a distinct HTMLElement
  * @constructor
  */
-var AnimatedElement = function() {
+var Element = function() {
   this.attributeMap = new Map();
 };
 
@@ -12,7 +12,7 @@ var AnimatedElement = function() {
  * Adds an animation to the animated element instance
  * @param {Animation} animation
  */
-AnimatedElement.prototype.addAnimation = function(animation) {
+Element.prototype.addAnimation = function(animation) {
   if (!this.attributeMap.has(animation.attribute)) {
     this.createNewAnimatedAttribute(animation.attribute, animation.start);
   }
@@ -38,7 +38,7 @@ AnimatedElement.prototype.addAnimation = function(animation) {
  * @param  {string} attributeName
  * @param  {number} start
  */
-AnimatedElement.prototype.createNewAnimatedAttribute = function(attributeName, start) {
+Element.prototype.createNewAnimatedAttribute = function(attributeName, start) {
   var newAttributeObject = {
     "model": start,
     "animations": []
@@ -46,4 +46,4 @@ AnimatedElement.prototype.createNewAnimatedAttribute = function(attributeName, s
   this.attributeMap.set(attributeName, newAttributeObject);
 };
 
-module.exports = AnimatedElement;
+module.exports = Element;

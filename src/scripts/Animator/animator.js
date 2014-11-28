@@ -3,7 +3,7 @@
 // imports
 var Animation       = require("./animation"),
     EasingFactory   = require("./ease"),
-    AnimatedElement = require("./animated_element"),
+    AnimatedElement = require("./element"),
     Helper          = require("./helper"),
     Constant        = require("./constants");
 
