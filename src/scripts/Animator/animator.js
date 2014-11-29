@@ -1,28 +1,18 @@
 /* @flow */
 
 // imports
-var Animation       = require("./animation"),
-    EasingFactory   = require("./ease"),
+var EasingFactory   = require("./ease"),
     AnimatedElement = require("./element"),
     Helper          = require("./helper"),
     Constant        = require("./constants");
 
-/**
- * The main Animation API.
- * 
- * @constructor
- * @param {Options} options - the options which configure the animation library.
- */
+
 var Animator = function() {
     this.elementMap = new Map();
     this.ticking = false;
 };
 
-/**
- * Add an animation object to the map of the states of all the animated objects.
- * 
- * @param {Animation} animation - the animation to be added.
- */
+
 Animator.prototype.addAnimationToMap = function(animation) {
   if (!this.elementMap.has(animation.element)) {
     this.elementMap.set(animation.element, new AnimatedElement());
@@ -30,28 +20,36 @@ Animator.prototype.addAnimationToMap = function(animation) {
   this.elementMap.get(animation.element).addAnimation(animation);
 };
 
-/**
- * Add a new animation to the target and start it immediately
- * 
- * @param {HTMLElement} target - the target HTML DOM element that will be animated                   
- * @param {string} attribute - the attribute that will be animated
- * @param {number} start - the attribute's starting value                       
- * @param {number} end - the attribute's ending value                                          
- * @param {number} duration - the number of frames the animation will take to complete
- * @param {Function} ease - the easing function which is applied to the animation                                    
- */
-Animator.prototype.addAnimation = function(
-    target    : HTMLElement, 
-    attribute : string, 
-    start     : number, 
-    end       : number, 
-    duration  : number, 
-    ease      : Function) {
 
-  var newAnimation = new Animation(target, attribute, start, end, duration, ease);
+Animator.prototype.addAnimation = function(arguments : {
+    target : HTMLElement;
+    attribute : string;
+    destination : number;
+    duration : ?number;
+    easingFunction : ?any;
+  }) {
+
+  var target = arguments.target,
+    attribute = arguments.attribute,
+    destination = arguments.destination,
+    duration = arguments.duration || 60,
+    easingFunction = arguments.easingFunction || 'linear';
+
+  if (typeof easingFunction === 'string') {
+    easingFunction = EasingFactory[easingFunction]();
+  }
+
+  var newAnimation = {
+    element: target,
+    attribute: attribute,
+    destination: destination,
+    duration: duration,
+    ease: easingFunction
+  };
   this.addAnimationToMap(newAnimation);
   this.requestTick();
 };
+
 
 Animator.prototype.calculateAnimationValue = function(animations) {
   var result = 0;
@@ -60,6 +58,7 @@ Animator.prototype.calculateAnimationValue = function(animations) {
   });
   return result;
 };
+
 
 Animator.prototype.applyStyle = function(element, attribute, value) {
   switch(attribute) {
@@ -73,6 +72,7 @@ Animator.prototype.applyStyle = function(element, attribute, value) {
       console.log("[ERROR] Invalid attribute");
   }
 };
+
 
 Animator.prototype.renderDOM = function() {
   var self = this; // maintain reference to Animator instance through the forEach calls
@@ -114,31 +114,24 @@ Animator.prototype.renderDOM = function() {
   return animated;
 };
 
+
 Animator.prototype.stepFrame = function() {
   var elementMap = this.elementMap;
   elementMap.forEach(function(value, key) {
     var attributeMap = value.attributeMap;
-    if (attributeMap.size === 0) { 
-      elementMap.delete(key); 
-    } else {
-      attributeMap.forEach(function(value, key) {
-        var updatedAnimations = [];
-        value.animations.forEach(function(value, index) {
-          if (value.currentIteration !== value.totalIterations) {
-            value["currentIteration"] += 1;
-            updatedAnimations.push(value);
-          }
-        });
-        if (updatedAnimations.length !== 0) {
-          value.animations = updatedAnimations;
-        } else {
-          attributeMap.delete(key);
+    attributeMap.forEach(function(value, key) {
+      var updatedAnimations = [];
+      value.animations.forEach(function(value, index) {
+        if (value.currentIteration !== value.totalIterations) {
+          value["currentIteration"] += 1;
+          updatedAnimations.push(value);
         }
       });
-      value.attributeMap = attributeMap;
-    }
+    });
+    value.attributeMap = attributeMap;
   });
 };
+
 
 Animator.prototype.update = function() {
   var animationsRemaining = this.renderDOM();
@@ -148,6 +141,7 @@ Animator.prototype.update = function() {
   if (animationsRemaining) this.requestTick();
 };
 
+
 Animator.prototype.requestTick = function() {
   if (!this.ticking) {
     window.requestAnimationFrame(this.update.bind(this));
@@ -155,4 +149,4 @@ Animator.prototype.requestTick = function() {
   }
 };
 
-module.exports = Animator;
+module.exports = new Animator();

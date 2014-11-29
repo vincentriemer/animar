@@ -14,7 +14,7 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "test": "node --harmony node_modules/istanbul/lib/cli.js cover _mocha -- -u exports -R spec"
+    "test": "node --harmony node_modules/istanbul/lib/cli.js cover _mocha -- --compilers js:test/compiler.js -R spec"
   },
   "browserify": {
     "transform": [
@@ -35,15 +35,18 @@
     "gulp-autoprefixer": "^1.0.1",
     "gulp-flowtype": "^0.3.1",
     "gulp-minify-css": "^0.3.11",
+    "gulp-mocha": "^2.0.0",
     "gulp-rename": "^1.2.0",
     "gulp-ruby-sass": "^0.7.1",
     "gulp-uglify": "^1.0.1",
+    "istanbul": "git://github.com/gotwarlost/istanbul.git#harmony",
     "mocha": "^2.0.1",
+    "node-jsx": "^0.12.4",
+    "react-tools": "^0.12.1",
     "reactify": "^0.17.1",
     "should": "^4.3.0",
     "tiny-lr": "^0.1.4",
     "vinyl-buffer": "^1.0.0",
-    "vinyl-source-stream": "^1.0.0",
-    "istanbul": "git://github.com/gotwarlost/istanbul.git#harmony"
+    "vinyl-source-stream": "^1.0.0"
   }
 }

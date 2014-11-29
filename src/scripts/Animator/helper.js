@@ -23,8 +23,8 @@ var Helper = {
                             computedStyle.getPropertyValue("-ms-transform") ||
                             computedStyle.getPropertyValue("-o-transform") ||
                             computedStyle.getPropertyValue("transform") ||
-                            "matrix(1, 0, 0, 1, 0, 0)"; // assume that the element just hasn't had a transform applied to it yet
-
+                            'woops'; // TODO: throw error
+      if (transformString === 'none') { transformString = "matrix(1, 0, 0, 1, 0, 0)"; }
       var values = transformString.split('(')[1].split(')')[0].split(',');
       values = values.map(function(x){return parseInt(x)});
       return values;
@@ -58,6 +58,11 @@ var Helper = {
           d = values[3];
 
       return Math.round(Math.atan2(b, a) * (180/Math.PI));
+    },
+
+    getOpacity: function(element : HTMLElement) : number {
+      var computedStyle = window.getComputedStyle(element, null);
+      return parseFloat(computedStyle.getPropertyValue("opacity"));
     }
 };
 

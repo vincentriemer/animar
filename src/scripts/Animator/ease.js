@@ -1,11 +1,5 @@
 /* @flow */
 
-/**
- * A factory that produces preset easing functions
- * Easing formulas taken from www.robertpenner.com
- * 
- * @type {Object}
- */
 var EasingFactory: {
     linear             : Function; 
     quadratic_in       : Function;
@@ -151,7 +145,7 @@ var EasingFactory: {
         return c/2 * ( -Math.pow( 2, -10 * t) + 2 ) + b;
     }
   },
-  circular_in: function()  {
+  circular_in: function() {
     return function(t : number, b : number, c : number, d : number) : number {
         t /= d;
         return -c * (Math.sqrt(1 - t*t) - 1) + b;
@@ -171,7 +165,7 @@ var EasingFactory: {
         t -= 2;
         return c/2 * (Math.sqrt(1 - t*t) + 1) + b;
     }
-  },
+  }
 };
 
 module.exports = EasingFactory;
