@@ -16,7 +16,7 @@ describe('Element', function() {
 
   describe('#createAttribute()', function() {
     it('should add a new attribute object to the attributeMap', function() {
-      testElement.createAttribute('test', 0);
+      testElement.createAttribute({ attribute: 'test', startValue: 0});
       testElement.attributeMap.get('test').model.should.be.exactly(0);
       testElement.attributeMap.get('test').animations.should.have.length(0);
     });

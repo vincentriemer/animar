@@ -56,7 +56,8 @@ Element.prototype.getStartValue = function(animation) {
 };
 
 Element.prototype.createAttribute = function(animation) {
-  var startValue = this.getStartValue(animation);
+  var startValue = animation.startValue || this.getStartValue(animation);
+  
   var newAttributeObject = {
     "model": startValue,
     "animations": []

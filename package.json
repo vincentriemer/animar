@@ -14,7 +14,7 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "test": "node --harmony node_modules/istanbul/lib/cli.js cover _mocha -- --compilers js:test/compiler.js -R spec"
+    "test": "node --harmony node_modules/istanbul/lib/cli.js cover _mocha --harmony -- --compilers js:test/compiler.js -R spec"
   },
   "browserify": {
     "transform": [
