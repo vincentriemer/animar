@@ -1,5 +1,5 @@
 var should = require("should"),
-    Element = require('../src/scripts/Animator/element');
+    Element = require('../lib/element');
 
 describe('Element', function() {
   var testElement;
