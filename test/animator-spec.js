@@ -31,7 +31,6 @@ describe('Animator', function() {
   });
 
   afterEach(function() {
-    // remove the test element from the dom
     testElement.parentElement.removeChild(testElement);
   });
 
