@@ -31,8 +31,8 @@ describe('EasingFactory', function() {
     describe(element, function() {
       it('should return a valid easing function', function() {
         var currentFunction = EasingFactory[element]();
-        currentFunction(0,0,10,20).should.equal(0);
-        currentFunction(20,0,10,20).should.equal(10);
+        Math.round(currentFunction(0,0,10,20)).should.equal(0);
+        Math.round(currentFunction(20,0,10,20)).should.equal(10);
       });
     });
   });
