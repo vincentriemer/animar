@@ -1,13 +1,7 @@
 /* @flow */
 
 var Helper = {
-    isElement: function(o     )         {
-        return (
-            typeof HTMLElement === "object" ? o instanceof HTMLElement : //DOM2
-            o && typeof o === "object" && o !== null && o.nodeType === 1 && typeof o.nodeName==="string"
-        );
-    },
-
+  
     setTransform: function(element              , transformString         ) {
       element.style.webkitTransform = transformString;
       element.style.MozTransform = transformString;

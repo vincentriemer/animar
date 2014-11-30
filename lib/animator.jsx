@@ -40,8 +40,8 @@ Animator.prototype.addAnimation = function(args : {
   var element = args.element,
     attribute = args.attribute,
     destination = args.destination,
-    duration = args.duration || 60,
-    easingFunction = args.easingFunction || 'linear';
+    duration = args.duration,
+    easingFunction = args.easingFunction;
 
   if (typeof easingFunction === 'string') {
     easingFunction = EasingFactory[easingFunction]();
@@ -84,8 +84,6 @@ Animator.prototype.applyStyle = function(element : HTMLElement, attribute : stri
     case("opacity"):
       element.style.opacity = value;
       break;
-    default:
-      // TODO: throw an error
   }
 };
 
@@ -117,7 +115,6 @@ Animator.prototype.renderDOM = function() : boolean {
           case("rotate"):
             transformValue += "rotate(" + targetValue + "deg) ";
             break;
-          default:
         }
       } else {
         self.applyStyle(targetElement, targetAttribute, targetValue);
@@ -143,6 +140,7 @@ Animator.prototype.stepFrame = function() {
           updatedAnimations.push(value);
         }
       });
+      value.animations = updatedAnimations;
     });
     value.attributeMap = attributeMap;
   });

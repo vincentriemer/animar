@@ -11,6 +11,9 @@ var gulp = require('gulp'),
     mocha = require('gulp-mocha'),
     exec = require('child_process').exec;
 
+// shim for harmony features
+require('es6-shim');
+
 gulp.task('hook', function() {
   return gulp.src('.pre-commit')
     .pipe(rename('pre-commit'))

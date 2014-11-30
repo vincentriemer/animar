@@ -196,6 +196,52 @@ describe('Animator', function() {
       animator.elementMap.set(testElement, { attributeMap: attributeMap });
       animator.stepFrame();
       animator.elementMap.get(testElement).attributeMap.get('testAttribute1').animations[0].currentIteration.should.be.exactly(1);
+    });
+    it('should remove an animation if it has ended', function() {
+      var attributeMap = new Map();
+      attributeMap.set('testAttribute1', { animations: [
+            { currentIteration: 10, totalIterations: 10 }
+      ]});
+      animator.elementMap.set(testElement, { attributeMap: attributeMap });
+      animator.stepFrame();
+      animator.elementMap.get(testElement).attributeMap.get('testAttribute1').animations.length.should.be.exactly(0);
     })
+  });
+
+  describe('#renderDOM()', function() {
+    var calculateStub, styleStub;
+    beforeEach(function() {
+      calculateStub = sinon.stub(Animator.prototype, 'calculateAnimationValue').returns(-5);
+      styleStub = sinon.stub(Animator.prototype, 'applyStyle');
+    });
+
+    afterEach(function() {
+      calculateStub.restore();
+      styleStub.restore();
+    });
+
+    it('should calculate the target value and apply the style to the attribute', function() {
+      var attributeMap = new Map();
+      attributeMap.set('testAttribute1', {
+        model: 5,
+        animations: []
+      });
+      animator.elementMap.set(testElement, { attributeMap: attributeMap });
+      animator.renderDOM();
+      calculateStub.called.should.be.true;
+      styleStub.calledWith(testElement, 'testAttribute1', 0).should.be.true;
+    });
+
+    it('should correctly construct a transform string', function() {
+      var attributeMap = new Map();
+      attributeMap.set('translateX', { model: 5, animations: [] });
+      attributeMap.set('translateY', { model: 5, animations: [] });
+      attributeMap.set('scaleX', { model: 5, animations: [] });
+      attributeMap.set('scaleY', { model: 5, animations: [] });
+      attributeMap.set('rotate', { model: 5, animations: [] });
+      animator.elementMap.set(testElement, { attributeMap: attributeMap });
+      animator.renderDOM();
+      styleStub.calledWith(testElement, 'transform', 'translateX(0px) translateY(0px) scaleX(0) scaleY(0) rotate(0deg) ').should.be.true;
+    });
   });
 });

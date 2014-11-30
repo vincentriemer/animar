@@ -41,8 +41,8 @@ Animator.prototype.addAnimation = function(args
   var element = args.element,
     attribute = args.attribute,
     destination = args.destination,
-    duration = args.duration || 60,
-    easingFunction = args.easingFunction || 'linear';
+    duration = args.duration,
+    easingFunction = args.easingFunction;
 
   if (typeof easingFunction === 'string') {
     easingFunction = EasingFactory[easingFunction]();
@@ -85,8 +85,6 @@ Animator.prototype.applyStyle = function(element              , attribute       
     case("opacity"):
       element.style.opacity = value;
       break;
-    default:
-      // TODO: throw an error
   }
 };
 
@@ -118,7 +116,6 @@ Animator.prototype.renderDOM = function()           {
           case("rotate"):
             transformValue += "rotate(" + targetValue + "deg) ";
             break;
-          default:
         }
       } else {
         self.applyStyle(targetElement, targetAttribute, targetValue);
@@ -144,6 +141,7 @@ Animator.prototype.stepFrame = function() {
           updatedAnimations.push(value);
         }
       });
+      value.animations = updatedAnimations;
     });
     value.attributeMap = attributeMap;
   });
@@ -438,13 +436,7 @@ module.exports = Elem;
 /* @flow */
 
 var Helper = {
-    isElement: function(o     )         {
-        return (
-            typeof HTMLElement === "object" ? o instanceof HTMLElement : //DOM2
-            o && typeof o === "object" && o !== null && o.nodeType === 1 && typeof o.nodeName==="string"
-        );
-    },
-
+  
     setTransform: function(element              , transformString         ) {
       element.style.webkitTransform = transformString;
       element.style.MozTransform = transformString;
