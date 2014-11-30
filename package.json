@@ -23,7 +23,7 @@
   },
   "license": "MIT",
   "scripts": {
-    "test": "node --harmony `which gulp` coverage",
+    "test": "node --harmony `which gulp` test",
     "prepublish": "gulp prepublish",
     "postinstall": "gulp hook"
   },
