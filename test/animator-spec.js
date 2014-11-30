@@ -9,7 +9,7 @@ describe('Animator', function() {
   var doc = jsdom.jsdom('<html><body><div id="testLocation"></div></body></html>');
 
   beforeEach(function() {
-    Animator = require('../lib/animator'); // create a new Animator object
+    Animator = require('../lib_js/animator'); // create a new Animator object
 
     // setup test element & parameter
     testElement = doc.createElement('div');

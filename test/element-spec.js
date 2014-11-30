@@ -1,5 +1,5 @@
 var should = require("should"),
-    Element = require('../lib/element');
+    Element = require('../lib_js/element');
 
 describe('Element', function() {
   var testElement;

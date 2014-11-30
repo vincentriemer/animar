@@ -6,7 +6,10 @@ var gulp = require('gulp'),
     source = require('vinyl-source-stream'),
     flow = require('gulp-flowtype'),
     buffer = require('vinyl-buffer'),
-    react = require('gulp-react');
+    react = require('gulp-react'),
+    istanbul = require('gulp-istanbul'),
+    mocha = require('gulp-mocha'),
+    exec = require('child_process').exec;
 
 gulp.task('hook', function() {
   return gulp.src('.pre-commit')
@@ -22,7 +25,7 @@ gulp.task('typecheck', function() {
 
 // Cleanup
 gulp.task('clean', function(cb) {
-   del(['dist', 'lib_js'], cb);
+   del(['dist', 'lib_js', 'coverage'], cb);
 });
 
 // pre-compile javascript for Code Climate
@@ -48,4 +51,25 @@ gulp.task('prepublish', ['prepareClimate'], function() {
     .pipe(buffer())
     .pipe(rename('animar.js'))
     .pipe(gulp.dest('dist'));
+});
+
+// testing
+gulp.task('test', ['prepublish', 'typecheck'], function(cb) {
+  gulp.src(['lib_js/*.js'])
+    .pipe(istanbul())
+    .on('finish', function() {
+      gulp.src(['test/*.js'])
+        .pipe(mocha())
+        .pipe(istanbul.writeReports({reporters: ['lcovonly']}))
+        .on('end', cb);
+    });
+});
+
+// task for uploading coverage data to Code Climate
+gulp.task('coverage', ['test'], function(cb) {
+  exec('CODECLIMATE_REPO_TOKEN=255dcc221d2564fd8a640532bf923db489f6ae8011024b2fdc77600d8d4fc054 codeclimate < coverage/lcov.info', function(err, stdout, stderr) {
+    console.log(stdout);
+    console.log(stderr);
+    cb(err);
+  });
 });

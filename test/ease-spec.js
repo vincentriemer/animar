@@ -1,5 +1,5 @@
 var should = require("should")
-    EasingFactory = require("../lib/ease");
+    EasingFactory = require("../lib_js/ease");
 
 describe('EasingFactory', function() {
   for (var property in EasingFactory) {
