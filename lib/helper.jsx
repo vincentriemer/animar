@@ -26,7 +26,7 @@ var Helper = {
                             'woops'; // TODO: throw error
       if (transformString === 'none') { transformString = "matrix(1, 0, 0, 1, 0, 0)"; }
       var values = transformString.split('(')[1].split(')')[0].split(',');
-      values = values.map(function(x){return parseInt(x)});
+      values = values.map(function(x) { return parseInt(x, 10); } );
       return values;
     },
 
@@ -53,9 +53,7 @@ var Helper = {
     getRotation: function(element : HTMLElement) : number {
       var values = this.getTransformMatrix(element);
       var a = values[0],
-          b = values[1],
-          c = values[2],
-          d = values[3];
+          b = values[1];
 
       return Math.round(Math.atan2(b, a) * (180/Math.PI));
     },

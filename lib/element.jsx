@@ -3,11 +3,11 @@
 // imports
 var Helper = require('./helper');
 
-var Element = function() {
+var Elem = function() {
   this.attributeMap = new Map();
 };
 
-Element.prototype.addAnimation = function(args : {
+Elem.prototype.addAnimation = function(args : {
     attribute   : string;
     destination : number;
     duration    : number;
@@ -34,7 +34,7 @@ Element.prototype.addAnimation = function(args : {
   });
 };
 
-Element.prototype.getStartValue = function(animation : {
+Elem.prototype.getStartValue = function(animation : {
     attribute : string;
     element   : HTMLElement;
   }) : number
@@ -65,7 +65,7 @@ Element.prototype.getStartValue = function(animation : {
   return result;
 };
 
-Element.prototype.createAttribute = function(animation : {
+Elem.prototype.createAttribute = function(animation : {
     attribute  : string;
     element    : HTMLElement;
     startValue : ?number;
@@ -80,4 +80,4 @@ Element.prototype.createAttribute = function(animation : {
   this.attributeMap.set(animation.attribute, newAttributeObject);
 };
 
-module.exports = Element;
+module.exports = Elem;
