@@ -29,14 +29,14 @@ Animator.prototype.addAnimationToMap = function(args : {
 
 
 Animator.prototype.addAnimation = function(args : {
-    target         : HTMLElement;
+    element        : HTMLElement;
     attribute      : string;
     destination    : number;
     duration       : ?number;
     easingFunction : ?any;
   })
 {
-  var target = args.target,
+  var element = args.element,
     attribute = args.attribute,
     destination = args.destination,
     duration = args.duration || 60,
@@ -47,7 +47,7 @@ Animator.prototype.addAnimation = function(args : {
   }
 
   var newAnimation = {
-    element: target,
+    element: element,
     attribute: attribute,
     destination: destination,
     duration: duration,
@@ -165,4 +165,4 @@ Animator.prototype.requestTick = function() {
   }
 };
 
-module.exports = new Animator();
+module.exports = Animator;

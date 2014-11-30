@@ -60,7 +60,7 @@ gulp.task('test', ['prepublish', 'typecheck'], function(cb) {
     .on('finish', function() {
       gulp.src(['test/*.js'])
         .pipe(mocha())
-        .pipe(istanbul.writeReports({reporters: ['lcovonly']}))
+        .pipe(istanbul.writeReports())
         .on('end', cb);
     });
 });

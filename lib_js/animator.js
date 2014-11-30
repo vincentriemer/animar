@@ -36,7 +36,7 @@ Animator.prototype.addAnimation = function(args
                           
    )
 {
-  var target = args.target,
+  var element = args.element,
     attribute = args.attribute,
     destination = args.destination,
     duration = args.duration || 60,
@@ -47,7 +47,7 @@ Animator.prototype.addAnimation = function(args
   }
 
   var newAnimation = {
-    element: target,
+    element: element,
     attribute: attribute,
     destination: destination,
     duration: duration,
@@ -165,4 +165,4 @@ Animator.prototype.requestTick = function() {
   }
 };
 
-module.exports = new Animator();
+module.exports = Animator;
