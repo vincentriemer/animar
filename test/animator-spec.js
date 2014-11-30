@@ -2,7 +2,8 @@ var should = require('should'),
   sinon = require('sinon'),
   jsdom = require('jsdom'),
   EasingFactory = require('../lib_js/ease'),
-  Animator = require('../lib_js/animator');
+  Animator = require('../lib_js/animator'),
+  Helper = require('../lib_js/helper');
 
 describe('Animator', function() {
 
@@ -126,6 +127,63 @@ describe('Animator', function() {
       var mockEasingFunction = function() {return 5;};
       animator.calculateAnimationValue([{easingFunction: mockEasingFunction},{easingFunction: mockEasingFunction}])
         .should.be.exactly(10);
+    });
+  });
+
+  describe('#applyStyle', function() {
+    it('should apply a transformation', function() {
+      var helperStub = sinon.stub(Helper, 'setTransform');
+      animator.applyStyle(testElement, 'transform', 'translateX(0)');
+      helperStub.called.should.be.true;
+      helperStub.restore();
+    });
+    it('should apply an opacity', function() {
+      animator.applyStyle(testElement, 'opacity', '0');
+      testElement.style.opacity.should.be.exactly('0');
+    });
+  });
+
+  describe('#update()', function() {
+    var renderStub, stepStub;
+    beforeEach(function() {
+      renderStub = sinon.stub(Animator.prototype, 'renderDOM');
+      stepStub = sinon.stub(Animator.prototype, 'stepFrame');
+    });
+    afterEach(function() {
+      renderStub.restore();
+      stepStub.restore();
+    });
+    it('should render the animations and step forward a frame', function() {
+      renderStub.returns(false)
+      animator.update();
+      renderStub.called.should.be.true;
+      stepStub.called.should.be.true;
+      animator.ticking.should.be.false;
+    });
+    it('should continue updating if there are still animations in progress', function() {
+      var requestTickStub = sinon.stub(Animator.prototype, 'requestTick');
+      renderStub.returns(true);
+      animator.update();
+      requestTickStub.called.should.be.true;
+      requestTickStub.restore();
+    });
+  });
+
+  describe('#requestTick()', function() {
+    beforeEach(function() {
+      window.requestAnimationFrame = sinon.spy();
+    });
+    it('should do nothing if the animator is currently ticking', function() {
+      animator.ticking = true;
+      animator.requestTick();
+      window.requestAnimationFrame.called.should.be.false;
+    });
+    it('should update the dom', function() {
+      animator.ticking = false;
+      console.log(window.requestAnimationFrame);
+      animator.requestTick();
+      window.requestAnimationFrame.called.should.be.true;
+      animator.ticking.should.be.true;
     });
   });
 });

@@ -8,9 +8,10 @@ var EasingFactory   = require("./ease"),
     Constant        = require("./constants");
 
 
-var Animator = function() {
+var Animator = function(requestAnimationFrame           ) {
     this.elementMap = new Map();
     this.ticking = false;
+    this.requestAnimationFrame = requestAnimationFrame;
 };
 
 
@@ -85,7 +86,7 @@ Animator.prototype.applyStyle = function(element              , attribute       
       element.style.opacity = value;
       break;
     default:
-      console.log("[ERROR] Invalid attribute"); // TODO: Throw error
+      // TODO: throw an error
   }
 };
 
