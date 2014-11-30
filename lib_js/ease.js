@@ -25,27 +25,23 @@ var EasingFactory
                                   
     = {
   linear: function() {
-    /* istanbul ignore next */
     return function(t         , b         , c         , d         )          {
       return c*t/d + b;
     };
   },
   quadratic_in: function() {
-    /* istanbul ignore next */
     return function(t         , b         , c         , d         )          {
       t /= d;
       return c*t*t + b;
     };
   },
   quadratic_out: function() {
-    /* istanbul ignore next */
     return function(t         , b         , c         , d         )          {
       t /= d;
       return -c * t*(t-2) + b;
     };
   },
   quadratic_in_out: function() {
-    /* istanbul ignore next */
     return function(t         , b         , c         , d         )          {
       t /= d/2;
       if (t < 1) { return c/2*t*t + b; }
@@ -54,14 +50,12 @@ var EasingFactory
     };
   },
   cubic_in: function() {
-    /* istanbul ignore next */
     return function(t         , b         , c         , d         )          {
       t /= d;
       return c*t*t*t + b;
     };
   },
   cubic_out: function() {
-    /* istanbul ignore next */
     return function(t         , b         , c         , d         )          {
       t /= d;
       t--;
@@ -69,7 +63,6 @@ var EasingFactory
     };
   },
   cubic_in_out: function() {
-    /* istanbul ignore next */
     return function(t         , b         , c         , d         )          {
       t /= d/2;
       if (t < 1) { return c/2*t*t*t + b; }
@@ -78,14 +71,12 @@ var EasingFactory
     };
   },
   quartic_in: function() {
-    /* istanbul ignore next */
     return function(t         , b         , c         , d         )          {
       t /= d;
       return c*t*t*t*t + b;
     };
   },
   quartic_out: function() {
-    /* istanbul ignore next */
     return function(t         , b         , c         , d         )          {
       t /= d;
       t--;
@@ -93,7 +84,6 @@ var EasingFactory
     };
   },
   quartic_in_out: function() {
-    /* istanbul ignore next */
     return function(t         , b         , c         , d         )          {
       t /= d/2;
       if (t < 1) { return c/2*t*t*t*t + b; }
@@ -102,14 +92,12 @@ var EasingFactory
     };
   },
   quintic_in: function() {
-    /* istanbul ignore next */
     return function(t         , b         , c         , d         )          {
       t /= d;
       return c*t*t*t*t*t + b;
     };
   },
   quintic_out: function() {
-    /* istanbul ignore next */
     return function(t         , b         , c         , d         )          {
       t /= d;
       t--;
@@ -117,7 +105,6 @@ var EasingFactory
     };
   },
   quintic_in_out: function() {
-    /* istanbul ignore next */
     return function(t         , b         , c         , d         )          {
       t /= d/2;
       if (t < 1) { return c/2*t*t*t*t*t + b; }
@@ -126,38 +113,38 @@ var EasingFactory
     };
   },
   sinusoidal_in: function()  {
-    /* istanbul ignore next */
     return function(t         , b         , c         , d         )          {
       return -c * Math.cos(t/d * (Math.PI/2)) + c + b;
     };
   },
   sinusoidal_out: function()  {
-    /* istanbul ignore next */
     return function(t         , b         , c         , d         )          {
       return c * Math.sin(t/d * (Math.PI/2)) + b;
     };
   },
   sinusoidal_in_out: function()  {
-    /* istanbul ignore next */
     return function(t         , b         , c         , d         )          {
       return -c/2 * (Math.cos(Math.PI*t/d) - 1) + b;
     };
   },
   exponential_in: function()  {
-    /* istanbul ignore next */
     return function(t         , b         , c         , d         )          {
+      if (t === 0) { return b; }
+      if (t === d) { return b + c; }
       return c * Math.pow( 2, 10 * (t/d - 1) ) + b;
     };
   },
   exponential_out: function()  {
-    /* istanbul ignore next */
     return function(t         , b         , c         , d         )          {
+      if (t === 0) { return b; }
+      if (t === d) { return b + c; }
       return c * ( -Math.pow( 2, -10 * t/d ) + 1 ) + b;
     };
   },
   exponential_in_out: function()  {
-    /* istanbul ignore next */
     return function(t         , b         , c         , d         )          {
+      if (t === 0) { return b; }
+      if (t === d) { return b + c; }
       t /= d/2;
       if (t < 1) { return c/2 * Math.pow( 2, 10 * (t - 1) ) + b; }
       t--;
@@ -165,14 +152,12 @@ var EasingFactory
     };
   },
   circular_in: function() {
-    /* istanbul ignore next */
     return function(t         , b         , c         , d         )          {
       t /= d;
       return -c * (Math.sqrt(1 - t*t) - 1) + b;
     };
   },
   circular_out: function()  {
-    /* istanbul ignore next */
     return function(t         , b         , c         , d         )          {
       t /= d;
       t--;
@@ -180,7 +165,6 @@ var EasingFactory
     };
   },
   circular_in_out: function()  {
-    /* istanbul ignore next */
     return function(t         , b         , c         , d         )          {
       t /= d/2;
       if (t < 1) { return -c/2 * (Math.sqrt(1 - t*t) - 1) + b; }
