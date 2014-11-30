@@ -14,27 +14,34 @@ var Animator = function() {
 };
 
 
-Animator.prototype.addAnimationToMap = function(animation) {
-  if (!this.elementMap.has(animation.element)) {
-    this.elementMap.set(animation.element, new AnimatedElement());
+Animator.prototype.addAnimationToMap = function(args    
+                              
+                         
+                         
+                         
+                           
+   ) 
+{
+  if (!this.elementMap.has(args.element)) {
+    this.elementMap.set(args.element, new AnimatedElement());
   }
-  this.elementMap.get(animation.element).addAnimation(animation);
+  this.elementMap.get(args.element).addAnimation(args);
 };
 
 
-Animator.prototype.addAnimation = function(arguments    
-                         
-                       
-                         
-                       
+Animator.prototype.addAnimation = function(args    
+                                 
+                            
+                            
+                             
                           
-   ) {
-
-  var target = arguments.target,
-    attribute = arguments.attribute,
-    destination = arguments.destination,
-    duration = arguments.duration || 60,
-    easingFunction = arguments.easingFunction || 'linear';
+   )
+{
+  var target = args.target,
+    attribute = args.attribute,
+    destination = args.destination,
+    duration = args.duration || 60,
+    easingFunction = args.easingFunction || 'linear';
 
   if (typeof easingFunction === 'string') {
     easingFunction = EasingFactory[easingFunction]();
@@ -52,7 +59,15 @@ Animator.prototype.addAnimation = function(arguments
 };
 
 
-Animator.prototype.calculateAnimationValue = function(animations) {
+Animator.prototype.calculateAnimationValue = function(animations   
+           
+                                  
+                                
+                                
+                                
+                                
+      )          
+{
   var result = 0;
   animations.forEach(function(value) {
     result += value.easingFunction(value.currentIteration, value.startValue, value.changeInValue, value.totalIterations);
@@ -61,7 +76,7 @@ Animator.prototype.calculateAnimationValue = function(animations) {
 };
 
 
-Animator.prototype.applyStyle = function(element, attribute, value) {
+Animator.prototype.applyStyle = function(element              , attribute         , value         ) {
   switch(attribute) {
     case("transform"):
       Helper.setTransform(element, value);
@@ -70,12 +85,12 @@ Animator.prototype.applyStyle = function(element, attribute, value) {
       element.style.opacity = value;
       break;
     default:
-      console.log("[ERROR] Invalid attribute");
+      console.log("[ERROR] Invalid attribute"); // TODO: Throw error
   }
 };
 
 
-Animator.prototype.renderDOM = function() {
+Animator.prototype.renderDOM = function()           {
   var self = this; // maintain reference to Animator instance through the forEach calls
   var animated = false;
   self.elementMap.forEach(function(value, key) {
@@ -342,18 +357,24 @@ var Element = function() {
   this.attributeMap = new Map();
 };
 
-Element.prototype.addAnimation = function(animation) {
-  if (!this.attributeMap.has(animation.attribute)) {
-    this.createAttribute(animation);
+Element.prototype.addAnimation = function(args    
+                         
+                         
+                         
+                           
+   ) 
+{
+  if (!this.attributeMap.has(args.attribute)) {
+    this.createAttribute(args);
   }
 
-  var currentAttribute = this.attributeMap.get(animation.attribute),
-      startValue       = currentAttribute.model - animation.destination,
+  var currentAttribute = this.attributeMap.get(args.attribute),
+      startValue       = currentAttribute.model - args.destination,
       changeInValue    = 0 - startValue,
-      totalIterations  = animation.duration,
-      easingFunction   = animation.ease;
+      totalIterations  = args.duration,
+      easingFunction   = args.ease;
 
-  currentAttribute.model = animation.destination;
+  currentAttribute.model = args.destination;
   currentAttribute.animations.push({
     "currentIteration" : 0,
     "startValue"       : startValue,
@@ -363,8 +384,12 @@ Element.prototype.addAnimation = function(animation) {
   });
 };
 
-Element.prototype.getStartValue = function(animation) {
-  var result;
+Element.prototype.getStartValue = function(animation    
+                       
+                            
+   )         
+{
+  var result         ;
   switch(animation.attribute) {
     case('opacity'):
       result = Helper.getOpacity(animation.element);
@@ -390,7 +415,12 @@ Element.prototype.getStartValue = function(animation) {
   return result;
 };
 
-Element.prototype.createAttribute = function(animation) {
+Element.prototype.createAttribute = function(animation    
+                        
+                             
+                         
+   ) 
+{
   var startValue = animation.startValue || this.getStartValue(animation);
   
   var newAttributeObject = {
