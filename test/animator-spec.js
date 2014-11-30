@@ -180,10 +180,22 @@ describe('Animator', function() {
     });
     it('should update the dom', function() {
       animator.ticking = false;
-      console.log(window.requestAnimationFrame);
       animator.requestTick();
       window.requestAnimationFrame.called.should.be.true;
       animator.ticking.should.be.true;
     });
+  });
+
+  describe('#stepFrame()', function() {
+    it('should add 1 to every current iteration property of every element\'s attribute\'s animation', function() {
+      var attributeMap = new Map();
+      attributeMap.set('testAttribute1', { animations: [
+            { currentIteration: 0, totalIterations: 10 }
+      ]});
+      animator.elementMap = new Map();
+      animator.elementMap.set(testElement, { attributeMap: attributeMap });
+      animator.stepFrame();
+      animator.elementMap.get(testElement).attributeMap.get('testAttribute1').animations[0].currentIteration.should.be.exactly(1);
+    })
   });
 });
