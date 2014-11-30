@@ -154,7 +154,7 @@ Animator.prototype.update = function() {
   this.stepFrame();
 
   this.ticking = false;
-  if (animationsRemaining) this.requestTick();
+  if (animationsRemaining) { this.requestTick(); }
 };
 
 
