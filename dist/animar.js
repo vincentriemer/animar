@@ -133,13 +133,13 @@ Animator.prototype.renderDOM = function()           {
 
 Animator.prototype.stepFrame = function() {
   var elementMap = this.elementMap;
-  elementMap.forEach(function(value, key) {
+  elementMap.forEach(function(value) {
     var attributeMap = value.attributeMap;
-    attributeMap.forEach(function(value, key) {
+    attributeMap.forEach(function(value) {
       var updatedAnimations = [];
-      value.animations.forEach(function(value, index) {
+      value.animations.forEach(function(value) {
         if (value.currentIteration !== value.totalIterations) {
-          value["currentIteration"] += 1;
+          value.currentIteration += 1;
           updatedAnimations.push(value);
         }
       });
@@ -170,8 +170,10 @@ module.exports = new Animator();
 },{"./constants":2,"./ease":3,"./element":4,"./helper":5}],2:[function(require,module,exports){
 /* @flow */
 
-var Constants = {
-  "TRANSFORM_ATTRIBUTES": ["translateX", "translateY", "scaleX", "scaleY", "rotate"]
+var Constants    
+                                      
+  = {
+  TRANSFORM_ATTRIBUTES: ["translateX", "translateY", "scaleX", "scaleY", "rotate"]
 };
 
 module.exports = Constants;
@@ -203,146 +205,146 @@ var EasingFactory
                                   
     = {
   linear: function() {
-      return function(t         , b         , c         , d         )          {
-        return c*t/d + b;
-    }
+    return function(t         , b         , c         , d         )          {
+      return c*t/d + b;
+    };
   },
   quadratic_in: function() {
-      return function(t         , b         , c         , d         )          {
-        t /= d;
-        return c*t*t + b;
-    }
+    return function(t         , b         , c         , d         )          {
+      t /= d;
+      return c*t*t + b;
+    };
   },
   quadratic_out: function() {
-      return function(t         , b         , c         , d         )          {
-        t /= d;
-        return -c * t*(t-2) + b;
-    }
+    return function(t         , b         , c         , d         )          {
+      t /= d;
+      return -c * t*(t-2) + b;
+    };
   },
   quadratic_in_out: function() {
-      return function(t         , b         , c         , d         )          {
-        t /= d/2;
-        if (t < 1) return c/2*t*t + b;
-        t--;
-        return -c/2 * (t*(t-2) - 1) + b;
-    }
+    return function(t         , b         , c         , d         )          {
+      t /= d/2;
+      if (t < 1) { return c/2*t*t + b; }
+      t--;
+      return -c/2 * (t*(t-2) - 1) + b;
+    };
   },
   cubic_in: function() {
-      return function(t         , b         , c         , d         )          {
-        t /= d;
-        return c*t*t*t + b;
-    }
+    return function(t         , b         , c         , d         )          {
+      t /= d;
+      return c*t*t*t + b;
+    };
   },
   cubic_out: function() {
-      return function(t         , b         , c         , d         )          {
-        t /= d;
-        t--;
-        return c*(t*t*t + 1) + b;
-    }
+    return function(t         , b         , c         , d         )          {
+      t /= d;
+      t--;
+      return c*(t*t*t + 1) + b;
+    };
   },
   cubic_in_out: function() {
-      return function(t         , b         , c         , d         )          {
-        t /= d/2;
-        if (t < 1) return c/2*t*t*t + b;
-        t -= 2;
-        return c/2*(t*t*t + 2) + b;
-    }
+    return function(t         , b         , c         , d         )          {
+      t /= d/2;
+      if (t < 1) { return c/2*t*t*t + b; }
+      t -= 2;
+      return c/2*(t*t*t + 2) + b;
+    };
   },
   quartic_in: function() {
-      return function(t         , b         , c         , d         )          {
-        t /= d;
-        return c*t*t*t*t + b;
-    }
+    return function(t         , b         , c         , d         )          {
+      t /= d;
+      return c*t*t*t*t + b;
+    };
   },
   quartic_out: function() {
-      return function(t         , b         , c         , d         )          {
-        t /= d;
-        t--;
-        return -c * (t*t*t*t - 1) + b;
-    }
+    return function(t         , b         , c         , d         )          {
+      t /= d;
+      t--;
+      return -c * (t*t*t*t - 1) + b;
+    };
   },
   quartic_in_out: function() {
-      return function(t         , b         , c         , d         )          {
-        t /= d/2;
-        if (t < 1) return c/2*t*t*t*t + b;
-        t -= 2;
-        return -c/2 * (t*t*t*t - 2) + b;
-    }
+    return function(t         , b         , c         , d         )          {
+      t /= d/2;
+      if (t < 1) { return c/2*t*t*t*t + b; }
+      t -= 2;
+      return -c/2 * (t*t*t*t - 2) + b;
+    };
   },
   quintic_in: function() {
-      return function(t         , b         , c         , d         )          {
-        t /= d;
-        return c*t*t*t*t*t + b;
-    }
+    return function(t         , b         , c         , d         )          {
+      t /= d;
+      return c*t*t*t*t*t + b;
+    };
   },
   quintic_out: function() {
-      return function(t         , b         , c         , d         )          {
-        t /= d;
-        t--;
-        return c*(t*t*t*t*t + 1) + b;
-    }
+    return function(t         , b         , c         , d         )          {
+      t /= d;
+      t--;
+      return c*(t*t*t*t*t + 1) + b;
+    };
   },
   quintic_in_out: function() {
-      return function(t         , b         , c         , d         )          {
-        t /= d/2;
-        if (t < 1) return c/2*t*t*t*t*t + b;
-        t -= 2;
-        return c/2*(t*t*t*t*t + 2) + b;
-    }
+    return function(t         , b         , c         , d         )          {
+      t /= d/2;
+      if (t < 1) { return c/2*t*t*t*t*t + b; }
+      t -= 2;
+      return c/2*(t*t*t*t*t + 2) + b;
+    };
   },
   sinusoidal_in: function()  {
     return function(t         , b         , c         , d         )          {
-        return -c * Math.cos(t/d * (Math.PI/2)) + c + b;
-    }
+      return -c * Math.cos(t/d * (Math.PI/2)) + c + b;
+    };
   },
   sinusoidal_out: function()  {
     return function(t         , b         , c         , d         )          {
-        return c * Math.sin(t/d * (Math.PI/2)) + b;
-    }
+      return c * Math.sin(t/d * (Math.PI/2)) + b;
+    };
   },
   sinusoidal_in_out: function()  {
     return function(t         , b         , c         , d         )          {
-        return -c/2 * (Math.cos(Math.PI*t/d) - 1) + b;
-    }
+      return -c/2 * (Math.cos(Math.PI*t/d) - 1) + b;
+    };
   },
   exponential_in: function()  {
     return function(t         , b         , c         , d         )          {
-        return c * Math.pow( 2, 10 * (t/d - 1) ) + b;
-    }
+      return c * Math.pow( 2, 10 * (t/d - 1) ) + b;
+    };
   },
   exponential_out: function()  {
     return function(t         , b         , c         , d         )          {
-        return c * ( -Math.pow( 2, -10 * t/d ) + 1 ) + b;
-    }
+      return c * ( -Math.pow( 2, -10 * t/d ) + 1 ) + b;
+    };
   },
   exponential_in_out: function()  {
     return function(t         , b         , c         , d         )          {
-        t /= d/2;
-        if (t < 1) return c/2 * Math.pow( 2, 10 * (t - 1) ) + b;
-        t--;
-        return c/2 * ( -Math.pow( 2, -10 * t) + 2 ) + b;
-    }
+      t /= d/2;
+      if (t < 1) { return c/2 * Math.pow( 2, 10 * (t - 1) ) + b; }
+      t--;
+      return c/2 * ( -Math.pow( 2, -10 * t) + 2 ) + b;
+    };
   },
   circular_in: function() {
     return function(t         , b         , c         , d         )          {
-        t /= d;
-        return -c * (Math.sqrt(1 - t*t) - 1) + b;
-    }
+      t /= d;
+      return -c * (Math.sqrt(1 - t*t) - 1) + b;
+    };
   },
   circular_out: function()  {
     return function(t         , b         , c         , d         )          {
-        t /= d;
-        t--;
-        return c * Math.sqrt(1 - t*t) + b;
-    }
+      t /= d;
+      t--;
+      return c * Math.sqrt(1 - t*t) + b;
+    };
   },
   circular_in_out: function()  {
     return function(t         , b         , c         , d         )          {
-        t /= d/2;
-        if (t < 1) return -c/2 * (Math.sqrt(1 - t*t) - 1) + b;
-        t -= 2;
-        return c/2 * (Math.sqrt(1 - t*t) + 1) + b;
-    }
+      t /= d/2;
+      if (t < 1) { return -c/2 * (Math.sqrt(1 - t*t) - 1) + b; }
+      t -= 2;
+      return c/2 * (Math.sqrt(1 - t*t) + 1) + b;
+    };
   }
 };
 
@@ -353,11 +355,11 @@ module.exports = EasingFactory;
 // imports
 var Helper = require('./helper');
 
-var Element = function() {
+var Elem = function() {
   this.attributeMap = new Map();
 };
 
-Element.prototype.addAnimation = function(args    
+Elem.prototype.addAnimation = function(args    
                          
                          
                          
@@ -384,7 +386,7 @@ Element.prototype.addAnimation = function(args
   });
 };
 
-Element.prototype.getStartValue = function(animation    
+Elem.prototype.getStartValue = function(animation    
                        
                             
    )         
@@ -415,7 +417,7 @@ Element.prototype.getStartValue = function(animation
   return result;
 };
 
-Element.prototype.createAttribute = function(animation    
+Elem.prototype.createAttribute = function(animation    
                         
                              
                          
@@ -430,7 +432,7 @@ Element.prototype.createAttribute = function(animation
   this.attributeMap.set(animation.attribute, newAttributeObject);
 };
 
-module.exports = Element;
+module.exports = Elem;
 },{"./helper":5}],5:[function(require,module,exports){
 /* @flow */
 
@@ -460,7 +462,7 @@ var Helper = {
                             'woops'; // TODO: throw error
       if (transformString === 'none') { transformString = "matrix(1, 0, 0, 1, 0, 0)"; }
       var values = transformString.split('(')[1].split(')')[0].split(',');
-      values = values.map(function(x){return parseInt(x)});
+      values = values.map(function(x) { return parseInt(x, 10); } );
       return values;
     },
 
@@ -487,9 +489,7 @@ var Helper = {
     getRotation: function(element              )          {
       var values = this.getTransformMatrix(element);
       var a = values[0],
-          b = values[1],
-          c = values[2],
-          d = values[3];
+          b = values[1];
 
       return Math.round(Math.atan2(b, a) * (180/Math.PI));
     },

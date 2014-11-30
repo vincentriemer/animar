@@ -132,13 +132,13 @@ Animator.prototype.renderDOM = function()           {
 
 Animator.prototype.stepFrame = function() {
   var elementMap = this.elementMap;
-  elementMap.forEach(function(value, key) {
+  elementMap.forEach(function(value) {
     var attributeMap = value.attributeMap;
-    attributeMap.forEach(function(value, key) {
+    attributeMap.forEach(function(value) {
       var updatedAnimations = [];
-      value.animations.forEach(function(value, index) {
+      value.animations.forEach(function(value) {
         if (value.currentIteration !== value.totalIterations) {
-          value["currentIteration"] += 1;
+          value.currentIteration += 1;
           updatedAnimations.push(value);
         }
       });
