@@ -14,12 +14,6 @@ var gulp = require('gulp'),
 // shim for harmony features
 require('es6-shim');
 
-gulp.task('hook', function() {
-  return gulp.src('.pre-commit')
-    .pipe(rename('pre-commit'))
-    .pipe(gulp.dest('.git/hooks/'));
-});
-
 // Flow type checking
 gulp.task('typecheck', function() {
   return gulp.src('lib/animator.jsx')
@@ -66,13 +60,4 @@ gulp.task('test', ['prepublish', 'typecheck'], function(cb) {
         .pipe(istanbul.writeReports())
         .on('end', cb);
     });
-});
-
-// task for uploading coverage data to Code Climate
-gulp.task('coverage', ['test'], function(cb) {
-  exec('CODECLIMATE_REPO_TOKEN=255dcc221d2564fd8a640532bf923db489f6ae8011024b2fdc77600d8d4fc054 codeclimate < coverage/lcov.info', function(err, stdout, stderr) {
-    console.log(stdout);
-    console.log(stderr);
-    cb(err);
-  });
 });
