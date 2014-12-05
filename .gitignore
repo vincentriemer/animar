@@ -2,3 +2,5 @@ node_modules
 .idea
 .sass-cache
 dist
+coverage
+npm-debug.log
