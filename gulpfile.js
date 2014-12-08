@@ -8,8 +8,7 @@ var gulp = require('gulp'),
     buffer = require('vinyl-buffer'),
     react = require('gulp-react'),
     istanbul = require('gulp-istanbul'),
-    mocha = require('gulp-mocha'),
-    exec = require('child_process').exec;
+    mocha = require('gulp-mocha');
 
 // shim for harmony features
 require('es6-shim');
