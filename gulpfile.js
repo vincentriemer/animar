@@ -53,6 +53,7 @@ gulp.task('prepublish', ['prepareClimate'], function() {
 gulp.task('test', ['prepublish', 'typecheck'], function(cb) {
   gulp.src(['lib_js/*.js'])
     .pipe(istanbul())
+    .pipe(istanbul.hookRequire())
     .on('finish', function() {
       gulp.src(['test/*.js'])
         .pipe(mocha())
