@@ -8,8 +8,7 @@ var gulp = require('gulp'),
     buffer = require('vinyl-buffer'),
     react = require('gulp-react'),
     istanbul = require('gulp-istanbul'),
-    mocha = require('gulp-mocha'),
-    exec = require('child_process').exec;
+    mocha = require('gulp-mocha');
 
 // shim for harmony features
 require('es6-shim');
@@ -60,13 +59,4 @@ gulp.task('test', ['prepublish', 'typecheck'], function(cb) {
         .pipe(istanbul.writeReports())
         .on('end', cb);
     });
-});
-
-// task for uploading coverage data to Code Climate
-gulp.task('coverage', ['test'], function(cb) {
-  exec('CODECLIMATE_REPO_TOKEN=255dcc221d2564fd8a640532bf923db489f6ae8011024b2fdc77600d8d4fc054 codeclimate < coverage/lcov.info', function(err, stdout, stderr) {
-    console.log(stdout);
-    console.log(stderr);
-    cb(err);
-  });
 });
