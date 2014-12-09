@@ -51,6 +51,7 @@
   },
   "devDependencies": {
     "browserify": "^6.3.2",
+    "codeclimate-test-reporter": "0.0.4",
     "del": "^1.0.0",
     "es6-shim": "^0.21.0",
     "gulp": "^3.8.10",
