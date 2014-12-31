@@ -1,7 +1,7 @@
 {
   "name": "animar",
-  "version": "0.1.1",
-  "description": "A modern, focused, flexible javascript animation framework.",
+  "version": "0.2.0",
+  "description": "A modern, focused, flexible javascript animation library.",
   "keywords": [
     "animation",
     "web",
@@ -38,6 +38,12 @@
     "lib": "lib"
   },
   "main": "dist/animar.js",
+  "keywords": [
+    "web",
+    "javascript",
+    "animation",
+    "additive"
+  ],
   "devDependencies": {
     "browserify": "^8.0.2",
     "chai": "^1.10.0",
