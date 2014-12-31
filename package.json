@@ -26,14 +26,6 @@
     "test": "gulp test",
     "prepublish": "gulp prepublish"
   },
-  "files": [
-    "lib",
-    "test",
-    "dist",
-    "gulpfile.js",
-    "README.md",
-    "LICENSE.md"
-  ],
   "directories": {
     "lib": "lib"
   },
