@@ -1,5 +1,5 @@
-var should = require("should")
-    EasingFactory = require("../lib_js/ease");
+var should = require('chai').should(),
+    EasingFactory = require("../lib/ease");
 
 var factoryProperties = [
   "linear",              

@@ -1,6 +1,4 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-/* @flow */
-
 // imports
 var EasingFactory   = require("./ease"),
     AnimatedElement = require("./element"),
@@ -8,20 +6,13 @@ var EasingFactory   = require("./ease"),
     Constant        = require("./constants");
 
 
-var Animator = function(requestAnimationFrame           ) {
+var Animar = function() {
     this.elementMap = new Map();
     this.ticking = false;
-    this.requestAnimationFrame = requestAnimationFrame;
 };
 
 
-Animator.prototype.addAnimationToMap = function(args    
-                              
-                         
-                         
-                         
-                           
-   ) 
+Animar.prototype.addAnimationToMap = function(args)
 {
   if (!this.elementMap.has(args.element)) {
     this.elementMap.set(args.element, new AnimatedElement());
@@ -30,13 +21,7 @@ Animator.prototype.addAnimationToMap = function(args
 };
 
 
-Animator.prototype.addAnimation = function(args    
-                                 
-                            
-                            
-                             
-                          
-   )
+Animar.prototype.addAnimation = function(args)
 {
   var element = args.element,
     attribute = args.attribute,
@@ -60,14 +45,7 @@ Animator.prototype.addAnimation = function(args
 };
 
 
-Animator.prototype.calculateAnimationValue = function(animations   
-           
-                                  
-                                
-                                
-                                
-                                
-      )          
+Animar.prototype.calculateAnimationValue = function(animations)
 {
   var result = 0;
   animations.forEach(function(value) {
@@ -77,7 +55,7 @@ Animator.prototype.calculateAnimationValue = function(animations
 };
 
 
-Animator.prototype.applyStyle = function(element              , attribute         , value         ) {
+Animar.prototype.applyStyle = function(element, attribute, value) {
   switch(attribute) {
     case("transform"):
       Helper.setTransform(element, value);
@@ -89,8 +67,8 @@ Animator.prototype.applyStyle = function(element              , attribute       
 };
 
 
-Animator.prototype.renderDOM = function()           {
-  var self = this; // maintain reference to Animator instance through the forEach calls
+Animar.prototype.renderDOM = function() {
+  var self = this; // maintain reference to Animar instance through the forEach calls
   var animated = false;
   self.elementMap.forEach(function(value, key) {
     var targetElement = key;
@@ -129,7 +107,7 @@ Animator.prototype.renderDOM = function()           {
 };
 
 
-Animator.prototype.stepFrame = function() {
+Animar.prototype.stepFrame = function() {
   var elementMap = this.elementMap;
   elementMap.forEach(function(value) {
     var attributeMap = value.attributeMap;
@@ -148,7 +126,7 @@ Animator.prototype.stepFrame = function() {
 };
 
 
-Animator.prototype.update = function() {
+Animar.prototype.update = function() {
   var animationsRemaining = this.renderDOM();
   
   this.stepFrame();
@@ -158,70 +136,41 @@ Animator.prototype.update = function() {
 };
 
 
-Animator.prototype.requestTick = function() {
+Animar.prototype.requestTick = function() {
   if (!this.ticking) {
     window.requestAnimationFrame(this.update.bind(this));
     this.ticking = true;
   }
 };
 
-module.exports = Animator;
+module.exports = Animar;
 },{"./constants":2,"./ease":3,"./element":4,"./helper":5}],2:[function(require,module,exports){
-/* @flow */
-
-var Constants    
-                                      
-  = {
+var Constants = {
   TRANSFORM_ATTRIBUTES: ["translateX", "translateY", "scaleX", "scaleY", "rotate"]
 };
 
 module.exports = Constants;
 },{}],3:[function(require,module,exports){
-/* @flow */
-
-var EasingFactory   
-                                   
-                                  
-                                  
-                                  
-                                  
-                                  
-                                  
-                                  
-                                  
-                                  
-                                  
-                                  
-                                  
-                                  
-                                  
-                                  
-                                  
-                                  
-                                  
-                                  
-                                  
-                                  
-    = {
+var EasingFactory = {
   linear: function() {
-    return function(t         , b         , c         , d         )          {
+    return function(t, b, c, d) {
       return c*t/d + b;
     };
   },
   quadratic_in: function() {
-    return function(t         , b         , c         , d         )          {
+    return function(t, b, c, d) {
       t /= d;
       return c*t*t + b;
     };
   },
   quadratic_out: function() {
-    return function(t         , b         , c         , d         )          {
+    return function(t, b, c, d) {
       t /= d;
       return -c * t*(t-2) + b;
     };
   },
   quadratic_in_out: function() {
-    return function(t         , b         , c         , d         )          {
+    return function(t, b, c, d) {
       t /= d/2;
       if (t < 1) { return c/2*t*t + b; }
       t--;
@@ -229,20 +178,20 @@ var EasingFactory
     };
   },
   cubic_in: function() {
-    return function(t         , b         , c         , d         )          {
+    return function(t, b, c, d) {
       t /= d;
       return c*t*t*t + b;
     };
   },
   cubic_out: function() {
-    return function(t         , b         , c         , d         )          {
+    return function(t, b, c, d) {
       t /= d;
       t--;
       return c*(t*t*t + 1) + b;
     };
   },
   cubic_in_out: function() {
-    return function(t         , b         , c         , d         )          {
+    return function(t, b, c, d) {
       t /= d/2;
       if (t < 1) { return c/2*t*t*t + b; }
       t -= 2;
@@ -250,20 +199,20 @@ var EasingFactory
     };
   },
   quartic_in: function() {
-    return function(t         , b         , c         , d         )          {
+    return function(t, b, c, d) {
       t /= d;
       return c*t*t*t*t + b;
     };
   },
   quartic_out: function() {
-    return function(t         , b         , c         , d         )          {
+    return function(t, b, c, d) {
       t /= d;
       t--;
       return -c * (t*t*t*t - 1) + b;
     };
   },
   quartic_in_out: function() {
-    return function(t         , b         , c         , d         )          {
+    return function(t, b, c, d) {
       t /= d/2;
       if (t < 1) { return c/2*t*t*t*t + b; }
       t -= 2;
@@ -271,20 +220,20 @@ var EasingFactory
     };
   },
   quintic_in: function() {
-    return function(t         , b         , c         , d         )          {
+    return function(t, b, c, d) {
       t /= d;
       return c*t*t*t*t*t + b;
     };
   },
   quintic_out: function() {
-    return function(t         , b         , c         , d         )          {
+    return function(t, b, c, d) {
       t /= d;
       t--;
       return c*(t*t*t*t*t + 1) + b;
     };
   },
   quintic_in_out: function() {
-    return function(t         , b         , c         , d         )          {
+    return function(t, b, c, d) {
       t /= d/2;
       if (t < 1) { return c/2*t*t*t*t*t + b; }
       t -= 2;
@@ -292,32 +241,32 @@ var EasingFactory
     };
   },
   sinusoidal_in: function()  {
-    return function(t         , b         , c         , d         )          {
+    return function(t, b, c, d) {
       return -c * Math.cos(t/d * (Math.PI/2)) + c + b;
     };
   },
   sinusoidal_out: function()  {
-    return function(t         , b         , c         , d         )          {
+    return function(t, b, c, d) {
       return c * Math.sin(t/d * (Math.PI/2)) + b;
     };
   },
   sinusoidal_in_out: function()  {
-    return function(t         , b         , c         , d         )          {
+    return function(t, b, c, d) {
       return -c/2 * (Math.cos(Math.PI*t/d) - 1) + b;
     };
   },
   exponential_in: function()  {
-    return function(t         , b         , c         , d         )          {
+    return function(t, b, c, d) {
       return c * Math.pow( 2, 10 * (t/d - 1) ) + b;
     };
   },
   exponential_out: function()  {
-    return function(t         , b         , c         , d         )          {
+    return function(t, b, c, d) {
       return c * ( -Math.pow( 2, -10 * t/d ) + 1 ) + b;
     };
   },
   exponential_in_out: function()  {
-    return function(t         , b         , c         , d         )          {
+    return function(t, b, c, d) {
       t /= d/2;
       if (t < 1) { return c/2 * Math.pow( 2, 10 * (t - 1) ) + b; }
       t--;
@@ -325,20 +274,20 @@ var EasingFactory
     };
   },
   circular_in: function() {
-    return function(t         , b         , c         , d         )          {
+    return function(t, b, c, d) {
       t /= d;
       return -c * (Math.sqrt(1 - t*t) - 1) + b;
     };
   },
   circular_out: function()  {
-    return function(t         , b         , c         , d         )          {
+    return function(t, b, c, d) {
       t /= d;
       t--;
       return c * Math.sqrt(1 - t*t) + b;
     };
   },
   circular_in_out: function()  {
-    return function(t         , b         , c         , d         )          {
+    return function(t, b, c, d) {
       t /= d/2;
       if (t < 1) { return -c/2 * (Math.sqrt(1 - t*t) - 1) + b; }
       t -= 2;
@@ -349,8 +298,6 @@ var EasingFactory
 
 module.exports = EasingFactory;
 },{}],4:[function(require,module,exports){
-/* @flow */
-
 // imports
 var Helper = require('./helper');
 
@@ -358,13 +305,7 @@ var Elem = function() {
   this.attributeMap = new Map();
 };
 
-Elem.prototype.addAnimation = function(args    
-                         
-                         
-                         
-                           
-   ) 
-{
+Elem.prototype.addAnimation = function(args) {
   if (!this.attributeMap.has(args.attribute)) {
     this.createAttribute(args);
   }
@@ -385,12 +326,8 @@ Elem.prototype.addAnimation = function(args
   });
 };
 
-Elem.prototype.getStartValue = function(animation    
-                       
-                            
-   )         
-{
-  var result         ;
+Elem.prototype.getStartValue = function(animation) {
+  var result;
   switch(animation.attribute) {
     case('opacity'):
       result = Helper.getOpacity(animation.element);
@@ -416,12 +353,7 @@ Elem.prototype.getStartValue = function(animation
   return result;
 };
 
-Elem.prototype.createAttribute = function(animation    
-                        
-                             
-                         
-   ) 
-{
+Elem.prototype.createAttribute = function(animation) {
   var startValue = animation.startValue || this.getStartValue(animation);
   
   var newAttributeObject = {
@@ -433,11 +365,9 @@ Elem.prototype.createAttribute = function(animation
 
 module.exports = Elem;
 },{"./helper":5}],5:[function(require,module,exports){
-/* @flow */
-
 var Helper = {
   
-    setTransform: function(element              , transformString         ) {
+    setTransform: function(element, transformString) {
       element.style.webkitTransform = transformString;
       element.style.MozTransform = transformString;
       element.style.msTransform = transformString;
@@ -446,7 +376,7 @@ var Helper = {
       return element;
     },
 
-    getTransformMatrix: function(element              )                 {
+    getTransformMatrix: function(element) {
       var computedStyle = window.getComputedStyle(element, null);
       /* istanbul ignore next */ // no need to test for all the browser prefixes
       var transformString = computedStyle.getPropertyValue("-webkit-transform") ||
@@ -461,27 +391,27 @@ var Helper = {
       return values;
     },
 
-    getTranslateX: function(element              )          {
+    getTranslateX: function(element) {
       var values = this.getTransformMatrix(element);
       return values[4];
     },
 
-    getTranslateY: function(element              )          {
+    getTranslateY: function(element) {
       var values = this.getTransformMatrix(element);
       return values[5];
     },
 
-    getScaleX: function(element              )          {
+    getScaleX: function(element) {
       var values = this.getTransformMatrix(element);
       return Math.sqrt(Math.pow(values[0], 2) + Math.pow(values[1], 2));
     },
 
-    getScaleY: function(element              )          {
+    getScaleY: function(element) {
       var values = this.getTransformMatrix(element);
       return Math.sqrt(Math.pow(values[2], 2) + Math.pow(values[3], 2));
     },
 
-    getRotation: function(element              )          {
+    getRotation: function(element) {
       var values = this.getTransformMatrix(element);
       var a = values[0],
           b = values[1];
@@ -489,7 +419,7 @@ var Helper = {
       return Math.round(Math.atan2(b, a) * (180/Math.PI));
     },
 
-    getOpacity: function(element              )          {
+    getOpacity: function(element) {
       var computedStyle = window.getComputedStyle(element, null);
       return parseFloat(computedStyle.getPropertyValue("opacity"));
     }

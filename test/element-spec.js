@@ -1,7 +1,7 @@
-var should = require("should"),
+var should = require('chai').should(),
     sinon = require('sinon'),
-    Element = require('../lib_js/element'),
-    Helper = require('../lib_js/helper');
+    Element = require('../lib/element'),
+    Helper = require('../lib/helper');
 
 describe('Element', function() {
   var testElement;
@@ -12,14 +12,14 @@ describe('Element', function() {
 
   describe('new Element()', function() {
     it('should initialize with an empty attribute map', function() {
-      testElement.should.have.properties('attributeMap');
+      testElement.should.have.property('attributeMap');
     });
   });
 
   describe('#createAttribute()', function() {
     it('should add a new attribute object to the attributeMap', function() {
       testElement.createAttribute({ attribute: 'test', startValue: 0});
-      testElement.attributeMap.get('test').model.should.be.exactly(0);
+      testElement.attributeMap.get('test').model.should.be.eql(0);
       testElement.attributeMap.get('test').animations.should.have.length(0);
     });
   });
