@@ -1,6 +1,6 @@
 var should = require('should'),
     sinon = require('sinon'),
-    Helper = require('../lib_js/helper');
+    Helper = require('../lib/helper');
 
 // EXPECTED RESULT = translateX(10px) translateY(10px) scaleX(5) scaleY(5) rotate(45deg)
 

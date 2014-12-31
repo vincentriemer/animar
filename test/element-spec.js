@@ -1,7 +1,7 @@
 var should = require("should"),
     sinon = require('sinon'),
-    Element = require('../lib_js/element'),
-    Helper = require('../lib_js/helper');
+    Element = require('../lib/element'),
+    Helper = require('../lib/helper');
 
 describe('Element', function() {
   var testElement;

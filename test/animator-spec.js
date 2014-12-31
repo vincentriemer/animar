@@ -1,9 +1,9 @@
 var should = require('should'),
   sinon = require('sinon'),
   jsdom = require('jsdom'),
-  EasingFactory = require('../lib_js/ease'),
-  Animator = require('../lib_js/animator'),
-  Helper = require('../lib_js/helper');
+  EasingFactory = require('../lib/ease'),
+  Animator = require('../lib/animar'),
+  Helper = require('../lib/helper');
 
 describe('Animator', function() {
 
