@@ -6,14 +6,13 @@ var EasingFactory   = require("./ease"),
     Constant        = require("./constants");
 
 
-var Animator = function(requestAnimationFrame) {
+var Animar = function() {
     this.elementMap = new Map();
     this.ticking = false;
-    this.requestAnimationFrame = requestAnimationFrame;
 };
 
 
-Animator.prototype.addAnimationToMap = function(args) 
+Animar.prototype.addAnimationToMap = function(args)
 {
   if (!this.elementMap.has(args.element)) {
     this.elementMap.set(args.element, new AnimatedElement());
@@ -22,7 +21,7 @@ Animator.prototype.addAnimationToMap = function(args)
 };
 
 
-Animator.prototype.addAnimation = function(args)
+Animar.prototype.addAnimation = function(args)
 {
   var element = args.element,
     attribute = args.attribute,
@@ -46,7 +45,7 @@ Animator.prototype.addAnimation = function(args)
 };
 
 
-Animator.prototype.calculateAnimationValue = function(animations)
+Animar.prototype.calculateAnimationValue = function(animations)
 {
   var result = 0;
   animations.forEach(function(value) {
@@ -56,7 +55,7 @@ Animator.prototype.calculateAnimationValue = function(animations)
 };
 
 
-Animator.prototype.applyStyle = function(element, attribute, value) {
+Animar.prototype.applyStyle = function(element, attribute, value) {
   switch(attribute) {
     case("transform"):
       Helper.setTransform(element, value);
@@ -68,8 +67,8 @@ Animator.prototype.applyStyle = function(element, attribute, value) {
 };
 
 
-Animator.prototype.renderDOM = function() {
-  var self = this; // maintain reference to Animator instance through the forEach calls
+Animar.prototype.renderDOM = function() {
+  var self = this; // maintain reference to Animar instance through the forEach calls
   var animated = false;
   self.elementMap.forEach(function(value, key) {
     var targetElement = key;
@@ -108,7 +107,7 @@ Animator.prototype.renderDOM = function() {
 };
 
 
-Animator.prototype.stepFrame = function() {
+Animar.prototype.stepFrame = function() {
   var elementMap = this.elementMap;
   elementMap.forEach(function(value) {
     var attributeMap = value.attributeMap;
@@ -127,7 +126,7 @@ Animator.prototype.stepFrame = function() {
 };
 
 
-Animator.prototype.update = function() {
+Animar.prototype.update = function() {
   var animationsRemaining = this.renderDOM();
   
   this.stepFrame();
@@ -137,14 +136,14 @@ Animator.prototype.update = function() {
 };
 
 
-Animator.prototype.requestTick = function() {
+Animar.prototype.requestTick = function() {
   if (!this.ticking) {
     window.requestAnimationFrame(this.update.bind(this));
     this.ticking = true;
   }
 };
 
-module.exports = Animator;
+module.exports = Animar;
 },{"./constants":2,"./ease":3,"./element":4,"./helper":5}],2:[function(require,module,exports){
 var Constants = {
   TRANSFORM_ATTRIBUTES: ["translateX", "translateY", "scaleX", "scaleY", "rotate"]

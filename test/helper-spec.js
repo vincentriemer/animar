@@ -1,4 +1,4 @@
-var should = require('should'),
+var should = require('chai').should(),
     sinon = require('sinon'),
     Helper = require('../lib/helper');
 
@@ -25,11 +25,11 @@ describe('Helper', function() {
     it('should set all the proper attributes on the element\'s style', function() {
       var transformString = "test";
       elementMock = Helper.setTransform(elementMock, transformString);
-      elementMock.style.webkitTransform.should.be.exactly(transformString);
-      elementMock.style.MozTransform.should.be.exactly(transformString);
-      elementMock.style.msTransform.should.be.exactly(transformString);
-      elementMock.style.OTransform.should.be.exactly(transformString);
-      elementMock.style.transform.should.be.exactly(transformString);
+      elementMock.style.webkitTransform.should.be.eql(transformString);
+      elementMock.style.MozTransform.should.be.eql(transformString);
+      elementMock.style.msTransform.should.be.eql(transformString);
+      elementMock.style.OTransform.should.be.eql(transformString);
+      elementMock.style.transform.should.be.eql(transformString);
     });
   });
 
