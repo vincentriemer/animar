@@ -242,7 +242,7 @@ describe('Animar', function() {
       attributeMap.set('rotate', { model: 5, animations: [] });
       animar.elementMap.set(testElement, { attributeMap: attributeMap });
       animar.renderDOM();
-      styleStub.calledWith(testElement, 'transform', 'translateX(0px) translateY(0px) scaleX(0) scaleY(0) rotate(0deg) ').should.be.true;
+      styleStub.calledWith(testElement, 'transform', 'translateX(0px) translateY(0px) scaleX(0) scaleY(0) rotate(0deg) translateZ(0)').should.be.true;
     });
   });
 });
