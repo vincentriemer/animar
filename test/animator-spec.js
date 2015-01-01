@@ -244,5 +244,17 @@ describe('Animar', function() {
       animar.renderDOM();
       styleStub.calledWith(testElement, 'transform', 'translateX(0px) translateY(0px) scaleX(0) scaleY(0) rotate(0deg) translateZ(0)').should.be.true;
     });
+
+    it('should not apply a style when an element has no animations in-progress', function() {
+      var attributeMap = new Map();
+      attributeMap.set('testAttribute1', {
+        model: 5,
+        animations: []
+      });
+      animar.elementMap.set(testElement, { attributeMap: attributeMap });
+      animar.renderDOM();
+      calculateStub.called.should.be.false;
+      styleStub.calledWith(testElement, 'testAttribute1', 0).should.be.false;
+    });
   });
 });
