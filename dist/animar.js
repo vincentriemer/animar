@@ -78,28 +78,15 @@ Animar.prototype.renderDOM = function() {
       var targetAttribute = key;
       var targetValue = value.model + self.calculateAnimationValue(value.animations);
       if (Constant.TRANSFORM_ATTRIBUTES.indexOf(targetAttribute) !== -1) {
-        switch(targetAttribute) {
-          case("translateX"):
-            transformValue += "translateX(" + targetValue + "px) ";
-            break;
-          case("translateY"):
-            transformValue += "translateY(" + targetValue + "px) ";
-            break;
-          case("scaleX"):
-            transformValue += "scaleX(" + targetValue + ") ";
-            break;
-          case("scaleY"):
-            transformValue += "scaleY(" + targetValue + ") ";
-            break;
-          case("rotate"):
-            transformValue += "rotate(" + targetValue + "deg) ";
-            break;
-        }
+        // determine the units necessary for the specified transform
+        var unit = ((targetAttribute === "translateX" || targetAttribute === "translateY") ? "px" : (targetAttribute === "rotate" ? "deg" : ""));
+        transformValue += targetAttribute + "(" + targetValue + unit + ") ";
       } else {
         self.applyStyle(targetElement, targetAttribute, targetValue);
       }
     });
     if (transformValue !== "") {
+      console.log(transformValue);
       self.applyStyle(targetElement, "transform", transformValue);
     }
   });
@@ -301,11 +288,11 @@ module.exports = EasingFactory;
 // imports
 var Helper = require('./helper');
 
-var Elem = function() {
+var Element = function() {
   this.attributeMap = new Map();
 };
 
-Elem.prototype.addAnimation = function(args) {
+Element.prototype.addAnimation = function(args) {
   if (!this.attributeMap.has(args.attribute)) {
     this.createAttribute(args);
   }
@@ -326,7 +313,7 @@ Elem.prototype.addAnimation = function(args) {
   });
 };
 
-Elem.prototype.getStartValue = function(animation) {
+Element.prototype.getStartValue = function(animation) {
   var result;
   switch(animation.attribute) {
     case('opacity'):
@@ -353,7 +340,7 @@ Elem.prototype.getStartValue = function(animation) {
   return result;
 };
 
-Elem.prototype.createAttribute = function(animation) {
+Element.prototype.createAttribute = function(animation) {
   var startValue = animation.startValue || this.getStartValue(animation);
   
   var newAttributeObject = {
@@ -363,7 +350,7 @@ Elem.prototype.createAttribute = function(animation) {
   this.attributeMap.set(animation.attribute, newAttributeObject);
 };
 
-module.exports = Elem;
+module.exports = Element;
 },{"./helper":5}],5:[function(require,module,exports){
 var Helper = {
   
