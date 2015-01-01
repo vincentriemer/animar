@@ -225,7 +225,7 @@ describe('Animar', function() {
       var attributeMap = new Map();
       attributeMap.set('testAttribute1', {
         model: 5,
-        animations: []
+        animations: [{}]
       });
       animar.elementMap.set(testElement, { attributeMap: attributeMap });
       animar.renderDOM();
@@ -235,11 +235,11 @@ describe('Animar', function() {
 
     it('should correctly construct a transform string', function() {
       var attributeMap = new Map();
-      attributeMap.set('translateX', { model: 5, animations: [] });
-      attributeMap.set('translateY', { model: 5, animations: [] });
-      attributeMap.set('scaleX', { model: 5, animations: [] });
-      attributeMap.set('scaleY', { model: 5, animations: [] });
-      attributeMap.set('rotate', { model: 5, animations: [] });
+      attributeMap.set('translateX', { model: 5, animations: [{}] });
+      attributeMap.set('translateY', { model: 5, animations: [{}] });
+      attributeMap.set('scaleX', { model: 5, animations: [{}] });
+      attributeMap.set('scaleY', { model: 5, animations: [{}] });
+      attributeMap.set('rotate', { model: 5, animations: [{}] });
       animar.elementMap.set(testElement, { attributeMap: attributeMap });
       animar.renderDOM();
       styleStub.calledWith(testElement, 'transform', 'translateX(0px) translateY(0px) scaleX(0) scaleY(0) rotate(0deg) translateZ(0)').should.be.true;
