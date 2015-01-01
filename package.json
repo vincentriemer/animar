@@ -29,7 +29,7 @@
   "directories": {
     "lib": "lib"
   },
-  "main": "dist/animar.js",
+  "main": "lib/animar.js",
   "keywords": [
     "web",
     "javascript",
