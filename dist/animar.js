@@ -23,22 +23,13 @@ Animar.prototype.addAnimationToMap = function(args)
 
 Animar.prototype.addAnimation = function(args)
 {
-  var element = args.element,
-    attribute = args.attribute,
-    destination = args.destination,
-    duration = args.duration,
-    easingFunction = args.easingFunction;
-
-  if (typeof easingFunction === 'string') {
-    easingFunction = EasingFactory[easingFunction]();
-  }
-
   var newAnimation = {
-    element: element,
-    attribute: attribute,
-    destination: destination,
-    duration: duration,
-    ease: easingFunction
+    element: args.target,
+    attribute: args.attribute,
+    start: args.start === undefined ? Helper.getStartValue([args.element, args.attribute]) : args.start,
+    destination: args.destination,
+    duration: args.duration,
+    ease: typeof args.easingFunction === 'string' ? EasingFactory[args.easingFunction]() : args.easingFunction
   };
   this.addAnimationToMap(newAnimation);
   this.requestTick();
@@ -315,38 +306,9 @@ Element.prototype.addAnimation = function(args) {
   });
 };
 
-Element.prototype.getStartValue = function(animation) {
-  var result;
-  switch(animation.attribute) {
-    case('opacity'):
-      result = Helper.getOpacity(animation.element);
-      break;
-    case('translateX'):
-      result = Helper.getTranslateX(animation.element);
-      break;
-    case('translateY'):
-      result = Helper.getTranslateY(animation.element);
-      break;
-    case('scaleX'):
-      result = Helper.getScaleX(animation.element);
-      break;
-    case('scaleY'):
-      result = Helper.getScaleY(animation.element);
-      break;
-    case('rotate'):
-      result = Helper.getRotation(animation.element);
-      break;
-    default:
-      result = 0; // TODO: throw an error
-  }
-  return result;
-};
-
 Element.prototype.createAttribute = function(animation) {
-  var startValue = animation.startValue || this.getStartValue(animation);
-  
   var newAttributeObject = {
-    "model": startValue,
+    "model": animation.start,
     "animations": []
   };
   this.attributeMap.set(animation.attribute, newAttributeObject);
@@ -408,6 +370,34 @@ var Helper = {
     getOpacity: function(element) {
       var computedStyle = window.getComputedStyle(element, null);
       return parseFloat(computedStyle.getPropertyValue("opacity"));
+    },
+
+    getStartValue: function(animation) {
+      var result;
+      switch(animation[1]) {
+        case('opacity'):
+          result = this.getOpacity(animation[0]);
+          break;
+        case('translateX'):
+          result = this.getTranslateX(animation[0]);
+          break;
+        case('translateY'):
+          result = this.getTranslateY(animation[0]);
+          break;
+        case('scaleX'):
+          result = this.getScaleX(animation[0]);
+          break;
+        case('scaleY'):
+          result = this.getScaleY(animation[0]);
+          break;
+        case('rotate'):
+          result = this.getRotation(animation[0]);
+          break;
+        /* istanbul ignore next */ 
+        default:
+          result = 0; // TODO: throw an error
+      }
+      return result;
     }
 };
 

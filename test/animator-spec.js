@@ -46,11 +46,58 @@ describe('Animar', function() {
     });
   });
 
+  describe('#addAnimation()', function() {
+    var addAnimationToMapStub, requestTickStub, easingFactoryMock, startStub;
+    beforeEach(function() {
+      addAnimationToMapStub = sinon.stub(Animar.prototype, 'addAnimationToMap');
+      requestTickStub = sinon.stub(Animar.prototype, 'requestTick');
+      easingFactoryMock = sinon.mock(EasingFactory);
+      startStub = sinon.stub(Helper, 'getStartValue').returns(69);
+    });
+    afterEach(function() {
+      addAnimationToMapStub.restore();
+      requestTickStub.restore();
+      easingFactoryMock.restore();
+      startStub.restore();
+    });
+    it('should add an animation given an easing function', function() {
+      var testEasingFunction = function() {};
+      animar.addAnimation({target: testElement, attribute: 'translateX', destination: 10, duration: 10, easingFunction: testEasingFunction});
+      addAnimationToMapStub.calledWith({
+        element: testElement,
+        attribute: 'translateX',
+        start: 69,
+        destination: 10,
+        duration: 10,
+        ease: testEasingFunction
+      }).should.be.true;
+      requestTickStub.called.should.be.true;
+    });
+    it('should add an animation given the name of an easing function', function() {
+      easingFactoryMock.expects('linear').once();
+      animar.addAnimation({target: testElement, attribute: 'translateX', destination: 10, duration: 10, easingFunction: 'linear'});
+      easingFactoryMock.verify();
+    });
+    it('should add an animation with an explicit `start` value', function() {
+      var testEasingFunction = function() {};
+      animar.addAnimation({target: testElement, attribute: 'translateX', start: 0, destination: 10, duration: 10, easingFunction: testEasingFunction});
+      addAnimationToMapStub.calledWith({
+        element: testElement,
+        attribute: 'translateX',
+        start: 0,
+        destination: 10,
+        duration: 10,
+        ease: testEasingFunction
+      }).should.be.true;
+    });
+  });
+
   describe('#addAnimationToMap()', function() {
     it('should add the element to the map if it doesn\'t already exist', function() {
       var testParam1 = {
         element: testElement,
         attribute: 'test',
+        start: 0,
         destination: 10,
         duration: 10,
         ease: function(){}
@@ -62,6 +109,7 @@ describe('Animar', function() {
       var testParam1 = {
         element: testElement,
         attribute: 'test',
+        start: 0,
         destination: 10,
         duration: 10,
         ease: function(){}
@@ -76,6 +124,7 @@ describe('Animar', function() {
       var testParam1 = {
         element: testElement,
         attribute: 'test',
+        start: 0,
         destination: 10,
         duration: 10,
         ease: function(){}
@@ -83,6 +132,7 @@ describe('Animar', function() {
       var testParam2 = {
         element: testElement,
         attribute: 'test',
+        start: 0,
         destination: 15,
         duration: 10,
         ease: function(){}
@@ -92,31 +142,6 @@ describe('Animar', function() {
       animar.addAnimationToMap(testParam2);
       animar.elementMap.set.called.should.be.false;
       animar.elementMap.set.restore();
-    });
-  });
-
-  describe('#addAnimation()', function() {
-    var addAnimationToMapStub, requestTickStub, easingFactoryMock;
-    beforeEach(function() {
-      addAnimationToMapStub = sinon.stub(Animar.prototype, 'addAnimationToMap');
-      requestTickStub = sinon.stub(Animar.prototype, 'requestTick');
-      easingFactoryMock = sinon.mock(EasingFactory);
-    });
-    afterEach(function() {
-      addAnimationToMapStub.restore();
-      requestTickStub.restore();
-      easingFactoryMock.restore();
-    });
-    it('should add an animation given an easing function', function() {
-      var testEasingFunction = function() {};
-      animar.addAnimation({target: testElement, attribute: 'translateX', destination: 10, duration: 10, easingFunction: testEasingFunction});
-      addAnimationToMapStub.called.should.be.true;
-      requestTickStub.called.should.be.true;
-    });
-    it('should add an animation given the name of an easing function', function() {
-      easingFactoryMock.expects('linear').once();
-      animar.addAnimation({target: testElement, attribute: 'translateX', destination: 10, duration: 10, easingFunction: 'linear'});
-      easingFactoryMock.verify();
     });
   });
   

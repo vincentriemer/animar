@@ -105,4 +105,45 @@ describe('Helper', function() {
       result.should.eql(0.5);
     });
   });
+
+  describe('#getStartValue()', function() {
+    it('should call its respective helper functions', function() {
+      var testArgs = [{}, 'translateX'];
+      var translateXStub = sinon.stub(Helper, 'getTranslateX'),
+          translateYStub = sinon.stub(Helper, 'getTranslateY'),
+          scaleXStub = sinon.stub(Helper, 'getScaleX'),
+          scaleYStub = sinon.stub(Helper, 'getScaleY'),
+          rotationStub = sinon.stub(Helper, 'getRotation'),
+          opacityStub = sinon.stub(Helper, 'getOpacity');
+      Helper.getStartValue(testArgs);
+      translateXStub.called.should.be.true;
+
+      testArgs[1] = 'translateY';
+      Helper.getStartValue(testArgs);
+      translateYStub.called.should.be.true;
+
+      testArgs[1] = 'scaleX';
+      Helper.getStartValue(testArgs);
+      scaleXStub.called.should.be.true;
+
+      testArgs[1] = 'scaleY';
+      Helper.getStartValue(testArgs);
+      scaleYStub.called.should.be.true;
+
+      testArgs[1] = 'rotate';
+      Helper.getStartValue(testArgs);
+      rotationStub.called.should.be.true;
+
+      testArgs[1] = 'opacity';
+      Helper.getStartValue(testArgs);
+      opacityStub.called.should.be.true;
+
+      translateXStub.restore();
+      translateYStub.restore();
+      scaleXStub.restore();
+      scaleYStub.restore();
+      rotationStub.restore();
+      opacityStub.restore();
+    });
+  });
 });
