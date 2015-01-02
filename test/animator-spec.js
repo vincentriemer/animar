@@ -62,7 +62,7 @@ describe('Animar', function() {
     });
     it('should add an animation given an easing function', function() {
       var testEasingFunction = function() {};
-      animar.addAnimation({target: testElement, attribute: 'translateX', destination: 10, duration: 10, easingFunction: testEasingFunction});
+      animar.addAnimation({element: testElement, attribute: 'translateX', destination: 10, duration: 10, easingFunction: testEasingFunction});
       addAnimationToMapStub.calledWith({
         element: testElement,
         attribute: 'translateX',
@@ -75,12 +75,12 @@ describe('Animar', function() {
     });
     it('should add an animation given the name of an easing function', function() {
       easingFactoryMock.expects('linear').once();
-      animar.addAnimation({target: testElement, attribute: 'translateX', destination: 10, duration: 10, easingFunction: 'linear'});
+      animar.addAnimation({element: testElement, attribute: 'translateX', destination: 10, duration: 10, easingFunction: 'linear'});
       easingFactoryMock.verify();
     });
     it('should add an animation with an explicit `start` value', function() {
       var testEasingFunction = function() {};
-      animar.addAnimation({target: testElement, attribute: 'translateX', start: 0, destination: 10, duration: 10, easingFunction: testEasingFunction});
+      animar.addAnimation({element: testElement, attribute: 'translateX', start: 0, destination: 10, duration: 10, easingFunction: testEasingFunction});
       addAnimationToMapStub.calledWith({
         element: testElement,
         attribute: 'translateX',

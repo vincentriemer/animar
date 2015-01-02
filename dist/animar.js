@@ -24,7 +24,7 @@ Animar.prototype.addAnimationToMap = function(args)
 Animar.prototype.addAnimation = function(args)
 {
   var newAnimation = {
-    element: args.target,
+    element: args.element,
     attribute: args.attribute,
     start: args.start === undefined ? Helper.getStartValue([args.element, args.attribute]) : args.start,
     destination: args.destination,
