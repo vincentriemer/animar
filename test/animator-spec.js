@@ -46,7 +46,7 @@ describe('Animar', function() {
     });
   });
 
-  describe('#addAnimation()', function() {
+  describe('#add()', function() {
     var addAnimationToMapStub, requestTickStub, easingFactoryMock, startStub;
     beforeEach(function() {
       addAnimationToMapStub = sinon.stub(Animar.prototype, 'addAnimationToMap');
@@ -62,37 +62,53 @@ describe('Animar', function() {
     });
     it('should add an animation given an easing function', function() {
       var testEasingFunction = function() {};
-      animar.addAnimation({element: testElement, attribute: 'translateX', destination: 10, duration: 10, easingFunction: testEasingFunction});
+      animar.add(testElement, 'translateX', 10, { duration: 10, easing: testEasingFunction });
       addAnimationToMapStub.calledWith({
         element: testElement,
         attribute: 'translateX',
         start: 69,
         destination: 10,
         duration: 10,
-        ease: testEasingFunction
+        ease: testEasingFunction,
+        delay: 0
       }).should.be.true;
       requestTickStub.called.should.be.true;
     });
     it('should add an animation given the name of an easing function', function() {
       easingFactoryMock.expects('linear').once();
-      animar.addAnimation({element: testElement, attribute: 'translateX', destination: 10, duration: 10, easingFunction: 'linear'});
+      animar.add(testElement, 'translateX', 10, { duration: 10, easing: 'linear' });
       easingFactoryMock.verify();
     });
     it('should add an animation with an explicit `start` value', function() {
       var testEasingFunction = function() {};
-      animar.addAnimation({element: testElement, attribute: 'translateX', start: 0, destination: 10, duration: 10, easingFunction: testEasingFunction});
+      animar.add(testElement, 'translateX', 10, { duration: 10, start: 0, easing: testEasingFunction });
       addAnimationToMapStub.calledWith({
         element: testElement,
         attribute: 'translateX',
         start: 0,
         destination: 10,
         duration: 10,
-        ease: testEasingFunction
+        ease: testEasingFunction,
+        delay: 0
+      }).should.be.true;
+    });
+    it('should add an animation with a delay option', function() {
+      var testEasingFunction = function() {};
+      animar.add(testElement, 'translateX', 10, { duration: 10, start: 0, easing: testEasingFunction, delay: 30 });
+      addAnimationToMapStub.calledWith({
+        element: testElement,
+        attribute: 'translateX',
+        start: 0,
+        destination: 10,
+        duration: 10,
+        ease: testEasingFunction,
+        delay: 30
       }).should.be.true;
     });
   });
 
   describe('#addAnimationToMap()', function() {
+
     it('should add the element to the map if it doesn\'t already exist', function() {
       var testParam1 = {
         element: testElement,
@@ -100,7 +116,8 @@ describe('Animar', function() {
         start: 0,
         destination: 10,
         duration: 10,
-        ease: function(){}
+        ease: function(){},
+        delay: 0
       };
       animar.addAnimationToMap(testParam1);
       animar.elementMap.has(testElement).should.be.true;
@@ -112,7 +129,8 @@ describe('Animar', function() {
         start: 0,
         destination: 10,
         duration: 10,
-        ease: function(){}
+        ease: function(){},
+        delay: 0
       };
       var mockElement = { addAnimation: sinon.spy() };
       animar.elementMap.set(testElement, mockElement);
@@ -127,7 +145,8 @@ describe('Animar', function() {
         start: 0,
         destination: 10,
         duration: 10,
-        ease: function(){}
+        ease: function(){},
+        delay: 0
       };
       var testParam2 = {
         element: testElement,
@@ -135,7 +154,8 @@ describe('Animar', function() {
         start: 0,
         destination: 15,
         duration: 10,
-        ease: function(){}
+        ease: function(){},
+        delay: 0
       };
       animar.addAnimationToMap(testParam1);
       sinon.spy(animar.elementMap, 'set');
@@ -147,13 +167,16 @@ describe('Animar', function() {
   
   describe('#calculateAnimationValue()', function() {
     it('should use the given easing function to add to the animation value', function() {
-      animar.calculateAnimationValue([{easingFunction: function() {return 5;}}]).should.be.eql(5);
+      animar.calculateAnimationValue([{currentIteration: 0, easingFunction: function() {return 5;} }]).should.be.eql(5);
     });
     it('should add multiple animations together', function() {
       var mockEasingFunction = function() {return 5;};
-      animar.calculateAnimationValue([{easingFunction: mockEasingFunction},{easingFunction: mockEasingFunction}])
+      animar.calculateAnimationValue([{currentIteration: 0, easingFunction: mockEasingFunction},{currentIteration: 0, easingFunction: mockEasingFunction}])
         .should.be.eql(10);
     });
+    it('should not add an animation if it\'s current iteration is less than zero', function() {
+      animar.calculateAnimationValue([{currentIteration: -1, easingFunction: function() {return 5;} }]).should.be.eql(0);
+    })
   });
 
   describe('#applyStyle', function() {
@@ -216,7 +239,7 @@ describe('Animar', function() {
     it('should add 1 to every current iteration property of every element\'s attribute\'s animation', function() {
       var attributeMap = new Map();
       attributeMap.set('testAttribute1', { animations: [
-            { currentIteration: 0, totalIterations: 10 }
+            { delay: 0, currentIteration: 0, totalIterations: 10 }
       ]});
       animar.elementMap = new Map();
       animar.elementMap.set(testElement, { attributeMap: attributeMap });
@@ -226,12 +249,12 @@ describe('Animar', function() {
     it('should remove an animation if it has ended', function() {
       var attributeMap = new Map();
       attributeMap.set('testAttribute1', { animations: [
-            { currentIteration: 10, totalIterations: 10 }
+            { delay: 0, currentIteration: 10, totalIterations: 10 }
       ]});
       animar.elementMap.set(testElement, { attributeMap: attributeMap });
       animar.stepFrame();
       animar.elementMap.get(testElement).attributeMap.get('testAttribute1').animations.length.should.be.eql(0);
-    })
+    });
   });
 
   describe('#renderDOM()', function() {

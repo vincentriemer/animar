@@ -3,7 +3,7 @@
 var EasingFactory   = require("./ease"),
     AnimatedElement = require("./element"),
     Helper          = require("./helper"),
-    Constant        = require("./constants");
+    Constants        = require("./constants");
 
 
 var Animar = function() {
@@ -12,8 +12,7 @@ var Animar = function() {
 };
 
 
-Animar.prototype.addAnimationToMap = function(args)
-{
+Animar.prototype.addAnimationToMap = function(args) {
   if (!this.elementMap.has(args.element)) {
     this.elementMap.set(args.element, new AnimatedElement());
   }
@@ -21,26 +20,27 @@ Animar.prototype.addAnimationToMap = function(args)
 };
 
 
-Animar.prototype.addAnimation = function(args)
-{
+Animar.prototype.add = function(element, attribute, destination, options) {
   var newAnimation = {
-    element: args.element,
-    attribute: args.attribute,
-    start: args.start === undefined ? Helper.getStartValue([args.element, args.attribute]) : args.start,
-    destination: args.destination,
-    duration: args.duration,
-    ease: typeof args.easingFunction === 'string' ? EasingFactory[args.easingFunction]() : args.easingFunction
-  };
+    element: element,
+    attribute: attribute,
+    start: options.start === undefined ? Helper.getStartValue([element, attribute]) : options.start,
+    destination: destination,
+    duration: options.duration,
+    ease: typeof options.easing === 'string' ? EasingFactory[options.easing]() : options.easing,
+    delay: options.delay || 0
+  }
   this.addAnimationToMap(newAnimation);
   this.requestTick();
-};
+}
 
 
-Animar.prototype.calculateAnimationValue = function(animations)
-{
+Animar.prototype.calculateAnimationValue = function(animations) {
   var result = 0;
   animations.forEach(function(value) {
-    result += value.easingFunction(value.currentIteration, value.startValue, value.changeInValue, value.totalIterations);
+    if (value.currentIteration >= 0) {
+      result += value.easingFunction(value.currentIteration, value.startValue, value.changeInValue, value.totalIterations);
+    }
   });
   return result;
 };
@@ -69,7 +69,7 @@ Animar.prototype.renderDOM = function() {
       if ( value.animations.length !== 0 ) {
         animated = true;
         var targetValue = value.model + self.calculateAnimationValue(value.animations);
-        if (Constant.TRANSFORM_ATTRIBUTES.indexOf(targetAttribute) !== -1) {
+        if (Constants.TRANSFORM_ATTRIBUTES.indexOf(targetAttribute) !== -1) {
           // determine the units necessary for the specified transform
           var unit = ((targetAttribute === "translateX" || targetAttribute === "translateY") ? "px" : (targetAttribute === "rotate" ? "deg" : ""));
           transformValue += targetAttribute + "(" + targetValue + unit + ") ";
@@ -289,27 +289,26 @@ Element.prototype.addAnimation = function(args) {
   if (!this.attributeMap.has(args.attribute)) {
     this.createAttribute(args);
   }
-
   var currentAttribute = this.attributeMap.get(args.attribute),
-      startValue       = currentAttribute.model - args.destination,
-      changeInValue    = 0 - startValue,
-      totalIterations  = args.duration,
-      easingFunction   = args.ease;
+    startValue  = currentAttribute.model - args.destination,
+    totalIterations = args.duration,
+    easingFunction = args.ease,
+    changeInValue = 0 - startValue;
 
   currentAttribute.model = args.destination;
   currentAttribute.animations.push({
-    "currentIteration" : 0,
-    "startValue"       : startValue,
-    "changeInValue"    : changeInValue,
-    "totalIterations"  : totalIterations,
-    "easingFunction"   : easingFunction
+    currentIteration: 0 - args.delay,
+    startValue: startValue,
+    changeInValue: changeInValue,
+    totalIterations: totalIterations,
+    easingFunction: easingFunction
   });
 };
 
 Element.prototype.createAttribute = function(animation) {
   var newAttributeObject = {
-    "model": animation.start,
-    "animations": []
+    model: animation.start,
+    animations: []
   };
   this.attributeMap.set(animation.attribute, newAttributeObject);
 };
