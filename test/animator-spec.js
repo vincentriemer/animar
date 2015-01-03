@@ -175,7 +175,7 @@ describe('Animar', function() {
         .should.be.eql(10);
     });
     it('should consider an animation value zero if it\'s current iteration is less than zero', function() {
-      animar.calculateAnimationValue([{currentIteration: -1, easingFunction: function() {return 5;} }]).should.be.eql(5);
+      animar.calculateAnimationValue([{currentIteration: -5, easingFunction: function() {return 5;} }]).should.be.eql(5);
     });
   });
 

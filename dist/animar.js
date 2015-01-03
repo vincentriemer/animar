@@ -39,7 +39,7 @@ Animar.prototype.calculateAnimationValue = function(animations) {
   var result = 0;
   animations.forEach(function(value) {
     var currentIteration = value.currentIteration;
-    if (value.currentIteration >= 0) { currentIteration = 0; }
+    if (value.currentIteration < 0) { currentIteration = 0; }
     result += value.easingFunction(currentIteration, value.startValue, value.changeInValue, value.totalIterations);
   });
   return result;
