@@ -164,7 +164,7 @@ describe('Animar', function() {
       animar.elementMap.set.restore();
     });
   });
-  
+  // TODO: make this more comprehensive
   describe('#calculateAnimationValue()', function() {
     it('should use the given easing function to add to the animation value', function() {
       animar.calculateAnimationValue([{currentIteration: 0, easingFunction: function() {return 5;} }]).should.be.eql(5);
@@ -174,9 +174,9 @@ describe('Animar', function() {
       animar.calculateAnimationValue([{currentIteration: 0, easingFunction: mockEasingFunction},{currentIteration: 0, easingFunction: mockEasingFunction}])
         .should.be.eql(10);
     });
-    it('should not add an animation if it\'s current iteration is less than zero', function() {
-      animar.calculateAnimationValue([{currentIteration: -1, easingFunction: function() {return 5;} }]).should.be.eql(0);
-    })
+    it('should consider an animation value zero if it\'s current iteration is less than zero', function() {
+      animar.calculateAnimationValue([{currentIteration: -1, easingFunction: function() {return 5;} }]).should.be.eql(5);
+    });
   });
 
   describe('#applyStyle', function() {
