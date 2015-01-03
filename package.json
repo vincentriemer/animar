@@ -1,7 +1,7 @@
 {
-  "name": "animar",
-  "version": "0.2.0",
-  "description": "A modern, focused, flexible javascript animation library.",
+  "name": "animar.js",
+  "version": "0.3.0",
+  "description": "a modern, focused, flexible javascript animation library.",
   "keywords": [
     "animation",
     "web",
