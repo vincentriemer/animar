@@ -28,7 +28,8 @@ Animar.prototype.add = function(element, attribute, destination, options) {
     destination: destination,
     duration: options.duration,
     ease: typeof options.easing === 'string' ? EasingFactory[options.easing]() : options.easing,
-    delay: options.delay || 0
+    delay: options.delay || 0,
+    loop: options.loop || false
   }
   this.addAnimationToMap(newAnimation);
   this.requestTick();
@@ -94,8 +95,11 @@ Animar.prototype.stepFrame = function() {
     attributeMap.forEach(function(value) {
       var updatedAnimations = [];
       value.animations.forEach(function(value) {
-        if (value.currentIteration !== value.totalIterations) {
+        if (value.currentIteration < value.totalIterations) {
           value.currentIteration += 1;
+          updatedAnimations.push(value);
+        } else if (value.loop) {
+          value.currentIteration = 0 - value.delay;
           updatedAnimations.push(value);
         }
       });
@@ -291,8 +295,6 @@ Element.prototype.addAnimation = function(args) {
   }
   var currentAttribute = this.attributeMap.get(args.attribute),
     startValue  = currentAttribute.model - args.destination,
-    totalIterations = args.duration,
-    easingFunction = args.ease,
     changeInValue = 0 - startValue;
 
   currentAttribute.model = args.destination;
@@ -300,8 +302,10 @@ Element.prototype.addAnimation = function(args) {
     currentIteration: 0 - args.delay,
     startValue: startValue,
     changeInValue: changeInValue,
-    totalIterations: totalIterations,
-    easingFunction: easingFunction
+    totalIterations: args.duration,
+    easingFunction: args.ease,
+    loop: args.loop,
+    delay: args.delay
   });
 };
 
