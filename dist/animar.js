@@ -3,7 +3,7 @@
 var EasingFactory   = require("./ease"),
     AnimatedElement = require("./element"),
     Helper          = require("./helper"),
-    Constant        = require("./constants");
+    Constants        = require("./constants");
 
 
 var Animar = function() {
@@ -12,8 +12,7 @@ var Animar = function() {
 };
 
 
-Animar.prototype.addAnimationToMap = function(args)
-{
+Animar.prototype.addAnimationToMap = function(args) {
   if (!this.elementMap.has(args.element)) {
     this.elementMap.set(args.element, new AnimatedElement());
   }
@@ -21,35 +20,27 @@ Animar.prototype.addAnimationToMap = function(args)
 };
 
 
-Animar.prototype.addAnimation = function(args)
-{
-  var element = args.element,
-    attribute = args.attribute,
-    destination = args.destination,
-    duration = args.duration,
-    easingFunction = args.easingFunction;
-
-  if (typeof easingFunction === 'string') {
-    easingFunction = EasingFactory[easingFunction]();
-  }
-
+Animar.prototype.add = function(element, attribute, destination, options) {
   var newAnimation = {
     element: element,
     attribute: attribute,
+    start: options.start === undefined ? Helper.getStartValue([element, attribute]) : options.start,
     destination: destination,
-    duration: duration,
-    ease: easingFunction
-  };
+    duration: options.duration,
+    ease: typeof options.easing === 'string' ? EasingFactory[options.easing]() : options.easing,
+    delay: options.delay || 0
+  }
   this.addAnimationToMap(newAnimation);
   this.requestTick();
-};
+}
 
 
-Animar.prototype.calculateAnimationValue = function(animations)
-{
+Animar.prototype.calculateAnimationValue = function(animations) {
   var result = 0;
   animations.forEach(function(value) {
-    result += value.easingFunction(value.currentIteration, value.startValue, value.changeInValue, value.totalIterations);
+    var currentIteration = value.currentIteration;
+    if (value.currentIteration < 0) { currentIteration = 0; }
+    result += value.easingFunction(currentIteration, value.startValue, value.changeInValue, value.totalIterations);
   });
   return result;
 };
@@ -74,32 +65,21 @@ Animar.prototype.renderDOM = function() {
     var targetElement = key;
     var transformValue = "";
     value.attributeMap.forEach(function(value, key) {
-      animated = true;
       var targetAttribute = key;
-      var targetValue = value.model + self.calculateAnimationValue(value.animations);
-      if (Constant.TRANSFORM_ATTRIBUTES.indexOf(targetAttribute) !== -1) {
-        switch(targetAttribute) {
-          case("translateX"):
-            transformValue += "translateX(" + targetValue + "px) ";
-            break;
-          case("translateY"):
-            transformValue += "translateY(" + targetValue + "px) ";
-            break;
-          case("scaleX"):
-            transformValue += "scaleX(" + targetValue + ") ";
-            break;
-          case("scaleY"):
-            transformValue += "scaleY(" + targetValue + ") ";
-            break;
-          case("rotate"):
-            transformValue += "rotate(" + targetValue + "deg) ";
-            break;
+      if ( value.animations.length !== 0 ) {
+        animated = true;
+        var targetValue = value.model + self.calculateAnimationValue(value.animations);
+        if (Constants.TRANSFORM_ATTRIBUTES.indexOf(targetAttribute) !== -1) {
+          // determine the units necessary for the specified transform
+          var unit = ((targetAttribute === "translateX" || targetAttribute === "translateY") ? "px" : (targetAttribute === "rotate" ? "deg" : ""));
+          transformValue += targetAttribute + "(" + targetValue + unit + ") ";
+        } else {
+          self.applyStyle(targetElement, targetAttribute, targetValue);
         }
-      } else {
-        self.applyStyle(targetElement, targetAttribute, targetValue);
       }
     });
     if (transformValue !== "") {
+      transformValue += "translateZ(0)";
       self.applyStyle(targetElement, "transform", transformValue);
     }
   });
@@ -301,69 +281,39 @@ module.exports = EasingFactory;
 // imports
 var Helper = require('./helper');
 
-var Elem = function() {
+var Element = function() {
   this.attributeMap = new Map();
 };
 
-Elem.prototype.addAnimation = function(args) {
+Element.prototype.addAnimation = function(args) {
   if (!this.attributeMap.has(args.attribute)) {
     this.createAttribute(args);
   }
-
   var currentAttribute = this.attributeMap.get(args.attribute),
-      startValue       = currentAttribute.model - args.destination,
-      changeInValue    = 0 - startValue,
-      totalIterations  = args.duration,
-      easingFunction   = args.ease;
+    startValue  = currentAttribute.model - args.destination,
+    totalIterations = args.duration,
+    easingFunction = args.ease,
+    changeInValue = 0 - startValue;
 
   currentAttribute.model = args.destination;
   currentAttribute.animations.push({
-    "currentIteration" : 0,
-    "startValue"       : startValue,
-    "changeInValue"    : changeInValue,
-    "totalIterations"  : totalIterations,
-    "easingFunction"   : easingFunction
+    currentIteration: 0 - args.delay,
+    startValue: startValue,
+    changeInValue: changeInValue,
+    totalIterations: totalIterations,
+    easingFunction: easingFunction
   });
 };
 
-Elem.prototype.getStartValue = function(animation) {
-  var result;
-  switch(animation.attribute) {
-    case('opacity'):
-      result = Helper.getOpacity(animation.element);
-      break;
-    case('translateX'):
-      result = Helper.getTranslateX(animation.element);
-      break;
-    case('translateY'):
-      result = Helper.getTranslateY(animation.element);
-      break;
-    case('scaleX'):
-      result = Helper.getScaleX(animation.element);
-      break;
-    case('scaleY'):
-      result = Helper.getScaleY(animation.element);
-      break;
-    case('rotate'):
-      result = Helper.getRotation(animation.element);
-      break;
-    default:
-      result = 0; // TODO: throw an error
-  }
-  return result;
-};
-
-Elem.prototype.createAttribute = function(animation) {
-  var startValue = animation.startValue || this.getStartValue(animation);
-  
+Element.prototype.createAttribute = function(animation) {
   var newAttributeObject = {
-    "model": startValue,
-    "animations": []
+    model: animation.start,
+    animations: []
   };
   this.attributeMap.set(animation.attribute, newAttributeObject);
 };
 
-module.exports = Elem;
+module.exports = Element;
 },{"./helper":5}],5:[function(require,module,exports){
 var Helper = {
   
@@ -413,15 +363,40 @@ var Helper = {
 
     getRotation: function(element) {
       var values = this.getTransformMatrix(element);
-      var a = values[0],
-          b = values[1];
-
-      return Math.round(Math.atan2(b, a) * (180/Math.PI));
+      return Math.round(Math.atan2(values[1], values[0]) * (180/Math.PI));
     },
 
     getOpacity: function(element) {
       var computedStyle = window.getComputedStyle(element, null);
       return parseFloat(computedStyle.getPropertyValue("opacity"));
+    },
+
+    getStartValue: function(animation) {
+      var result;
+      switch(animation[1]) {
+        case('opacity'):
+          result = this.getOpacity(animation[0]);
+          break;
+        case('translateX'):
+          result = this.getTranslateX(animation[0]);
+          break;
+        case('translateY'):
+          result = this.getTranslateY(animation[0]);
+          break;
+        case('scaleX'):
+          result = this.getScaleX(animation[0]);
+          break;
+        case('scaleY'):
+          result = this.getScaleY(animation[0]);
+          break;
+        case('rotate'):
+          result = this.getRotation(animation[0]);
+          break;
+        /* istanbul ignore next */ 
+        default:
+          result = 0; // TODO: throw an error
+      }
+      return result;
     }
 };
 

@@ -19,10 +19,9 @@ gulp.task('clean', function(cb) {
 
 // npm prepublish
 gulp.task('prepublish', ['clean'], function() {
-  var bundler = browserify({
-    entries: ['./lib/animar.js'],
-    extensions: ['.js']
-  });
+  var bundler = browserify();
+
+  bundler.add('./lib/animar.js');
 
   return bundler
       .bundle()
