@@ -14,7 +14,7 @@ require('es6-shim');
 
 // Cleanup
 gulp.task('clean', function(cb) {
-   del(['dist', 'coverage'], cb);
+   del(['build', 'coverage'], cb);
 });
 
 // npm prepublish
@@ -27,10 +27,10 @@ gulp.task('prepublish', ['clean'], function() {
       .bundle()
       .pipe(source('animar.js'))
       .pipe(buffer())
-      .pipe(gulp.dest('dist'))
+      .pipe(gulp.dest('build'))
       .pipe(uglify())
       .pipe(rename({ suffix: "-min" }))
-      .pipe(gulp.dest('dist'));
+      .pipe(gulp.dest('build'));
 });
 
 // testing

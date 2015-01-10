@@ -1,9 +1,9 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 // imports
-var EasingFactory   = require("./ease"),
+var EasingFactory = require("./ease"),
     AnimatedElement = require("./element"),
-    Helper          = require("./helper"),
-    Constants        = require("./constants");
+    Helper = require("./helper"),
+    Constants = require("./constants");
 
 
 var Animar = function() {
@@ -16,11 +16,11 @@ Animar.prototype.addAnimationToMap = function(args) {
   if (!this.elementMap.has(args.element)) {
     this.elementMap.set(args.element, new AnimatedElement());
   }
-  this.elementMap.get(args.element).addAnimation(args);
+  return this.elementMap.get(args.element).addAnimation(args);
 };
 
 
-Animar.prototype.add = function(element, attribute, destination, options) {
+Animar.prototype.addAnimation = function(element, attribute, destination, options) {
   var newAnimation = {
     element: element,
     attribute: attribute,
@@ -32,17 +32,86 @@ Animar.prototype.add = function(element, attribute, destination, options) {
     loop: options.loop || false,
     wait: options.wait || 0
   }
-  this.addAnimationToMap(newAnimation);
+  var currentAnimation = this.addAnimationToMap(newAnimation);
   this.requestTick();
-}
+  return currentAnimation;
+};
+
+Animar.prototype.add = function(element, attributes, options) {
+  return this._add(element, attributes, options, { delay: 0, currentDuration: 0, totalDuration: 0, animationList: [] });
+};
+
+Animar.prototype._add = function(element, attributes, options, chainOptions) {
+
+  var self = this,
+      start = undefined,
+      destination = undefined,
+      attributeValue = undefined,
+      currentAnimation = undefined,
+      attrOptions = undefined;
+
+  // manage options defaults
+  options.delay = options.delay || 0;
+  options.wait = options.wait || 0;
+
+  for (attribute in attributes) {
+    if (attributes.hasOwnProperty(attribute)) {
+      start, destination = undefined;
+      attributeValue = attributes[attribute];
+      if (typeof attributeValue === 'number') {
+        destination = attributeValue;
+      } else {
+        start = attributeValue[0];
+        destination = attributeValue[1];
+      }
+      destination = destination === undefined ? Helper.getStartValue([element, attribute]) : destination;
+      attrOptions = {
+        start: start,
+        duration: options.duration,
+        easing: options.easing,
+        delay: options.delay + chainOptions.delay,
+        loop: options.loop
+      };
+      currentAnimation = this.addAnimation(element, attribute, destination, attrOptions);
+      chainOptions.animationList.push(currentAnimation);
+    }
+  }
+  chainOptions.currentDuration = Math.max(chainOptions.currentDuration, options.delay + options.duration);
+  // chaining
+  // animation.wait = chainTotalDuration - animation.delay - animation.duration
+  return {
+    and: function(element, attributes, options) {
+      return self._add(element, attributes, options, chainOptions);
+    },
+    then: function(element, attributes, options) {
+      chainOptions.totalDuration = chainOptions.totalDuration + chainOptions.currentDuration;
+      chainOptions.currentDuration = 0;
+      chainOptions.delay = chainOptions.totalDuration;
+      return self._add(element, attributes, options, chainOptions);
+    },
+    loop: function() {
+      chainOptions.totalDuration = chainOptions.totalDuration + chainOptions.currentDuration;
+      for (var i = 0; i < chainOptions.animationList.length; i++) {
+        var anim = chainOptions.animationList[i];
+        anim.loop = true;
+        anim.wait = chainOptions.totalDuration - anim.delay - anim.totalIterations;
+        console.log(anim);
+      }
+    }
+  };
+};
 
 
 Animar.prototype.calculateAnimationValue = function(animations) {
   var result = 0;
   animations.forEach(function(value) {
     var currentIteration = value.currentIteration;
-    if (value.currentIteration < 0) { currentIteration = 0; }
-    if (value.currentIteration >= value.totalIterations) { currentIteration = value.totalIterations; }
+    if (value.currentIteration < 0) {
+      currentIteration = 0;
+    }
+    if (value.currentIteration >= value.totalIterations) {
+      currentIteration = value.totalIterations;
+    }
     result += value.easingFunction(currentIteration, value.startValue, value.changeInValue, value.totalIterations);
   });
   return result;
@@ -73,7 +142,6 @@ Animar.prototype.renderDOM = function() {
         animated = true;
         var targetValue = value.model + self.calculateAnimationValue(value.animations);
         if (Constants.TRANSFORM_ATTRIBUTES.indexOf(targetAttribute) !== -1) {
-          // determine the units necessary for the specified transform
           var unit = ((targetAttribute === "translateX" || targetAttribute === "translateY") ? "px" : (targetAttribute === "rotate" ? "deg" : ""));
           transformValue += targetAttribute + "(" + targetValue + unit + ") ";
         } else {
@@ -114,11 +182,11 @@ Animar.prototype.stepFrame = function() {
 
 Animar.prototype.update = function() {
   var animationsRemaining = this.renderDOM();
-  
   this.stepFrame();
-
   this.ticking = false;
-  if (animationsRemaining) { this.requestTick(); }
+  if (animationsRemaining) { 
+    this.requestTick();
+  }
 };
 
 
@@ -300,7 +368,8 @@ Element.prototype.addAnimation = function(args) {
     changeInValue = 0 - startValue;
 
   currentAttribute.model = args.destination;
-  currentAttribute.animations.push({
+
+  var currentAnimation = {
     currentIteration: 0 - args.delay,
     startValue: startValue,
     changeInValue: changeInValue,
@@ -309,7 +378,9 @@ Element.prototype.addAnimation = function(args) {
     loop: args.loop,
     delay: args.delay,
     wait: args.wait
-  });
+  };
+  currentAttribute.animations.push(currentAnimation);
+  return currentAnimation;
 };
 
 Element.prototype.createAttribute = function(animation) {
