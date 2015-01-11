@@ -76,9 +76,9 @@ Animar.prototype._add = function(element, attributes, options, chainOptions) {
       chainOptions.animationList.push(currentAnimation);
     }
   }
+
   chainOptions.currentDuration = Math.max(chainOptions.currentDuration, options.delay + options.duration);
-  // chaining
-  // animation.wait = chainTotalDuration - animation.delay - animation.duration
+
   return {
     and: function(element, attributes, options) {
       return self._add(element, attributes, options, chainOptions);
@@ -95,7 +95,6 @@ Animar.prototype._add = function(element, attributes, options, chainOptions) {
         var anim = chainOptions.animationList[i];
         anim.loop = true;
         anim.wait = chainOptions.totalDuration - anim.delay - anim.totalIterations;
-        console.log(anim);
       }
     }
   };
@@ -126,6 +125,10 @@ Animar.prototype.applyStyle = function(element, attribute, value) {
     case("opacity"):
       element.style.opacity = value;
       break;
+    case("perspective"):
+      element.style.perspective = value;
+      element.style.webkitPerspective = value;
+      break;
   }
 };
 
@@ -140,9 +143,11 @@ Animar.prototype.renderDOM = function() {
       var targetAttribute = key;
       if ( value.animations.length !== 0 ) {
         animated = true;
-        var targetValue = value.model + self.calculateAnimationValue(value.animations);
+        var targetValue = value.model + self.calculateAnimationValue(value.animations),
+            pxRegex = /(perspective)|(translate[XYZ])/,
+            degRegex = /rotate[XYZ]?/;
         if (Constants.TRANSFORM_ATTRIBUTES.indexOf(targetAttribute) !== -1) {
-          var unit = ((targetAttribute === "translateX" || targetAttribute === "translateY") ? "px" : (targetAttribute === "rotate" ? "deg" : ""));
+          var unit = ((pxRegex.test(targetAttribute)) ? "px" : (degRegex.test(targetAttribute) ? "deg" : ""));
           transformValue += targetAttribute + "(" + targetValue + unit + ") ";
         } else {
           self.applyStyle(targetElement, targetAttribute, targetValue);
@@ -200,7 +205,7 @@ Animar.prototype.requestTick = function() {
 module.exports = Animar;
 },{"./constants":2,"./ease":3,"./element":4,"./helper":5}],2:[function(require,module,exports){
 var Constants = {
-  TRANSFORM_ATTRIBUTES: ["translateX", "translateY", "scaleX", "scaleY", "rotate"]
+  TRANSFORM_ATTRIBUTES: ["translateX", "translateY", "translateZ", "scale", "scaleX", "scaleY", "rotate", "rotateX", "rotateY", "rotateZ"]
 };
 
 module.exports = Constants;
