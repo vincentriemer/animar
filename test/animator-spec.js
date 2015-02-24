@@ -144,7 +144,6 @@ describe('Animar', function() {
   });
 
   describe('#addAnimationToMap()', function() {
-
     it('should add the element to the map if it doesn\'t already exist', function() {
       var testParam1 = {
         element: testElement,
@@ -159,24 +158,6 @@ describe('Animar', function() {
       };
       animar.addAnimationToMap(testParam1);
       animar.elementMap.has(testElement).should.be.true;
-    });
-    it('should call the addAnimation function with the given parameter', function() {
-      var testParam1 = {
-        element: testElement,
-        attribute: 'test',
-        start: 0,
-        destination: 10,
-        duration: 10,
-        ease: function(){},
-        delay: 0,
-        loop: false,
-        wait: 0
-      };
-      var mockElement = { addAnimation: sinon.spy() };
-      animar.elementMap.set(testElement, mockElement);
-      animar.addAnimationToMap(testParam1);
-      mockElement.addAnimation.calledOnce.should.be.true;
-      mockElement.addAnimation.calledWith(testParam1).should.be.true;
     });
     it('should not create another entry in the elementMap if the element already exists in the map', function() {
       var testParam1 = {

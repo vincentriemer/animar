@@ -4,8 +4,6 @@ var gulp = require('gulp'),
     browserify = require('browserify'),
     source = require('vinyl-source-stream'),
     buffer = require('vinyl-buffer'),
-    istanbul = require('gulp-istanbul'),
-    mocha = require('gulp-mocha'),
     rename = require('gulp-rename'),
     uglify = require('gulp-uglify');
 
@@ -18,7 +16,7 @@ gulp.task('clean', function(cb) {
 });
 
 // npm prepublish
-gulp.task('prepublish', ['clean'], function() {
+gulp.task('bundle', ['clean'], function() {
   var bundler = browserify();
 
   bundler.add('./lib/animar.js');
@@ -31,17 +29,4 @@ gulp.task('prepublish', ['clean'], function() {
       .pipe(uglify())
       .pipe(rename({ suffix: "-min" }))
       .pipe(gulp.dest('build'));
-});
-
-// testing
-gulp.task('test', ['prepublish'], function(cb) {
-  gulp.src(['lib/*.js'])
-    .pipe(istanbul())
-    .pipe(istanbul.hookRequire())
-    .on('finish', function() {
-      gulp.src(['test/*.js'])
-        .pipe(mocha())
-        .pipe(istanbul.writeReports())
-        .on('end', cb);
-    });
 });
