@@ -23,8 +23,15 @@
   },
   "license": "MIT",
   "scripts": {
-    "test": "jest"
+    "lint": "jshint **.js",
+    "clean": "rimraf dist && rimraf coverage",
+    "build": "webpack && webpack --config webpack.config.minified.js",
+    "test": "jest",
+    "prepublish": "npm run build",
+    "pretest": "npm run lint",
+    "prebuild": "npm run clean && npm run test"
   },
+  "jshintConfig": {},
   "jest": {
     "collectCoverage": true,
     "testFileExtensions": [
@@ -43,7 +50,10 @@
   "main": "lib/animar.js",
   "devDependencies": {
     "codeclimate-test-reporter": "0.0.4",
-    "jest-cli": "^0.4.0"
+    "jest-cli": "^0.4.0",
+    "jshint": "^2.6.0",
+    "rimraf": "latest",
+    "webpack": "^1.6.0"
   },
   "dependencies": {
     "es6-collections": "^0.5.1"

@@ -3,4 +3,3 @@ node_modules
 .sass-cache
 coverage
 npm-debug.log
-build
