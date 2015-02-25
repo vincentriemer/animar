@@ -7,9 +7,6 @@ var gulp = require('gulp'),
     rename = require('gulp-rename'),
     uglify = require('gulp-uglify');
 
-// shim for harmony features
-require('es6-shim');
-
 // Cleanup
 gulp.task('clean', function(cb) {
    del(['build', 'coverage'], cb);
