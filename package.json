@@ -54,5 +54,8 @@
     "jest-cli": "^0.4.0",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.0.0"
+  },
+  "dependencies": {
+    "es6-collections": "^0.5.1"
   }
 }
