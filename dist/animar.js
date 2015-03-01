@@ -238,7 +238,7 @@
 	  self.elementMap.forEach(function(value, key) {
 	    var targetElement = key;
 	    var transformValue = "";
-	    value.attributeMap.forEach(function(value, key) {
+	    value.forEach(function(value, key) {
 	      var targetAttribute = String(key);
 	      if ( value.animations.length !== 0 ) {
 	        animated = true;
@@ -265,7 +265,7 @@
 	Animar.prototype.stepFrame = function() {
 	  var elementMap = this.elementMap;
 	  elementMap.forEach(function(value) {
-	    var attributeMap = value.attributeMap;
+	    var attributeMap = value;
 	    attributeMap.forEach(function(value) {
 	      var updatedAnimations = [];
 	      value.animations.forEach(function(value) {
