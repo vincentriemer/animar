@@ -266,8 +266,7 @@
 	Animar.prototype.stepFrame = function() {
 	  var elementMap = this.elementMap;
 	  elementMap.forEach(function(value) {
-	    var attributeMap = value;
-	    attributeMap.forEach(function(value) {
+	    value.forEach(function(value) {
 	      var updatedAnimations = [];
 	      value.animations.forEach(function(value) {
 	        if (value.currentIteration < (value.totalIterations + value.wait)) {
@@ -280,7 +279,6 @@
 	      });
 	      value.animations = updatedAnimations;
 	    });
-	    value.attributeMap = attributeMap;
 	  });
 	};
 
