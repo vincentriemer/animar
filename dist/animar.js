@@ -134,6 +134,7 @@
 	  var self = this;
 
 	  // manage options defaults
+	  options = options || {};
 	  options.delay = options.delay || 0;
 	  options.wait = options.wait || 0;
 
