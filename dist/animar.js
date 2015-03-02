@@ -134,9 +134,9 @@
 	  // manage options defaults
 	  options = options || {};
 	  options.delay = options.delay || 0;
-	  options.wait = options.wait || 0;
 
 	  for (var attribute in attributes) {
+	    /* istanbul ignore else */
 	    if (attributes.hasOwnProperty(attribute)) {
 	      var start, destination;
 	      var attributeValue = attributes[attribute];
