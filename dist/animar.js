@@ -55,7 +55,7 @@
 	    this.ticking = false;
 	};
 
-	Animar.prototype.createAttribute = function(attributeMap, animation) {
+	Animar.prototype._createAttribute = function(attributeMap, animation) {
 	  var newAttributeObject = {
 	    model: animation.start,
 	    animations: []
@@ -64,9 +64,9 @@
 	  return attributeMap;
 	};
 
-	Animar.prototype.addAnimationToElement = function(attributeMap, args) {
+	Animar.prototype._addAnimationToElement = function(attributeMap, args) {
 	  if (!attributeMap.has(args.attribute)) {
-	    attributeMap = this.createAttribute(attributeMap,args);
+	    attributeMap = this._createAttribute(attributeMap,args);
 	  }
 	  var currentAttribute = attributeMap.get(args.attribute),
 	    startValue  = currentAttribute.model - args.destination,
@@ -88,16 +88,14 @@
 	  return currentAnimation;
 	};
 
-
-	Animar.prototype.addAnimationToMap = function(args) {
+	Animar.prototype._addAnimationToMap = function(args) {
 	  if (!this.elementMap.has(args.element)) {
 	    this.elementMap.set(args.element, new Map());
 	  }
-	  return this.addAnimationToElement(this.elementMap.get(args.element),args);
+	  return this._addAnimationToElement(this.elementMap.get(args.element),args);
 	};
 
-
-	Animar.prototype.addAnimation = function(element, attribute, destination, options) {
+	Animar.prototype._addAnimation = function(element, attribute, destination, options) {
 	  options = options || {};
 
 	  // DEFAULTS & PARAMETER TRANSFORMATION
@@ -120,8 +118,8 @@
 	    loop: options.loop,
 	    wait: options.wait
 	  };
-	  var currentAnimation = this.addAnimationToMap(newAnimation);
-	  this.requestTick();
+	  var currentAnimation = this._addAnimationToMap(newAnimation);
+	  this._requestTick();
 	  return currentAnimation;
 	};
 
@@ -131,7 +129,7 @@
 
 	Animar.prototype._add = function(element, attributes, options, chainOptions) {
 
-	  var self = this;
+	  var self = this; // maintain reference to Animar instance
 
 	  // manage options defaults
 	  options = options || {};
@@ -158,7 +156,7 @@
 	        loop: options.loop
 	      };
 
-	      var currentAnimation = this.addAnimation(element, attribute, destination, attrOptions);
+	      var currentAnimation = this._addAnimation(element, attribute, destination, attrOptions);
 	      chainOptions.animationList.push(currentAnimation);
 	    }
 	  }
@@ -166,21 +164,21 @@
 	  chainOptions.currentDuration = Math.max(chainOptions.currentDuration, options.delay + options.duration);
 
 	  return { // chaining functions
-	    and: self.andChainFunction(chainOptions),
-	    then: self.thenChainFunction(chainOptions),
-	    loop: self.loopChainFunction(chainOptions)
+	    and: self._andChainFunction(chainOptions),
+	    then: self._thenChainFunction(chainOptions),
+	    loop: self._loopChainFunction(chainOptions)
 	  };
 	};
 
-	Animar.prototype.andChainFunction = function(chainOptions) {
+	Animar.prototype._andChainFunction = function(chainOptions) {
 	  var self = this;
 	  return function(element, attributes, options) {
 	    return self._add(element, attributes, options, chainOptions);
 	  };
 	};
 
-	Animar.prototype.thenChainFunction = function(chainOptions) {
-	  var self = this;
+	Animar.prototype._thenChainFunction = function(chainOptions) {
+	  var self = this; // maintain reference to Animar instance through the forEach calls
 	  return function(element, attributes, options) {
 	    chainOptions.totalDuration = chainOptions.totalDuration + chainOptions.currentDuration;
 	    chainOptions.currentDuration = 0;
@@ -189,7 +187,7 @@
 	  };
 	};
 
-	Animar.prototype.loopChainFunction = function(chainOptions) {
+	Animar.prototype._loopChainFunction = function(chainOptions) {
 	  return function() {
 	    chainOptions.totalDuration = chainOptions.totalDuration + chainOptions.currentDuration;
 	    for (var i = 0; i < chainOptions.animationList.length; i++) {
@@ -201,7 +199,7 @@
 	};
 
 
-	Animar.prototype.calculateAnimationValue = function(animations) {
+	Animar.prototype._calculateAnimationValue = function(animations) {
 	  var result = 0;
 	  animations.forEach(function(value) {
 	    var currentIteration = value.currentIteration;
@@ -216,8 +214,7 @@
 	  return result;
 	};
 
-
-	Animar.prototype.applyStyle = function(element, attribute, value) {
+	Animar.prototype._applyStyle = function(element, attribute, value) {
 	  switch(attribute) {
 	    case("transform"):
 	      Helper.setTransform(element, value);
@@ -232,8 +229,7 @@
 	  }
 	};
 
-
-	Animar.prototype.renderDOM = function() {
+	Animar.prototype._renderDOM = function() {
 	  var self = this; // maintain reference to Animar instance through the forEach calls
 	  var animated = false;
 	  self.elementMap.forEach(function(value, key) {
@@ -243,27 +239,26 @@
 	      var targetAttribute = String(key);
 	      if ( value.animations.length !== 0 ) {
 	        animated = true;
-	        var targetValue = value.model + self.calculateAnimationValue(value.animations),
+	        var targetValue = value.model + self._calculateAnimationValue(value.animations),
 	            pxRegex = /(perspective)|(translate[XYZ])/,
 	            degRegex = /rotate[XYZ]?/;
 	        if (Constants.TRANSFORM_ATTRIBUTES.indexOf(targetAttribute) !== -1) {
 	          var unit = ((pxRegex.test(targetAttribute)) ? "px" : (degRegex.test(targetAttribute) ? "deg" : ""));
 	          transformValue += targetAttribute + "(" + targetValue + unit + ") ";
 	        } else {
-	          self.applyStyle(targetElement, targetAttribute, targetValue);
+	          self._applyStyle(targetElement, targetAttribute, targetValue);
 	        }
 	      }
 	    });
 	    if (transformValue !== "") {
 	      transformValue += "translateZ(0)";
-	      self.applyStyle(targetElement, "transform", transformValue);
+	      self._applyStyle(targetElement, "transform", transformValue);
 	    }
 	  });
 	  return animated;
 	};
 
-
-	Animar.prototype.stepFrame = function() {
+	Animar.prototype._stepFrame = function() {
 	  var elementMap = this.elementMap;
 	  elementMap.forEach(function(value) {
 	    value.forEach(function(value) {
@@ -282,20 +277,18 @@
 	  });
 	};
 
-
-	Animar.prototype.update = function() {
-	  var animationsRemaining = this.renderDOM();
-	  this.stepFrame();
+	Animar.prototype._update = function() {
+	  var animationsRemaining = this._renderDOM();
+	  this._stepFrame();
 	  this.ticking = false;
 	  if (animationsRemaining) { 
-	    this.requestTick();
+	    this._requestTick();
 	  }
 	};
 
-
-	Animar.prototype.requestTick = function() {
+	Animar.prototype._requestTick = function() {
 	  if (!this.ticking) {
-	    window.requestAnimationFrame(this.update.bind(this));
+	    window.requestAnimationFrame(this._update.bind(this));
 	    this.ticking = true;
 	  }
 	};
