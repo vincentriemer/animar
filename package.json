@@ -50,6 +50,7 @@
   "main": "lib/animar.js",
   "devDependencies": {
     "codeclimate-test-reporter": "0.0.4",
+    "compression-webpack-plugin": "^0.1.2",
     "jest-cli": "^0.4.0",
     "jshint": "^2.6.0",
     "rimraf": "latest",

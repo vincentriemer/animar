@@ -83,7 +83,8 @@
 	        duration: options.duration,
 	        easing: options.easing,
 	        delay: options.delay + chainOptions.delay,
-	        loop: options.loop
+	        loop: options.loop,
+	        damping: options.damping
 	      };
 
 	      var currentAnimation = this._addAnimation(element, attribute, destination, attrOptions);
@@ -132,8 +133,11 @@
 	  options = options || {};
 
 	  // DEFAULTS & PARAMETER TRANSFORMATION
+	  options.damping = options.damping || 0.8;
 	  options.easing = options.easing || 'linear';
-	  options.easing = typeof options.easing === 'string' ? EasingFactory[options.easing]() : options.easing;
+	  options.easing = typeof options.easing === 'string' ?
+	    (options.easing === 'elastic' ? EasingFactory[options.easing](options.damping) : EasingFactory[options.easing]()) :
+	    (options.easing);
 	  options.duration = options.duration || 60;
 	  options.loop = options.loop || false;
 	  options.delay = options.delay || 0;
@@ -424,19 +428,39 @@
 	      return -c * (Math.sqrt(1 - t*t) - 1) + b;
 	    };
 	  },
-	  circular_out: function()  {
+	  circular_out: function() {
 	    return function(t, b, c, d) {
 	      t /= d;
 	      t--;
 	      return c * Math.sqrt(1 - t*t) + b;
 	    };
 	  },
-	  circular_in_out: function()  {
+	  circular_in_out: function() {
 	    return function(t, b, c, d) {
 	      t /= d/2;
 	      if (t < 1) { return -c/2 * (Math.sqrt(1 - t*t) - 1) + b; }
 	      t -= 2;
 	      return c/2 * (Math.sqrt(1 - t*t) + 1) + b;
+	    };
+	  },
+	  elastic: function(damping) {
+	    return function(currentIteration, startValue, changeInValue, totalIterations) {
+	      if (damping >= 1) {
+	        damping = 0.99;
+	      }
+	      // prepare variables
+	      var iterationMult = 27.42078669 * Math.pow(damping, -0.8623276489);
+	      var startVelocity = 0.0,
+	        spring = 0.7,
+	        weightedIteration = currentIteration * (iterationMult / totalIterations);
+
+	      // Spring simulation
+	      var wd = spring * Math.sqrt(1.0 - Math.pow(damping, 2.0));
+	      var theta = damping * spring;
+
+	      return Math.exp(-1.0 * theta * weightedIteration) *
+	        (startValue * Math.cos(wd * weightedIteration) +
+	          ((theta * startValue + startVelocity) / wd) * Math.sin(wd * weightedIteration));
 	    };
 	  }
 	};
