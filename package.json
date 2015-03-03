@@ -54,8 +54,5 @@
     "jshint": "^2.6.0",
     "rimraf": "latest",
     "webpack": "^1.6.0"
-  },
-  "dependencies": {
-    "es6-collections": "^0.5.1"
   }
 }
