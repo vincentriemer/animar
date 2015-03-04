@@ -8,10 +8,14 @@ module.exports = {
 
   output: {
     path: path.join(__dirname, 'dist'),
-    filename: 'animar.min.js'
+    filename: 'animar.min.js',
+    library: 'Animar',
+    libraryTarget: 'var'
   },
 
   plugins: [
+    new webpack.optimize.OccurenceOrderPlugin(),
+    new webpack.optimize.DedupePlugin(),
     new webpack.optimize.UglifyJsPlugin({
       compress: {
         warnings: false,
@@ -20,7 +24,6 @@ module.exports = {
         unsafe: true
       }
     }),
-    new webpack.optimize.OccurenceOrderPlugin(),
     new CompressionPlugin()
   ]
 };

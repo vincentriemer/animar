@@ -6,7 +6,9 @@ module.exports = {
 
   output: {
     path: path.join(__dirname, 'dist'),
-    filename: 'animar.js'
+    filename: 'animar.js',
+    library: 'Animar',
+    libraryTarget: 'var'
   }
 
 };
