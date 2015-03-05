@@ -2,15 +2,17 @@ var webpack = require('webpack'),
   path = require('path'),
   CompressionPlugin = require('compression-webpack-plugin');
 
+var pjson = require('./package.json');
+
 module.exports = {
 
   entry: './lib/animar.js',
 
   output: {
     path: path.join(__dirname, 'dist'),
-    filename: 'animar.min.js',
+    filename: 'animar-v' + pjson.version + '.min.js',
     library: 'Animar',
-    libraryTarget: 'var'
+    libraryTarget: 'umd'
   },
 
   plugins: [
