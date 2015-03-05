@@ -32,7 +32,7 @@
     "test": "jest",
     "pretest": "npm run clean-coverage && npm run lint",
     "prebuild": "npm run clean-dist",
-    "predeploy": "npm run test && npm run build"
+    "predeploy": "npm run build"
   },
   "jshintConfig": {},
   "jest": {
