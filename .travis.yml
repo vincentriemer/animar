@@ -8,7 +8,6 @@ env:
   global:
     secure: Mu2ZIBaKlcsXYvCwzieNEGkzD/CuCG4mWR5oZghV4V/vdRQgUoDQLcyr9LCTUe/Amb6DvASXYXidsuVfQpSzZldFqpNMsBbZ7WXMHge2tkz+anGa1e6yKYt079QFPzXXUi1To+Ho7eA9HYuhHZ2HsbxGf12u9s9S3IjK8hlWxNY=
 before_deploy:
-  - npm version $TRAVIS_TAG
   - npm run build
 deploy:
   - provider: releases
