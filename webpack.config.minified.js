@@ -1,18 +1,11 @@
 var webpack = require('webpack'),
-  path = require('path'),
-  CompressionPlugin = require('compression-webpack-plugin');
+  CompressionPlugin = require('compression-webpack-plugin'),
+  _ = require('lodash');
 
-module.exports = {
-
-  entry: './lib/animar.js',
-
+module.exports = _.merge(require('./webpack.config.js'), {
   output: {
-    path: path.join(__dirname, 'dist'),
-    filename: 'animar.min.js',
-    library: 'Animar',
-    libraryTarget: 'umd'
+    filename: 'animar.min.js'
   },
-
   plugins: [
     new webpack.optimize.OccurenceOrderPlugin(),
     new webpack.optimize.DedupePlugin(),
@@ -26,4 +19,4 @@ module.exports = {
     }),
     new CompressionPlugin()
   ]
-};
+});
