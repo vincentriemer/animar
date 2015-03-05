@@ -28,11 +28,9 @@
     "clean": "npm run clean-coverage && npm run clean-dist",
     "lint": "jshint **.js",
     "build": "./scripts/build.sh",
-    "deploy": "npm publish ./ && surge --project ./dist --domain animar.surge.sh",
     "test": "jest",
     "pretest": "npm run clean-coverage && npm run lint",
-    "prebuild": "npm run clean-dist",
-    "predeploy": "npm run build"
+    "prebuild": "npm run clean-dist"
   },
   "jshintConfig": {},
   "jest": {

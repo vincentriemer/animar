@@ -1,16 +1,27 @@
 language: node_js
 node_js:
-- iojs-v1.4.2
+  - iojs-v1.4.2
 sudo: false
 after_script:
-- cat coverage/lcov.info | codeclimate
+  - cat coverage/lcov.info | codeclimate
 env:
   global:
     secure: Mu2ZIBaKlcsXYvCwzieNEGkzD/CuCG4mWR5oZghV4V/vdRQgUoDQLcyr9LCTUe/Amb6DvASXYXidsuVfQpSzZldFqpNMsBbZ7WXMHge2tkz+anGa1e6yKYt079QFPzXXUi1To+Ho7eA9HYuhHZ2HsbxGf12u9s9S3IjK8hlWxNY=
+before_deploy:
+  - npm version $TRAVIS_TAG
+  - npm run build
 deploy:
-  provider: releases
-  api_key:
-    secure: Xc4bV75pnI6JcNW5HG/9gD92ObTVaeZYpEhsPKOw6ApvejgchKPbeAeHaAUZHCCXdgRSWsomTSENbfa23klii1F4Z4XlxLd2h1DddNRf2jbujjRftDY3/i2rC/PcAAmg7Vjx5NH0z1f9Vsxtvtjp6iLQOUWnxt7Uoul9bN9WYqQ=
-  file: dist/animar.js
-  on:
-    repo: vincentriemer/animar
+  - provider: releases
+    api_key:
+      secure: Xc4bV75pnI6JcNW5HG/9gD92ObTVaeZYpEhsPKOw6ApvejgchKPbeAeHaAUZHCCXdgRSWsomTSENbfa23klii1F4Z4XlxLd2h1DddNRf2jbujjRftDY3/i2rC/PcAAmg7Vjx5NH0z1f9Vsxtvtjp6iLQOUWnxt7Uoul9bN9WYqQ=
+    file:
+      - dist/animar.js
+      - dist/animar.min.js
+    on:
+      tags: true
+  - provider: npm
+    email: vincentriemer@gmail.com
+    api_key:
+      secure: hB9MBQ+AnS1BpMGEjd7+BVh2cNeDfNTEENbdOGyYvHmba2ce4dX2b91aVh7zLx4pW+RjkfxesZ3sVuHErMtY9FZTF2hvVnnY5Kd4l646sYGKZeoFjgrqtrOFT6TX83awLaBsoxfKg2pv9FAJfZehSrCsVSTxW02G3BAIzeghkfg=
+    on:
+      tags: true
