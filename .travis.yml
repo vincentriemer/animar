@@ -7,3 +7,10 @@ after_script:
 env:
   global:
     secure: Mu2ZIBaKlcsXYvCwzieNEGkzD/CuCG4mWR5oZghV4V/vdRQgUoDQLcyr9LCTUe/Amb6DvASXYXidsuVfQpSzZldFqpNMsBbZ7WXMHge2tkz+anGa1e6yKYt079QFPzXXUi1To+Ho7eA9HYuhHZ2HsbxGf12u9s9S3IjK8hlWxNY=
+deploy:
+  provider: releases
+  api_key:
+    secure: Xc4bV75pnI6JcNW5HG/9gD92ObTVaeZYpEhsPKOw6ApvejgchKPbeAeHaAUZHCCXdgRSWsomTSENbfa23klii1F4Z4XlxLd2h1DddNRf2jbujjRftDY3/i2rC/PcAAmg7Vjx5NH0z1f9Vsxtvtjp6iLQOUWnxt7Uoul9bN9WYqQ=
+  file: dist/animar.js
+  on:
+    repo: vincentriemer/animar
