@@ -28,9 +28,11 @@
     "clean": "npm run clean-coverage && npm run clean-dist",
     "lint": "jshint **.js",
     "build": "webpack && webpack --config webpack.config.minified.js",
+    "deploy": "npm publish ./ && surge --project ./dist --domain animar.surge.sh",
     "test": "jest",
     "pretest": "npm run clean-coverage && npm run lint",
-    "prebuild": "npm run clean-dist"
+    "prebuild": "npm run clean-dist",
+    "predeploy": "npm run test && npm run build"
   },
   "jshintConfig": {},
   "jest": {
