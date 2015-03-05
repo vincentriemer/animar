@@ -2,6 +2,8 @@
 
 # Animar
 
+**NOTE**: This is still very much a work in progress (espcially in the documentation department). If you attempt to use this in its current state, you are doing so at your own risk.
+
 ## Initialization
 
 ```javascript
