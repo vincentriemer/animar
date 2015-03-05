@@ -32,7 +32,6 @@
     "pretest": "npm run clean-coverage && npm run lint",
     "prebuild": "npm run clean-dist"
   },
-  "jshintConfig": {},
   "jest": {
     "collectCoverage": true,
     "testFileExtensions": [
