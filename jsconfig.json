@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "target": "ES6",
+    "module": "commonjs"
+  },
+  "files": [
+    "lib/animar.js",
+    "lib/animation.js",
+    "lib/attribute.js",
+    "lib/constants.js",
+    "lib/ease.js",
+    "lib/element.js",
+    "lib/helper.js"
+  ]
+}

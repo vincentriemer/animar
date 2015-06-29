@@ -7,5 +7,14 @@ module.exports = {
     filename: 'animar.js',
     library: 'Animar',
     libraryTarget: 'umd'
+  },
+  module: {
+    loaders: [
+      {
+        test: /\.jsx?$/,
+        exclude: /(node_modules)/,
+        loader: 'babel'
+      }
+    ]
   }
 };

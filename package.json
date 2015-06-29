@@ -23,37 +23,23 @@
   },
   "license": "MIT",
   "scripts": {
-    "clean-coverage": "rimraf coverage",
-    "clean-dist": "rimraf dist",
-    "clean": "npm run clean-coverage && npm run clean-dist",
-    "lint": "jshint **.js",
+    "clean": "rimraf dist",
     "build": "./scripts/build.sh",
-    "test": "jest",
-    "pretest": "npm run clean-coverage && npm run lint",
-    "prebuild": "npm run clean-dist"
-  },
-  "jest": {
-    "collectCoverage": true,
-    "testFileExtensions": [
-      "js"
-    ],
-    "moduleFileExtensions": [
-      "js"
-    ],
-    "testPathDirs": [
-      "lib"
-    ]
+    "lint": "eslint lib",
+    "prebuild": "npm run clean"
   },
   "directories": {
     "lib": "lib"
   },
   "main": "lib/animar.js",
   "devDependencies": {
-    "compression-webpack-plugin": "^0.1.2",
-    "jest-cli": "^0.4.0",
-    "jshint": "^2.6.0",
+    "babel-core": "^5.6.15",
+    "babel-eslint": "^3.1.19",
+    "babel-loader": "^5.2.2",
+    "compression-webpack-plugin": "^0.2.0",
+    "eslint": "^0.24.0",
     "lodash": "^3.3.1",
     "rimraf": "^2.3.1",
-    "webpack": "^1.6.0"
+    "webpack": "^1.9.12"
   }
 }
