@@ -24,10 +24,12 @@
   "license": "MIT",
   "scripts": {
     "clean": "rimraf dist",
+    "clean-coverage": "rimraf coverage",
     "build": "./scripts/build.sh",
     "lint": "eslint lib",
     "prebuild": "npm run clean",
-    "test": "./node_modules/.bin/mocha --compilers js:babel/register"
+    "test": "istanbul cover _mocha -- --require babel/register",
+    "pretest": "npm run clean-coverage"
   },
   "directories": {
     "lib": "lib"
@@ -41,6 +43,7 @@
     "chai": "^3.0.0",
     "compression-webpack-plugin": "^0.2.0",
     "eslint": "^0.24.0",
+    "istanbul": "^0.3.17",
     "lodash": "^3.3.1",
     "mocha": "^2.2.5",
     "rimraf": "^2.3.1",
