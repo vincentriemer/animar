@@ -8,10 +8,11 @@
     "lib/animation.js",
     "lib/attribute.js",
     "lib/constants.js",
-    "lib/ease.js",
+    "lib/easing.js",
     "lib/element.js",
-    "lib/helper.js",
-    "test/animation.js",
-    "test/attribute.js"
+    "lib/helpers.js",
+    "test/animation.spec.js",
+    "test/attribute.spec.js",
+    "test/element.spec.js"
   ]
 }

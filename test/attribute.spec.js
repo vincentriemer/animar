@@ -1,10 +1,11 @@
-/// <reference path="../typings/mocha/mocha.d.ts"/>
-/// <reference path="../typings/chai/chai.d.ts"/>
+/// <reference path="../typings/tsd.d.ts"/>
 'use strict';
 
 let assert = require('chai').assert;
+let sinon = require('sinon');
 
 import Attribute from '../lib/attribute';
+import * as Helper from '../lib/helper';
 
 describe('Attribute', () => {
   describe('#constructor()', () => {
@@ -64,6 +65,85 @@ describe('Attribute', () => {
       testAttribute.animations.forEach((animation) => {
         assert.typeOf(animation, 'string');
       });
+    });
+  });
+  
+  describe('#render', () => {
+    let applyStyleStub, calculateStub;
+    
+    beforeEach(() => {
+      applyStyleStub = sinon.stub(Helper, 'applyStyle');
+      calculateStub = sinon.stub(Helper, 'calculateAnimationValue').returns(10);
+    })
+    
+    afterEach(() => {
+      applyStyleStub.restore();
+      calculateStub.restore();
+    });
+    
+    it('should correctly apply an attribute that isn\'t a transform attribute', () => {
+      let testAttribute = new Attribute('opacity', 20);
+      let transformString = testAttribute.render({}, '');
+      
+      assert.isTrue(calculateStub.calledOnce);
+      assert.isTrue(applyStyleStub.calledWith({}, 'opacity', '30'));
+      assert.equal(transformString, '');
+    });
+    
+    it('should append a transform declaration to the transform string', () => {
+      let testAttribute = new Attribute('scaleX', 20);
+      let transformString = testAttribute.render({}, 'translateX(10px) ');
+      
+      assert.isTrue(calculateStub.calledOnce);
+      assert.isFalse(applyStyleStub.called);
+      assert.equal(transformString, 'translateX(10px) scaleX(30) ');
+    });
+    
+    it('should correctly apply the deg unit for rotation attributes', () => {
+      let testAttribute = new Attribute('rotate', 20);
+      let testAttributeX = new Attribute('rotateX', 20);
+      let testAttributeY = new Attribute('rotateY', 20);
+      let testAttributeZ = new Attribute('rotateZ', 20);
+      
+      let transString = testAttribute.render({}, '');
+      let transStringX = testAttributeX.render({}, '');
+      let transStringY = testAttributeY.render({}, '');
+      let transStringZ = testAttributeZ.render({}, '');
+      
+      assert.isFalse(applyStyleStub.called);
+      assert.equal(calculateStub.callCount, 4);
+      
+      assert.equal(transString, 'rotate(30deg) ');
+      assert.equal(transStringX, 'rotateX(30deg) ');
+      assert.equal(transStringY, 'rotateY(30deg) ');
+      assert.equal(transStringZ, 'rotateZ(30deg) ');
+    });
+    
+    it('should correctly apply the px unit for perspective', () => {
+      let testAttribute = new Attribute('perspective', 20);
+      let transformString = testAttribute.render({}, '');
+      
+      assert.isTrue(calculateStub.calledOnce);
+      assert.equal(transformString, '');
+      
+      assert.isTrue(applyStyleStub.calledWith({}, 'perspective', '30px'));
+    });
+    
+    it('should correctly apply the px unit for translate transforms', () => {
+      let testAttributeX = new Attribute('translateX', 20);
+      let testAttributeY = new Attribute('translateY', 20);
+      let testAttributeZ = new Attribute('translateZ', 20);
+      
+      let transStringX = testAttributeX.render({}, '');
+      let transStringY = testAttributeY.render({}, '');
+      let transStringZ = testAttributeZ.render({}, '');
+      
+      assert.isFalse(applyStyleStub.called);
+      assert.equal(calculateStub.callCount, 3);
+      
+      assert.equal(transStringX, 'translateX(30px) ');
+      assert.equal(transStringY, 'translateY(30px) ');
+      assert.equal(transStringZ, 'translateZ(30px) ');
     });
   });
 });
