@@ -10,6 +10,8 @@
     "lib/constants.js",
     "lib/ease.js",
     "lib/element.js",
-    "lib/helper.js"
+    "lib/helper.js",
+    "test/animation.js",
+    "test/attribute.js"
   ]
 }
