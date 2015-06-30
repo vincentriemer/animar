@@ -13,6 +13,7 @@
     "lib/helpers.js",
     "test/animation.spec.js",
     "test/attribute.spec.js",
-    "test/element.spec.js"
+    "test/element.spec.js",
+    "test/helpers.spec.js"
   ]
 }

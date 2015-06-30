@@ -5,7 +5,7 @@ let assert = require('chai').assert;
 let sinon = require('sinon');
 
 import Attribute from '../lib/attribute';
-import * as Helper from '../lib/helper';
+import * as Helper from '../lib/helpers';
 
 describe('Attribute', () => {
   describe('#constructor()', () => {
@@ -53,7 +53,7 @@ describe('Attribute', () => {
     });
   });
   
-  describe('#forEachAnimation', () => {
+  describe('#forEachAnimation()', () => {
     it('should perform a mutating function on all animations', () => {
       let testAttribute = new Attribute('test', 0);
       testAttribute.animations = [0, 1, 2, 3, 4, 5, 6, 7];
@@ -68,7 +68,7 @@ describe('Attribute', () => {
     });
   });
   
-  describe('#render', () => {
+  describe('#render()', () => {
     let applyStyleStub, calculateStub;
     
     beforeEach(() => {
