@@ -42,7 +42,17 @@ jsdom.env(
           const perspectiveValue = '30px';
           Helpers.applyStyle(testDOMElement, 'perspective', perspectiveValue);
           assert.equal(testDOMElement.style.perspective, perspectiveValue);
-        })
+        });
+        
+        it('should throw an error if it\'s provided an unknown attribute', () => {
+          let exceptionSpy = sinon.spy(Helpers, 'applyStyle');
+          try {
+            Helpers.applyStyle(testDOMElement, 'blah', '20px');
+          } catch (e) {} finally {
+            assert.isTrue(Helpers.applyStyle.threw());
+            exceptionSpy.restore();
+          }
+        });
       });
       
       describe('#calculateAnimationValue', () => {
@@ -85,9 +95,6 @@ jsdom.env(
       });
       
       describe('#getStartValue()', () => {
-        it('should do something', () => {
-          console.log(Helpers.getTransformMatrix);
-        });
       });
     });
   });
