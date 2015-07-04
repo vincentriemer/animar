@@ -5,8 +5,8 @@ const assert = require('chai').assert;
 const sinon = require('sinon');
 const jsdom = require('jsdom');
 
-import * as Helpers from '../lib/helpers';
 import Animation from '../lib/animation';
+import * as Helpers from '../lib/helpers';
 
 jsdom.env(
   '<div id="test"></div>',
@@ -81,6 +81,12 @@ jsdom.env(
           
           assert.isTrue(testEasingFunction1.calledWith(testAnimation1.totalIterations, testAnimation1.startValue, testAnimation1.changeInValue, testAnimation1.totalIterations));
           assert.equal(result, 10);
+        });
+      });
+      
+      describe('#getStartValue()', () => {
+        it('should do something', () => {
+          console.log(Helpers.getTransformMatrix);
         });
       });
     });
