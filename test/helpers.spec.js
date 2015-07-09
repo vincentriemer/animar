@@ -94,7 +94,43 @@ jsdom.env(
         });
       });
       
-      describe('#getStartValue()', () => {
+      describe("#getStartValue()", () => {
+        let getTransformStub, getOpacityStub;
+        
+        beforeEach(() => {
+          getTransformStub = sinon.stub(Helpers, 'getTransform').returns(5);
+          getOpacityStub = sinon.stub(Helpers, 'getOpacity').returns(0.5);
+        });
+        
+        afterEach(() => {
+          getTransformStub.restore();
+          getOpacityStub.restore();
+        });
+        
+        it("should get a transform value", () => {
+          let testAttribute = 'translateX';
+          let result = Helpers.getStartValue(testDOMElement, testAttribute);
+          assert.isTrue(getTransformStub.called);
+          assert.equal(result, 5);
+        });
+        
+        it("should get an opacity value", () => {
+          let testAttribute = 'opacity';
+          let result = Helpers.getStartValue(testDOMElement, testAttribute);
+          assert.isTrue(getOpacityStub.called);
+          assert.equal(result, 0.5);
+        });
+        
+        it("should throw an error if it's provided an unknown attribute", () => {
+          let testAttribute = 'foo';
+          let getStartValueSpy = sinon.spy(Helpers, 'getStartValue');
+          try {
+            Helpers.getStartValue(testDOMElement, testAttribute);
+          } catch (e) { } finally {
+            assert.isTrue(getStartValueSpy.threw());
+            getStartValueSpy.restore();
+          }
+        });
       });
     });
   });
