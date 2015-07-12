@@ -90,13 +90,13 @@ describe('Attribute', () => {
       assert.equal(transformString, '');
     });
     
-    it('should append a transform declaration to the transform string', () => {
+    it('should return a transform string', () => {
       let testAttribute = new Attribute('scaleX', 20);
-      let transformString = testAttribute.render({}, 'translateX(10px) ');
+      let transformString = testAttribute.render({});
       
       assert.isTrue(calculateStub.calledOnce);
       assert.isFalse(applyStyleStub.called);
-      assert.equal(transformString, 'translateX(10px) scaleX(30) ');
+      assert.equal(transformString, 'scaleX(30) ');
     });
     
     it('should correctly apply the deg unit for rotation attributes', () => {
