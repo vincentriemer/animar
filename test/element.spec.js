@@ -50,4 +50,30 @@ describe('Element', () => {
       applyStyleStub.restore();
     });
   });
+  
+  describe("#merge()", () => {
+    it("should correctly call merge on all attributes that exist in both elements", () => {
+      let testElement2 = new Element({});
+      let mergeStub = sinon.stub().returns('blah');
+      testElement.addAttribute('test', {merge: mergeStub});
+      testElement2.addAttribute('test', {});
+      
+      let result = testElement.merge(testElement2);
+      
+      assert.isTrue(mergeStub.calledOnce);
+      assert.equal(result.attributes.get('test'), 'blah');
+    });
+    
+    it("should add attributes which it doesn't have from the target", () => {
+      let testElement2 = new Element({});
+      let mergeStub = sinon.stub().returns('blah');
+      testElement.addAttribute('test', {merge: mergeStub});
+      testElement2.addAttribute('test2', {});
+      
+      let result = testElement.merge(testElement2);
+      
+      assert.isFalse(mergeStub.calledOnce);
+      assert.isTrue(result.attributes.has('test2'));
+    });
+  });
 });

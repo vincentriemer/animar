@@ -1,3 +1,4 @@
+/* global GLOBAL */
 /// <reference path="../typings/tsd.d.ts"/>
 'use strict';
 
@@ -7,8 +8,6 @@ const jsdom = require('jsdom');
 
 import Animation from '../lib/animation';
 import * as Helpers from '../lib/helpers';
-
-// EXPECTED TRANSFORM RESULT = translateX(10px) translateY(10px) scaleX(5) scaleY(5) rotate(45deg)
 
 describe('Helpers', () => {
   let mockElement;
