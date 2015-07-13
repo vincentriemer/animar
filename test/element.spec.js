@@ -76,4 +76,45 @@ describe('Element', () => {
       assert.isTrue(result.attributes.has('test2'));
     });
   });
+  
+  describe("#addAttribute", () => {
+    it('should add an attribute to the element', () => {
+      let testAttribute = { foo: 'bar' };
+      testElement.addAttribute('test', testAttribute);
+      assert.equal(testElement.attributes.get('test'), testAttribute);
+    });
+  });
+  
+  describe("#forEachAnimationInAttribute()", () => {
+    it("should perform an attribute's forEachAnimation passing the callback", () => {
+      let forEachStub = sinon.stub().returns('blah');
+      let testAttribute = { forEachAnimation: forEachStub };
+      
+      testElement.addAttribute('test', testAttribute);
+      
+      let testCallback = () => { let foo = 'bar'; };
+      
+      let result = testElement.forEachAnimationInAttribute(testCallback);
+      
+      assert.isTrue(forEachStub.calledOnce);
+      assert.equal(result.get('test'), 'blah');
+    });
+  });
+  
+  describe("#hasAttribute()", () => {
+    it("should return a boolean representing the existance of an attribute", () => {
+      testElement.addAttribute('test', {});
+      assert.isTrue(testElement.hasAttribute('test'));
+      assert.isFalse(testElement.hasAttribute('foo'));
+    });
+  });
+  
+  describe("#getModelFromAttribute", () => {
+    it("should return the model from the given attribute name", () => {
+      let testAttribute = new Attribute('test', 23);
+      testElement.addAttribute('test', testAttribute);
+      
+      assert.equal(testElement.getModelFromAttribute('test'), 23);
+    });
+  });
 });
