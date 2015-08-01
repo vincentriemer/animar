@@ -87,17 +87,16 @@ describe('Element', () => {
   
   describe("#forEachAnimationInAttribute()", () => {
     it("should perform an attribute's forEachAnimation passing the callback", () => {
-      let forEachStub = sinon.stub().returns('blah');
+      let forEachStub = sinon.stub();
       let testAttribute = { forEachAnimation: forEachStub };
       
       testElement.addAttribute('test', testAttribute);
       
-      let testCallback = () => { let foo = 'bar'; };
-      
-      let result = testElement.forEachAnimationInAttribute(testCallback);
+      let testCallback = () => {};
+      testElement.forEachAnimationInAttribute(testCallback);
       
       assert.isTrue(forEachStub.calledOnce);
-      assert.equal(result.get('test'), 'blah');
+      assert.isTrue(forEachStub.calledWith(testCallback));
     });
   });
   

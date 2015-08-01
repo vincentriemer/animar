@@ -40,18 +40,19 @@ describe('Animation', () => {
   });
   
   describe('#step()', () => {
-    it('should increment the currentIteration value', () => {
+    it('should increment the currentIteration value by the given timescale value', () => {
       let testAnimation = new Animation(0, -20, 20, 60, () => { }, false, 0, 0);
-      testAnimation.step();
+      let timescale = 0.5
+      testAnimation.step(timescale);
       
-      assert.equal(testAnimation.currentIteration, 1);
+      assert.equal(testAnimation.currentIteration, timescale);
     });
     
     it('should reset the currentIteration value to the inverse of the animation\'s' +
       'delay value if looping is enabled and the currentIteration matches the' +
       'totalIterations', () => {
         let testAnimation = new Animation(60, -20, 20, 60, () => { }, true, 10, 0);
-        testAnimation.step();
+        testAnimation.step(1);
         
         assert.equal(testAnimation.currentIteration, -10);
       });
@@ -59,14 +60,14 @@ describe('Animation', () => {
     it('should continue iterating after totalIterations if the animation has a wait' +
       'value', () => {
         let testAnimation = new Animation(60, -20, 20, 60, () => { }, false, 0, 10);
-        testAnimation.step();
+        testAnimation.step(1);
         
         assert.equal(testAnimation.currentIteration, 61);
       });
     
     it('should not increment if the animation is over', () => {
       let testAnimation = new Animation(60, -20, 20, 60, () => { }, false, 0, 0);
-      testAnimation.step();
+      testAnimation.step(1);
       
       assert.equal(testAnimation.currentIteration, 60);
     });
