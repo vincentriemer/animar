@@ -2,18 +2,5 @@
   "compilerOptions": {
     "target": "ES6",
     "module": "commonjs"
-  },
-  "files": [
-    "lib/animar.js",
-    "lib/animation.js",
-    "lib/attribute.js",
-    "lib/constants.js",
-    "lib/easing.js",
-    "lib/element.js",
-    "lib/helpers.js",
-    "test/animation.spec.js",
-    "test/attribute.spec.js",
-    "test/element.spec.js",
-    "test/helpers.spec.js"
-  ]
+  }
 }
