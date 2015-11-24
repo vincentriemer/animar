@@ -1,4 +1,8 @@
 {
+  "parser": "babel-eslint",
+  "plugins": [
+    "flow-vars"
+  ],
   "ecmaFeatures": {
     "modules": true
   },
@@ -9,6 +13,7 @@
   },
   "rules": {
     "quotes": [2, "single", "avoid-escape"],
-    "no-underscore-dangle": [0]
+    "no-underscore-dangle": [0],
+    "no-dupe-class-members": [0]
   }
 }

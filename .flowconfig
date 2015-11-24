@@ -1,0 +1,7 @@
+[ignore]
+
+[include]
+lib
+[libs]
+
+[options]

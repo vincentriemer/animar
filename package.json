@@ -27,9 +27,10 @@
     "clean-coverage": "rimraf coverage",
     "build": "./scripts/build.sh",
     "lint": "eslint lib",
+    "typecheck": "./node_modules/.bin/flow check",
     "prebuild": "npm run clean",
     "test": "./node_modules/babel-cli/bin/babel-node.js ./node_modules/.bin/isparta cover ./node_modules/.bin/_mocha",
-    "pretest": "npm run clean-coverage && npm run lint"
+    "pretest": "npm run clean-coverage && npm run lint && npm run typecheck"
   },
   "directories": {
     "lib": "lib"
@@ -40,11 +41,15 @@
     "babel-core": "^6.2.1",
     "babel-eslint": "^4.1.5",
     "babel-loader": "^6.2.0",
+    "babel-plugin-transform-class-properties": "^6.2.2",
     "babel-plugin-transform-es2015-modules-commonjs": "^6.2.0",
+    "babel-plugin-transform-flow-strip-types": "^6.1.18",
     "babel-preset-es2015": "^6.1.18",
     "chai": "^3.4.1",
     "compression-webpack-plugin": "^0.2.0",
     "eslint": "^0.24.0",
+    "eslint-plugin-flow-vars": "0.0.1",
+    "flow-bin": "^0.18.1",
     "isparta": "^4.0.0",
     "jsdom": "^5.5.0",
     "lodash": "^3.3.1",
