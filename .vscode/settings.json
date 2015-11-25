@@ -4,5 +4,6 @@
   "javascript.validate.lint.primitivesInInstanceOf": "ignore",
   "travis.username": "vincentriemer",
   "travis.repository": "animar",
-  "javascript.validate.syntaxValidation": false
+  "javascript.validate.syntaxValidation": false,
+  "eslint.enable": true
 }

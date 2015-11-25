@@ -7,9 +7,18 @@ module.exports = _.merge(require('./webpack.config.js'), {
     filename: 'animar.min.js'
   },
   plugins: [
-    new webpack.optimize.OccurenceOrderPlugin(),
-    new webpack.optimize.DedupePlugin(),
-    new webpack.optimize.UglifyJsPlugin(),
+    new webpack.DefinePlugin({
+      __DEV__: false
+    }),
+    new webpack.optimize.UglifyJsPlugin({
+      compress: {
+        warnings: false,
+      },
+      sourceMap: false,
+      mangle: {
+        except: ['$super', '$', 'exports', 'require', 'Animar', 'add']
+      }
+    }),
     new CompressionPlugin()
   ]
 });
