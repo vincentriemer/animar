@@ -1,4 +1,0 @@
-node_modules
-lib/__tests__/*
-dist
-coverage

@@ -23,37 +23,41 @@
   },
   "license": "MIT",
   "scripts": {
+    "clean": "rimraf dist",
     "clean-coverage": "rimraf coverage",
-    "clean-dist": "rimraf dist",
-    "clean": "npm run clean-coverage && npm run clean-dist",
-    "lint": "jshint **.js",
     "build": "./scripts/build.sh",
-    "test": "jest",
-    "pretest": "npm run clean-coverage && npm run lint",
-    "prebuild": "npm run clean-dist"
-  },
-  "jest": {
-    "collectCoverage": true,
-    "testFileExtensions": [
-      "js"
-    ],
-    "moduleFileExtensions": [
-      "js"
-    ],
-    "testPathDirs": [
-      "lib"
-    ]
+    "lint": "eslint lib",
+    "typecheck": "./node_modules/.bin/flow check",
+    "prebuild": "npm run clean",
+    "test": "./node_modules/babel-cli/bin/babel-node.js ./node_modules/.bin/isparta cover ./node_modules/.bin/_mocha",
+    "pretest": "npm run clean-coverage && npm run lint && npm run typecheck"
   },
   "directories": {
     "lib": "lib"
   },
   "main": "lib/animar.js",
   "devDependencies": {
-    "compression-webpack-plugin": "0.2.0",
-    "jest-cli": "facebook/jest#0.5.x",
-    "jshint": "2.8.0",
-    "lodash": "3.10.0",
-    "rimraf": "2.4.1",
-    "webpack": "1.10.1"
+    "babel-cli": "^6.2.0",
+    "babel-core": "^6.2.1",
+    "babel-eslint": "^4.1.5",
+    "babel-loader": "^6.2.0",
+    "babel-plugin-transform-class-properties": "^6.2.2",
+    "babel-plugin-transform-es2015-modules-commonjs": "^6.2.0",
+    "babel-plugin-transform-flow-strip-types": "^6.1.18",
+    "babel-preset-es2015": "^6.1.18",
+    "chai": "^3.4.1",
+    "compression-webpack-plugin": "^0.2.0",
+    "eslint": "^0.24.0",
+    "eslint-plugin-flow-vars": "0.0.1",
+    "flow-bin": "^0.18.1",
+    "isparta": "^4.0.0",
+    "jsdom": "^5.5.0",
+    "lodash": "^3.3.1",
+    "mocha": "^2.3.4",
+    "rimraf": "^2.3.1",
+    "sinon": "^1.15.4",
+    "travis-weigh-in": "^1.0.2",
+    "tsd": "^0.6.3",
+    "webpack": "^1.12.8"
   }
 }

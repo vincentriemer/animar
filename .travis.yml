@@ -1,11 +1,15 @@
 language: node_js
 node_js:
-  - iojs-v1.4.2
+  - 4.2.2
 sudo: false
 before_script:
   - npm install -g codeclimate-test-reporter
+script:
+  - npm test
+  - npm run build
 after_script:
-  - cat coverage/lcov.info | codeclimate-test-reporter
+  - codeclimate-test-reporter < coverage/lcov.info
+  - python node_modules/travis-weigh-in/weigh_in.py dist/animar.min.js
 env:
   global:
     secure: Mu2ZIBaKlcsXYvCwzieNEGkzD/CuCG4mWR5oZghV4V/vdRQgUoDQLcyr9LCTUe/Amb6DvASXYXidsuVfQpSzZldFqpNMsBbZ7WXMHge2tkz+anGa1e6yKYt079QFPzXXUi1To+Ho7eA9HYuhHZ2HsbxGf12u9s9S3IjK8hlWxNY=
