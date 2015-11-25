@@ -1,5 +1,6 @@
 /// <reference path="typings/node/node.d.ts"/>
 var path = require('path');
+var webpack = require('webpack');
 
 module.exports = {
   entry: './lib/animar.js',
@@ -17,5 +18,10 @@ module.exports = {
         loader: 'babel'
       }
     ]
-  }
+  },
+  plugins: [
+    new webpack.DefinePlugin({
+      __DEV__: true
+    })
+  ]
 };
