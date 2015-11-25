@@ -3,5 +3,5 @@
 [include]
 lib
 [libs]
-
+lib/flow
 [options]
