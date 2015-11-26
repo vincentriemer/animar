@@ -1,5 +1,4 @@
-var path = require('path'),
-  _ = require('lodash'),
+var _ = require('lodash'),
   pjson = require('./package.json');
 
 module.exports = _.merge(require('./webpack.config.minified.js'), {
