@@ -3,3 +3,14 @@ node_modules
 npm-debug.log
 .idea
 dist
+.vscode
+typings
+scripts
+.codeclimate.yml
+.travis.yml
+jsconfig.json
+.babelrc
+.eslintrc
+.flowconfig
+tsd.json
+webpack.config.*
