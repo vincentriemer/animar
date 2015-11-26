@@ -24,9 +24,13 @@ deploy:
       - dist/animar.min.js
     on:
       tags: true
+      condition: "$TRAVIS_TAG =~ ^v[0-9].[0-9].[0-9]$"
+      all_branches: true
   - provider: npm
     email: vincentriemer@gmail.com
     api_key:
       secure: hB9MBQ+AnS1BpMGEjd7+BVh2cNeDfNTEENbdOGyYvHmba2ce4dX2b91aVh7zLx4pW+RjkfxesZ3sVuHErMtY9FZTF2hvVnnY5Kd4l646sYGKZeoFjgrqtrOFT6TX83awLaBsoxfKg2pv9FAJfZehSrCsVSTxW02G3BAIzeghkfg=
     on:
       tags: true
+      condition: "$TRAVIS_TAG =~ ^v[0-9].[0-9].[0-9]$"
+      all_branches: true
