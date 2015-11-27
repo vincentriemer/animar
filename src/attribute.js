@@ -27,7 +27,7 @@ module.exports = class Attribute {
   forEachAnimation(callback: (animation: ?Animation) => ?Animation) {
     this.animations = this.animations
       .map(callback)
-      .filter((x) => typeof x !== 'undefined');
+      .filter((x) => x != null);
   }
 
   step(timescale: number): boolean {
@@ -38,7 +38,7 @@ module.exports = class Attribute {
           somethingChanged = true;
           return animation;
         }
-      }).filter((x) => typeof x !== 'undefined');
+      }).filter((x) => x != null);
 
     return somethingChanged;
   }

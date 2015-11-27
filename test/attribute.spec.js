@@ -144,4 +144,94 @@ describe('Attribute', () => {
       assert.equal(transStringZ, 'translateZ(30px) ');
     });
   });
+  describe('#step()', () => {
+    it('should remove all pre-existing animations which are null', () => {
+      let testAnimation1 = null;
+      let testAttribute = new Attribute('test', 20);
+      testAttribute.addAnimation(testAnimation1);
+
+      testAttribute.step(1);
+
+      assert.equal(testAttribute.animations.length, 0);
+    });
+
+    it('should run the step function on each animation, passing in the timescale parameter', () => {
+      let timescale = 1;
+      let stepStub = sinon.stub();
+      let testAnimation = { step: stepStub };
+      let testAttribute = new Attribute('test', 20);
+      testAttribute.addAnimation(testAnimation);
+
+      testAttribute.step(timescale);
+
+      assert.isTrue(stepStub.calledOnce);
+      assert.isTrue(stepStub.calledWith(timescale));
+    });
+
+    it('should remove any animations which step functions return false', () => {
+      let timescale = 1;
+      let stepStub = sinon.stub().returns(false);
+      let testAnimation = { step: stepStub };
+      let testAttribute = new Attribute('test', 20);
+      testAttribute.addAnimation(testAnimation);
+
+      testAttribute.step(timescale);
+
+      assert.equal(testAttribute.animations.length, 0);
+    });
+
+    it('should keep any animations which step functions return true', () => {
+      let timescale = 1;
+      let stepStub = sinon.stub().returns(true);
+      let testAnimation = { step: stepStub };
+      let testAttribute = new Attribute('test', 20);
+      testAttribute.addAnimation(testAnimation);
+
+      testAttribute.step(timescale);
+
+      assert.equal(testAttribute.animations.length, 1);
+    });
+
+    it('should return true if all animation step functions return true', () => {
+      let timescale = 1;
+      let stepStub = sinon.stub().returns(true);
+      let testAnimation = { step: stepStub };
+      let testAttribute = new Attribute('test', 20);
+      testAttribute.addAnimation(testAnimation);
+
+      let result = testAttribute.step(timescale);
+
+      assert.isTrue(result);
+    });
+
+    it('should return true if at least one of the animation step functions returns true', () => {
+      let timescale = 1;
+      let stepStub1 = sinon.stub().returns(true);
+      let testAnimation1 = { step: stepStub1 };
+      let stepStub2 = sinon.stub().returns(false);
+      let testAnimation2 = { step: stepStub2 };
+      let testAttribute = new Attribute('test', 20);
+      testAttribute.addAnimation(testAnimation1);
+      testAttribute.addAnimation(testAnimation2);
+
+      let result = testAttribute.step(timescale);
+
+      assert.isTrue(result);
+    });
+
+    it('should return false if all of the animation step functions return false', () => {
+      let timescale = 1;
+      let stepStub1 = sinon.stub().returns(false);
+      let testAnimation1 = { step: stepStub1 };
+      let stepStub2 = sinon.stub().returns(false);
+      let testAnimation2 = { step: stepStub2 };
+      let testAttribute = new Attribute('test', 20);
+      testAttribute.addAnimation(testAnimation1);
+      testAttribute.addAnimation(testAnimation2);
+
+      let result = testAttribute.step(timescale);
+
+      assert.isFalse(result);
+    });
+  });
 });

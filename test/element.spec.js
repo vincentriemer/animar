@@ -21,8 +21,8 @@ describe('Element', () => {
     });
   });
 
-  describe("#render()", () => {
-    it("should call the render function on all attributes", () => {
+  describe('#render()', () => {
+    it('should call the render function on all attributes', () => {
       let attributeRenderFunction = sinon.stub().returns('');
       testElement.attributes.set('opacity', { render: attributeRenderFunction });
       testElement.attributes.set('perspective', { render: attributeRenderFunction });
@@ -49,8 +49,8 @@ describe('Element', () => {
     });
   });
 
-  describe("#merge()", () => {
-    it("should correctly call merge on all attributes that exist in both elements", () => {
+  describe('#merge()', () => {
+    it('should correctly call merge on all attributes that exist in both elements', () => {
       let testElement2 = new Element({});
       let mergeStub = sinon.stub().returns('blah');
       testElement.addAttribute('test', {merge: mergeStub});
@@ -62,7 +62,7 @@ describe('Element', () => {
       assert.equal(result.attributes.get('test'), 'blah');
     });
 
-    it("should add attributes which it doesn't have from the target", () => {
+    it('should add attributes which it doesn\'t have from the target', () => {
       let testElement2 = new Element({});
       let mergeStub = sinon.stub().returns('blah');
       testElement.addAttribute('test', {merge: mergeStub});
@@ -75,7 +75,7 @@ describe('Element', () => {
     });
   });
 
-  describe("#addAttribute", () => {
+  describe('#addAttribute', () => {
     it('should add an attribute to the element', () => {
       let testAttribute = { foo: 'bar' };
       testElement.addAttribute('test', testAttribute);
@@ -83,8 +83,8 @@ describe('Element', () => {
     });
   });
 
-  describe("#forEachAnimationInAttribute()", () => {
-    it("should perform an attribute's forEachAnimation passing the callback", () => {
+  describe('#forEachAnimationInAttribute()', () => {
+    it('should perform an attribute\'s forEachAnimation passing the callback', () => {
       let forEachStub = sinon.stub();
       let testAttribute = { forEachAnimation: forEachStub };
 
@@ -98,20 +98,68 @@ describe('Element', () => {
     });
   });
 
-  describe("#hasAttribute()", () => {
-    it("should return a boolean representing the existance of an attribute", () => {
+  describe('#hasAttribute()', () => {
+    it('should return a boolean representing the existance of an attribute', () => {
       testElement.addAttribute('test', {});
       assert.isTrue(testElement.hasAttribute('test'));
       assert.isFalse(testElement.hasAttribute('foo'));
     });
   });
 
-  describe("#getModelFromAttribute", () => {
-    it("should return the model from the given attribute name", () => {
+  describe('#getModelFromAttribute', () => {
+    it('should return the model from the given attribute name', () => {
       let testAttribute = new Attribute('test', 23);
       testElement.addAttribute('test', testAttribute);
 
       assert.equal(testElement.getModelFromAttribute('test'), 23);
+    });
+  });
+
+  describe('#step()', () => {
+    it('should execute the step function on every attribute in the attributes map, passing in the timescale parameter', () => {
+      let timescale = 1;
+      let stepStub1 = sinon.stub();
+      let stepStub2 = sinon.stub();
+      let testAttribute1 = { step: stepStub1 };
+      let testAttribute2 = { step: stepStub2 };
+      testElement.addAttribute('test1', testAttribute1);
+      testElement.addAttribute('test2', testAttribute2);
+
+      testElement.step(timescale);
+
+      assert.isTrue(stepStub1.calledOnce);
+      assert.isTrue(stepStub1.calledWith(timescale));
+
+      assert.isTrue(stepStub2.calledOnce);
+      assert.isTrue(stepStub2.calledWith(timescale));
+    });
+
+    it('should return false if all attribute step functions return false', () => {
+      let timescale = 1;
+      let stepStub1 = sinon.stub().returns(false);
+      let stepStub2 = sinon.stub().returns(false);
+      let testAttribute1 = { step: stepStub1 };
+      let testAttribute2 = { step: stepStub2 };
+      testElement.addAttribute('test1', testAttribute1);
+      testElement.addAttribute('test2', testAttribute2);
+
+      let result = testElement.step(timescale);
+
+      assert.equal(result, false);
+    });
+
+    it('should return true if at least 1 attribute step function returns true', () => {
+      let timescale = 1;
+      let stepStub1 = sinon.stub().returns(true);
+      let stepStub2 = sinon.stub().returns(false);
+      let testAttribute1 = { step: stepStub1 };
+      let testAttribute2 = { step: stepStub2 };
+      testElement.addAttribute('test1', testAttribute1);
+      testElement.addAttribute('test2', testAttribute2);
+
+      let result = testElement.step(timescale);
+
+      assert.equal(result, true);
     });
   });
 });
