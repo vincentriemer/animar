@@ -1,20 +1,19 @@
 language: node_js
 node_js:
-  - 4.2.2
+- 4.2.2
 sudo: false
 before_script:
-  - npm install -g codeclimate-test-reporter
+- npm install -g codeclimate-test-reporter
 script:
-  - npm test
-  - npm run build
+- npm test
 after_script:
-  - codeclimate-test-reporter < coverage/lcov.info
-  - python node_modules/travis-weigh-in/weigh_in.py dist/animar.min.js
+- codeclimate-test-reporter < coverage/lcov.info
+- npm run build && python node_modules/travis-weigh-in/weigh_in.py dist/animar.min.js
 env:
   global:
     secure: Mu2ZIBaKlcsXYvCwzieNEGkzD/CuCG4mWR5oZghV4V/vdRQgUoDQLcyr9LCTUe/Amb6DvASXYXidsuVfQpSzZldFqpNMsBbZ7WXMHge2tkz+anGa1e6yKYt079QFPzXXUi1To+Ho7eA9HYuhHZ2HsbxGf12u9s9S3IjK8hlWxNY=
 before_deploy:
-  - npm run build
+- npm run build
 deploy:
   - provider: releases
     api_key:
@@ -24,11 +23,12 @@ deploy:
       - dist/animar.min.js
     on:
       tags: true
-      all_branches: true
+      repo: vincentriemer/animar
   - provider: npm
     email: vincentriemer@gmail.com
     api_key:
-      secure: hB9MBQ+AnS1BpMGEjd7+BVh2cNeDfNTEENbdOGyYvHmba2ce4dX2b91aVh7zLx4pW+RjkfxesZ3sVuHErMtY9FZTF2hvVnnY5Kd4l646sYGKZeoFjgrqtrOFT6TX83awLaBsoxfKg2pv9FAJfZehSrCsVSTxW02G3BAIzeghkfg=
+      secure: NwcWvTdxNsSjECle6ZVHqmaUYY0i3bWn0VL/erQp0e5WLmSOf5ZyuKD6fBAm4GU3Eiul5Z2gcHmPzkP19jO0kj7E8Q1zxqJb8bFC8WMu7DRxsFPRwMwhceeWqTgQ12/+5ukxF889s9Yra7QwxzE9PvdqFJJo6j2lPYRCwlAigCc=
     on:
       tags: true
-      all_branches: true
+      repo: vincentriemer/animar
+

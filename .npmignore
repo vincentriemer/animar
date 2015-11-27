@@ -17,3 +17,4 @@ test
 jsconfig.json
 tsd.json
 webpack.config.*
+flow
