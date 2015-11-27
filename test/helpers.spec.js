@@ -4,8 +4,8 @@ var assert = require('chai').assert;
 var sinon = require('sinon');
 var jsdom = require('jsdom');
 
-import Animation from '../lib/animation';
-import * as Helpers from '../lib/helpers';
+import Animation from '../src/animation';
+import * as Helpers from '../src/helpers';
 
 describe('Helpers', () => {
   let mockElement;

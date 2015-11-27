@@ -1,6 +1,6 @@
 /// <reference path="../typings/tsd.d.ts"/>
 import {assert} from 'chai';
-import Animation from '../lib/animation';
+import Animation from '../src/animation';
 
 describe('Animation', () => {
   describe('#constructor()', () => {

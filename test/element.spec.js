@@ -2,9 +2,9 @@
 var assert = require('chai').assert;
 var sinon = require('sinon');
 
-import Element from '../lib/element';
-import Attribute from '../lib/attribute';
-import * as Helpers from '../lib/helpers';
+import Element from '../src/element';
+import Attribute from '../src/attribute';
+import * as Helpers from '../src/helpers';
 
 describe('Element', () => {
   let testDomElement, testElement;

@@ -26,11 +26,12 @@
     "clean": "rimraf dist",
     "clean-coverage": "rimraf coverage",
     "build": "./scripts/build.sh",
+    "prebuild": "npm run clean",
     "lint": "eslint lib",
     "typecheck": "./node_modules/.bin/flow check",
-    "prebuild": "npm run clean",
     "test": "./node_modules/babel-cli/bin/babel-node.js ./node_modules/.bin/isparta cover ./node_modules/.bin/_mocha",
-    "pretest": "npm run clean-coverage && npm run lint && npm run typecheck"
+    "pretest": "npm run clean-coverage && npm run lint && npm run typecheck",
+    "prepublish": "./node_modules/.bin/babel ./src --out-dir ./lib"
   },
   "directories": {
     "lib": "lib"

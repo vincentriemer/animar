@@ -117,6 +117,7 @@ module.exports = class Animar {
       start = this.elementMap.get(element).getModelFromAttribute(attribute);
     } else {
       if (__DEV__) {
+        // TODO: Add development warning
           start = getStartValue(element, attribute);
       }
     }
