@@ -1,8 +1,8 @@
 /* @flow */
 /* global __DEV__ */
-import Animation from './animation';
-import Attribute from './attribute';
-import Element from './element';
+import Animation from './animation.js';
+import Attribute from './attribute.js';
+import Element from './element.js';
 
 if (__DEV__) {
   var Helpers = require('./helpers');
@@ -64,17 +64,18 @@ module.exports = class Animar {
   add(element: HTMLElement, attributes: AttributesOptions, options: AnimationOptions): FullChainObject {
     let resolvedOptions = options == null ? EMPTY_ANIMATION_OPTIONS : options;
 
+    /* istanbul ignore else */
     if (__DEV__) {
       if (element == null) {
         throw 'Missing or null parameter: element';
       }
-      if (!element instanceof HTMLElement) {
+      if (!(element instanceof HTMLElement)) {
         throw "Parameter 'element' should be of type HTMLElement";
       }
-      if (typeof attributes === 'undefined') {
+      if (attributes == null) {
         throw 'Missing or null parameter: attribtues';
       }
-      if (typeof attributes !== 'object') {
+      if (Object.prototype.toString.call(attributes) !== '[object Object]') {
         throw "Parameter 'attributes' should be of type Object";
       }
       // TODO: Validate attributes contents

@@ -2,8 +2,8 @@
 var assert = require('chai').assert;
 var sinon = require('sinon');
 
-import Attribute from '../src/attribute';
-import * as Helper from '../src/helpers';
+import Attribute from '../src/attribute.js';
+import * as Helper from '../src/helpers.js';
 
 describe('Attribute', () => {
   describe('#constructor()', () => {

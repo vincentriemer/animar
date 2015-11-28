@@ -1,7 +1,6 @@
 /* @flow */
-import type * as Animation from './animation';
-
-import { calculateAnimationValue, applyStyle, TRANSFORM_ATTRIBUTES} from './helpers';
+import type * as Animation from './animation.js';
+import { calculateAnimationValue, applyStyle, TRANSFORM_ATTRIBUTES} from './helpers.js';
 
 module.exports = class Attribute {
   model: number;

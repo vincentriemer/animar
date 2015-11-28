@@ -1,8 +1,7 @@
 // @flow
-import type * as Attribute from './attribute';
-import type * as Animation from './animation';
-
-import { applyStyle } from './helpers';
+import type * as Attribute from './attribute.js';
+import type * as Animation from './animation.js';
+import { applyStyle } from './helpers.js';
 
 module.exports = class Element {
   attributes: Map<string, Attribute>;
