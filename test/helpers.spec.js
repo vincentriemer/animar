@@ -7,22 +7,40 @@ var jsdom = require('jsdom');
 import Animation from '../src/animation.js';
 import * as Helpers from '../src/helpers.js';
 
+function propagateToGlobal (window) {
+  for (let key in window) {
+    if (!window.hasOwnProperty(key)) continue
+    if (key in global) continue
+
+    global[key] = window[key]
+  }
+}
+
 describe('Helpers', () => {
   let mockElement;
 
-  beforeEach(() => {
-    mockElement = { style: { wekbkitTransform: "", MozTransform: "", msTransform: "", OTransform: "", transform: "" } };
+  beforeEach((done) => {
+    if (__BROWSER__) {
+      // TODO: Add browser environment setup
+      done();
+    } else {
+      jsdom.env(
+        '<div id="target"></div>',
+        function (err, window) {
+          global.window = window;
+          global.document = window.document;
+          propagateToGlobal(window);
+          mockElement = document.getElementById('target');
+          done();
+        }
+      );
+    }
   });
 
   afterEach(() => {
-    // reset all animateable properties
-    mockElement.style.webkitTransform = '';
-    mockElement.style.MozTransform = '';
-    mockElement.style.msTransform = '';
-    mockElement.style.OTransform = '';
-    mockElement.style.transform = '';
-    mockElement.style.opacity = '1';
-    mockElement.style.perspective = 'none';
+    if (__BROWSER__) {
+      // TODO: Add browser environment cleanup
+    }
   });
 
   describe('#applyStyle()', () => {
@@ -134,21 +152,9 @@ describe('Helpers', () => {
   });
 
   describe("#getOpacity()", () => {
-    beforeEach(() => {
-      GLOBAL.window = {};
-      window.getComputedStyle = sinon.stub().returns({
-        getPropertyValue: function (arg) {
-          return '0.5';
-        }
-      });
-    });
-
-    afterEach(() => {
-      delete GLOBAL.window;
-    });
-
     it("should get the computed opacity value for a dom element", () => {
-      let result = Helpers.getOpacity.call({ window: window }, mockElement);
+      mockElement.style.opacity = 0.5;
+      let result = Helpers.getOpacity(mockElement);
       assert.equal(result, 0.5);
     });
   });
@@ -205,7 +211,6 @@ describe('Helpers', () => {
 
   describe("#getTransformMatrix()", () => {
     it("should correctly parse the matrix string", () => {
-      GLOBAL.window = {};
       window.getComputedStyle = sinon.stub().returns({
         getPropertyValue: function (arg) {
           return 'matrix(3.5355339059327378, 3.5355339059327373, -3.5355339059327373, 3.5355339059327378, 10, 10)';
@@ -215,12 +220,9 @@ describe('Helpers', () => {
       let result = Helpers.getTransformMatrix(mockElement);
       assert.isTrue(window.getComputedStyle.called);
       assert.deepEqual(result, [3.5355339059327378, 3.5355339059327373, -3.5355339059327373, 3.5355339059327378, 10, 10]);
-
-      delete GLOBAL.window;
     });
 
     it("should correctly handle an element that hasn't been transformed", () => {
-      GLOBAL.window = {};
       window.getComputedStyle = sinon.stub().returns({
         getPropertyValue: function (arg) {
           return 'none';
@@ -230,8 +232,6 @@ describe('Helpers', () => {
       let result = Helpers.getTransformMatrix(mockElement);
       assert.isTrue(window.getComputedStyle.called);
       assert.deepEqual(result, [1, 0, 0, 1, 0, 0]);
-
-      delete GLOBAL.window;
     });
   });
 });

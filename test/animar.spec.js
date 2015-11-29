@@ -26,15 +26,25 @@ describe('Animar', () => {
   let animar;
 
   beforeEach((done) => {
-    // create clean dom environment for testing
-    jsdom.env(
-      '<div id="target1"></div><div id="target2"></div>',
-      function (err, window) {
-        propagateToGlobal(window);
-        animar = new Animar();
-        done();
-      }
-    );
+    if (__BROWSER__) {
+      // TODO: Add browser environment setup
+      done();
+    } else {
+      jsdom.env(
+        '<div id="target1"></div><div id="target2"></div>',
+        function (err, window) {
+          propagateToGlobal(window);
+          animar = new Animar();
+          done();
+        }
+      );
+    }
+  });
+
+  afterEach(() => {
+    if (__BROWSER__) {
+      // TODO: Add browser environment cleanup
+    }
   });
 
   describe('#constructor()', () => {

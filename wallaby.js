@@ -22,6 +22,10 @@ module.exports = function (wallaby) {
 
       compilers: {
         '**/*.js': wallaby.compilers.babel(babelConfig)
+      },
+
+      bootstrap: function (wallaby) {
+        global.__BROWSER__ = false;
       }
     };
   };
