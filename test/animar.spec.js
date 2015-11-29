@@ -2,9 +2,7 @@
 global.__DEV__ = true;
 
 var Animar = require('../src/animar');
-var assert = require('chai').assert;
-var sinon = require('sinon');
-var jsdom = require('jsdom');
+var assert = chai.assert;
 
 const EMPTY_ANIMATION_OPTIONS = {
   delay: null,
@@ -26,8 +24,23 @@ describe('Animar', () => {
   let animar;
 
   beforeEach((done) => {
-    if (__BROWSER__) {
-      // TODO: Add browser environment setup
+    if (BROWSER) {
+      if (document.getElementById('wrapper') == null) {
+        let wrapper = document.createElement('div');
+        wrapper.id = 'wrapper';
+        document.body.appendChild(wrapper);
+      }
+      let wrapper = document.getElementById('wrapper');
+
+      let target1 = document.createElement('div');
+      target1.id = 'target1';
+      let target2 = document.createElement('div');
+      target2.id = 'target2';
+
+      wrapper.appendChild(target1);
+      wrapper.appendChild(target2);
+
+      animar = new Animar();
       done();
     } else {
       jsdom.env(
@@ -42,8 +55,11 @@ describe('Animar', () => {
   });
 
   afterEach(() => {
-    if (__BROWSER__) {
-      // TODO: Add browser environment cleanup
+    if (BROWSER) {
+      let wrapper = document.getElementById('wrapper');
+      while(wrapper.hasChildNodes()) {
+        wrapper.removeChild(wrapper.lastChild);
+      }
     }
   });
 

@@ -25,7 +25,23 @@ module.exports = function (wallaby) {
       },
 
       bootstrap: function (wallaby) {
-        global.__BROWSER__ = false;
+        var mocha = wallaby.testFramework;
+
+        global.BROWSER = false;
+        global.sinon = require('sinon');
+        global.chai = require('chai');
+        global.jsdom = require('jsdom');
+
+        mocha.suite.beforeEach('sinon before', function() {
+          if (null == this.sinon) {
+            this.sinon = sinon.sandbox.create();
+          }
+        });
+        mocha.suite.afterEach('sinon after', function() {
+          if (this.sinon && 'function' === typeof this.sinon.restore) {
+            this.sinon.restore();
+          }
+        });
       }
     };
   };

@@ -1,10 +1,9 @@
 /// <reference path="../typings/tsd.d.ts"/>
-var assert = require('chai').assert;
-var sinon = require('sinon');
-
 import Element from '../src/element.js';
 import Attribute from '../src/attribute.js';
 import * as Helpers from '../src/helpers.js';
+
+var assert = chai.assert;
 
 describe('Element', () => {
   let testDomElement, testElement;

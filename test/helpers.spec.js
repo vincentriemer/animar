@@ -1,11 +1,9 @@
 /* global GLOBAL */
 /// <reference path="../typings/tsd.d.ts"/>
-var assert = require('chai').assert;
-var sinon = require('sinon');
-var jsdom = require('jsdom');
-
 import Animation from '../src/animation.js';
 import * as Helpers from '../src/helpers.js';
+
+var assert = chai.assert;
 
 function propagateToGlobal (window) {
   for (let key in window) {
@@ -20,8 +18,19 @@ describe('Helpers', () => {
   let mockElement;
 
   beforeEach((done) => {
-    if (__BROWSER__) {
-      // TODO: Add browser environment setup
+    if (BROWSER) {
+      if (document.getElementById('wrapper') == null) {
+        let wrapper = document.createElement('div');
+        wrapper.id = 'wrapper';
+        document.body.appendChild(wrapper);
+      }
+      let wrapper = document.getElementById('wrapper');
+
+      let target1 = document.createElement('div');
+      target1.id = 'target';
+      wrapper.appendChild(target1);
+
+      mockElement = document.getElementById('target');
       done();
     } else {
       jsdom.env(
@@ -38,8 +47,11 @@ describe('Helpers', () => {
   });
 
   afterEach(() => {
-    if (__BROWSER__) {
-      // TODO: Add browser environment cleanup
+    if (BROWSER) {
+      let wrapper = document.getElementById('wrapper');
+      while(wrapper.hasChildNodes()) {
+        wrapper.removeChild(wrapper.lastChild);
+      }
     }
   });
 

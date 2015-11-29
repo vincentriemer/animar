@@ -1,9 +1,8 @@
 /// <reference path="../typings/tsd.d.ts"/>
-var assert = require('chai').assert;
-var sinon = require('sinon');
-
 import Attribute from '../src/attribute.js';
 import * as Helper from '../src/helpers.js';
+
+var assert = chai.assert;
 
 describe('Attribute', () => {
   describe('#constructor()', () => {
