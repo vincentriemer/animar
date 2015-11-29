@@ -13,15 +13,24 @@ const EMPTY_ANIMATION_OPTIONS = {
   loop: null
 };
 
+function propagateToGlobal (window) {
+  for (let key in window) {
+    if (!window.hasOwnProperty(key)) continue
+    if (key in global) continue
+
+    global[key] = window[key]
+  }
+}
+
 describe('Animar', () => {
   let animar;
 
   beforeEach((done) => {
     // create clean dom environment for testing
     jsdom.env(
-      '<div id="target"></div>',
+      '<div id="target1"></div><div id="target2"></div>',
       function (err, window) {
-        Object.assign(global, window);
+        propagateToGlobal(window);
         animar = new Animar();
         done();
       }
@@ -51,7 +60,7 @@ describe('Animar', () => {
     beforeEach(() => {
       expectedResult = 'chain object';
       animar._add = sinon.stub().returns(expectedResult);
-      testElement = document.getElementById('target');
+      testElement = window.document.getElementById('target1');
       testAttributes = { test: [0, 100] };
       testOptions = { delay: 0, easingFunction: () => {}, duration: 60, loop: false };
     });
@@ -112,6 +121,35 @@ describe('Animar', () => {
         animar.add(testElement, [], testOptions);
       } catch(e) {};
       assert.isTrue(spy.threw());
+    });
+  });
+
+  describe('#mergeElementMaps()', () => {
+    let sourceMap, targetMap;
+    beforeEach(() => {
+      sourceMap = new Map();
+      targetMap = new Map();
+    });
+
+    it('should add target elements to the source if they don\'t exist in the source', () => {
+      let expected = 'bar';
+      targetMap.set('foo', expected);
+
+      let result = animar.mergeElementMaps(sourceMap, targetMap);
+
+      assert.equal(result.get('foo'), expected);
+    });
+
+    it('should call the merge function on elements which exist in both maps and put the output into the result', () => {
+      let mergeStub = sinon.stub().returns('foo');
+      sourceMap.set('test', { merge: mergeStub });
+      targetMap.set('test', { foo: 'bar' });
+
+      let result = animar.mergeElementMaps(sourceMap, targetMap);
+
+      assert.isTrue(mergeStub.called);
+      assert.isTrue(mergeStub.calledWith(targetMap.get('test')));
+      assert.equal(result.get('test'), 'foo');
     });
   });
 });
