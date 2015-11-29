@@ -50,21 +50,6 @@
       "exe": "./node_modules/.bin/saucie",
       "args": ["-b", "internet explorer", "-v", "11", "--no-ct", "--at", "-u"],
       "protocol": "browser"
-    },
-    "SL_IE_10": {
-      "exe": "./node_modules/.bin/saucie",
-      "args": ["-b", "internet explorer", "-v", "10", "--no-ct", "--at", "-u"],
-      "protocol": "browser"
-    },
-    "SL_IE_9": {
-      "exe": "./node_modules/.bin/saucie",
-      "args": ["-b", "internet explorer", "-v", "9", "--no-ct", "--at", "-u"],
-      "protocol": "browser"
-    },
-    "SL_IE_8": {
-      "exe": "./node_modules/.bin/saucie",
-      "args": ["-b", "internet explorer", "-v", "8", "--no-ct", "--at", "-u"],
-      "protocol": "browser"
     }
   },
   "launch_in_dev": [
