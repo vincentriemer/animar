@@ -24,9 +24,9 @@ launchers:
   SL_Chrome_Current:
     exe: ./node_modules/.bin/saucie
     args:
-      - --browserNameSL="chrome"
-      - --platformSL="Linux"
-      - --versionSL="46.0"
+      - --browserNameSL=chrome
+      - --platformSL=Linux
+      - --versionSL=46.0
       - --no-ct
       - --at
       - -u
@@ -34,9 +34,9 @@ launchers:
   SL_Firefox_Current:
     exe: ./node_modules/.bin/saucie
     args:
-      - --browserNameSL="firefox"
-      - --platformSL="Linux"
-      - --versionSL="42.0"
+      - --browserNameSL=firefox
+      - --platformSL=Linux
+      - --versionSL=42.0
       - --no-ct
       - --at
       - -u
@@ -44,9 +44,9 @@ launchers:
   SL_Safari_Current:
     exe: ./node_modules/.bin/saucie
     args:
-      - --browserNameSL="safari"
-      - --platformSL="OS X 10.11"
-      - --versionSL="9.0"
+      - --browserNameSL=safari
+      - --platformSL=OS X 10.11
+      - --versionSL=9.0
       - --no-ct
       - --at
       - -u
@@ -54,9 +54,9 @@ launchers:
   SL_Safari_Last:
     exe: ./node_modules/.bin/saucie
     args:
-      - --browserNameSL="safari"
-      - --platformSL="OS X 10.10"
-      - --versionSL="8.0"
+      - --browserNameSL=safari
+      - --platformSL=OS X 10.10
+      - --versionSL=8.0
       - --no-ct
       - --at
       - -u
@@ -64,9 +64,9 @@ launchers:
   SL_MS_Edge:
     exe: ./node_modules/.bin/saucie
     args:
-      - --browserNameSL="microsoftedge"
-      - --platformSL="Windows 10"
-      - --versionSL="20.10240"
+      - --browserNameSL=microsoftedge
+      - --platformSL=Windows 10
+      - --versionSL=20.10240
       - --no-ct
       - --at
       - -u
@@ -74,9 +74,9 @@ launchers:
   SL_IE_11:
     exe: ./node_modules/.bin/saucie
     args:
-      - --browserNameSL="internet explorer"
-      - --platformSL="Windows 7"
-      - --versionSL="11.0"
+      - --browserNameSL=internet explorer
+      - --platformSL=Windows 7
+      - --versionSL=11.0
       - --no-ct
       - --at
       - -u
@@ -84,11 +84,11 @@ launchers:
   SL_iOS_Current:
     exe: ./node_modules/.bin/saucie
     args:
-      - --browserNameSL="iphone"
-      - --platformSL="OS X 10.10"
-      - --versionSL="9.1"
-      - --deviceNameSL="iPhone 6"
-      - --deviceOrientationSL="portrait"
+      - --browserNameSL=iphone
+      - --platformSL=OS X 10.10
+      - --versionSL=9.1
+      - --deviceNameSL=iPhone 6
+      - --deviceOrientationSL=portrait
       - --no-ct
       - --at
       - -u
@@ -96,11 +96,35 @@ launchers:
   SL_iOS_Last:
     exe: ./node_modules/.bin/saucie
     args:
-      - --browserNameSL="iphone"
-      - --platformSL="OS X 10.10"
-      - --versionSL="8.4"
-      - --deviceNameSL="iPhone 6"
-      - --deviceOrientationSL="portrait"
+      - --browserNameSL=iphone
+      - --platformSL=OS X 10.10
+      - --versionSL=8.4
+      - --deviceNameSL=iPhone 6
+      - --deviceOrientationSL=portrait
+      - --no-ct
+      - --at
+      - -u
+    protocol: browser
+  SL_Android_5:
+    exe: ./node_modules/.bin/saucie
+    args:
+      - --browserNameSL=android
+      - --platformSL=Linux
+      - --versionSL=5.1
+      - --deviceNameSL=Android Emulator
+      - --deviceOrientationSL=portrait
+      - --no-ct
+      - --at
+      - -u
+    protocol: browser
+  SL_Android_4:
+    exe: ./node_modules/.bin/saucie
+    args:
+      - --browserNameSL=android
+      - --platformSL=Linux
+      - --versionSL=4.4
+      - --deviceNameSL=Android Emulator
+      - --deviceOrientationSL=portrait
       - --no-ct
       - --at
       - -u
@@ -109,10 +133,13 @@ launch_in_dev:
   - Node
   - PhantomJS
 launch_in_ci:
-  - SL_Chrome_Current
-  - SL_Firefox_Current
-  - SL_Safari_Current
-  - SL_Safari_Last
-  - SL_MS_Edge
-  - SL_IE_11
-  - SL_iOS_Current
+  # - SL_Chrome_Current
+  # - SL_Firefox_Current
+  # - SL_Safari_Current
+  # - SL_Safari_Last
+  # - SL_MS_Edge
+  # - SL_IE_11
+  # - SL_iOS_Current
+  # - SL_iOS_Last
+  - SL_Android_5
+  - SL_Android_4

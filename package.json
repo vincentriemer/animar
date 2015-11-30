@@ -33,7 +33,7 @@
     "test": "./node_modules/.bin/babel-node ./node_modules/.bin/isparta cover test-scripts/node-test.js",
     "pretest": "npm run clean-coverage && npm run lint && npm run typecheck",
     "dev-test": "./node_modules/.bin/testem",
-    "ci-test": "./node_modules/.bin/testem ci --port 8080",
+    "ci-test": "./node_modules/.bin/testem ci",
     "prepublish": "npm run clean-lib && ./node_modules/.bin/babel ./src --out-dir ./lib"
   },
   "main": "lib/animar.js",
