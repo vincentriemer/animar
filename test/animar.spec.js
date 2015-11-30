@@ -1,4 +1,8 @@
 /// <reference path="../typings/tsd.d.ts"/>
+
+// Compatibility Polyfills
+require('core-js/es6/map');
+
 global.__DEV__ = true;
 
 var Animar = require('../src/animar');
