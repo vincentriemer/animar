@@ -1,0 +1,82 @@
+framework: mocha
+before_tests: webpack --config webpack.config.test.js
+after_tests: rm -rf browser-test
+src_files:
+  - test/*.js
+timeout: 600
+parallel: 5
+port: 7000
+on_start: ./sauce-scripts/saucie-connect.js
+on_exit: ./sauce-scripts/saucie-disconnect.js
+serve_files:
+  - node_modules/chai/chai.js
+  - node_modules/sinon/pkg/sinon.js
+  - test-scripts/browser-test.js
+  - browser-test/*.js
+launchers:
+  Node:
+    command: >
+      ./node_modules/.bin/babel-node
+      ./node_modules/.bin/isparta cover
+      test-scripts/node-test.js
+    protocol: tap
+  SL_Chrome_Current:
+    command: >
+      ./node_modules/.bin/saucie
+      --browserNameSL="chrome"
+      --no-ct --at -u
+    protocol: browser
+  SL_Firefox_Current:
+    command: >
+      ./node_modules/.bin/saucie
+      --browserNameSL="firefox"
+      --versionSL="42"
+      --no-ct --at -u
+    protocol: browser
+  SL_Safari_Current:
+    command: >
+      ./node_modules/.bin/saucie
+      --browserNameSL="safari"
+      --versionSL="9"
+      --no-ct --at -u
+    protocol: browser
+  SL_Safari_Last:
+    command: >
+      ./node_modules/.bin/saucie
+      --browserNameSL="safari"
+      --versionSL="8"
+      --no-ct --at -u
+    protocol: browser
+  SL_MS_Edge:
+    command: >
+      ./node_modules/.bin/saucie
+      --browserNameSL="microsoftedge"
+      --no-ct --at -u
+    protocol: browser
+  SL_IE_11:
+    command: >
+      ./node_modules/.bin/saucie
+      --browserNameSL="internet explorer"
+      --versionSL="11"
+      --no-ct --at -u
+    protocol: browser
+  SL_iOS_Current:
+    command: >
+      ./node_modules/.bin/saucie
+      --browserNameSL="iphone"
+      --platformSL="OS X 10.10"
+      --versionSL="9.1"
+      --deviceNameSL="iPhone 6"
+      --no-ct --at -u
+    protocol: browser
+launch_in_dev:
+  - Node
+  - PhantomJS
+launch_in_ci:
+  - SL_Chrome_Current
+  - SL_Firefox_Current
+  - SL_Safari_Current
+  - SL_Safari_Last
+  - SL_MS_Edge
+  - SL_IE_11
+  - SL_iOS_Current
