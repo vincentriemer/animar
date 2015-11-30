@@ -25,6 +25,8 @@ launchers:
     exe: ./node_modules/.bin/saucie
     args:
       - --browserNameSL="chrome"
+      - --platformSL="Linux"
+      - --versionSL="46.0"
       - --no-ct
       - --at
       - -u
@@ -33,7 +35,8 @@ launchers:
     exe: ./node_modules/.bin/saucie
     args:
       - --browserNameSL="firefox"
-      - --versionSL="42"
+      - --platformSL="Linux"
+      - --versionSL="42.0"
       - --no-ct
       - --at
       - -u
@@ -42,7 +45,8 @@ launchers:
     exe: ./node_modules/.bin/saucie
     args:
       - --browserNameSL="safari"
-      - --versionSL="9"
+      - --platformSL="OS X 10.11"
+      - --versionSL="9.0"
       - --no-ct
       - --at
       - -u
@@ -51,7 +55,8 @@ launchers:
     exe: ./node_modules/.bin/saucie
     args:
       - --browserNameSL="safari"
-      - --versionSL="8"
+      - --platformSL="OS X 10.10"
+      - --versionSL="8.0"
       - --no-ct
       - --at
       - -u
@@ -60,6 +65,8 @@ launchers:
     exe: ./node_modules/.bin/saucie
     args:
       - --browserNameSL="microsoftedge"
+      - --platformSL="Windows 10"
+      - --versionSL="20.10240"
       - --no-ct
       - --at
       - -u
@@ -68,7 +75,8 @@ launchers:
     exe: ./node_modules/.bin/saucie
     args:
       - --browserNameSL="internet explorer"
-      - --versionSL="11"
+      - --platformSL="Windows 7"
+      - --versionSL="11.0"
       - --no-ct
       - --at
       - -u
@@ -80,6 +88,19 @@ launchers:
       - --platformSL="OS X 10.10"
       - --versionSL="9.1"
       - --deviceNameSL="iPhone 6"
+      - --deviceOrientationSL="portrait"
+      - --no-ct
+      - --at
+      - -u
+    protocol: browser
+  SL_iOS_Last:
+    exe: ./node_modules/.bin/saucie
+    args:
+      - --browserNameSL="iphone"
+      - --platformSL="OS X 10.10"
+      - --versionSL="8.4"
+      - --deviceNameSL="iPhone 6"
+      - --deviceOrientationSL="portrait"
       - --no-ct
       - --at
       - -u
