@@ -5,7 +5,7 @@
   "src_files": [
     "test/*.js"
   ],
-  "timeout": 600,
+  "timeout": 900,
   "parallel": 5,
   "port": 7000,
   "on_start": "./sauce-scripts/saucie-connect.js",
@@ -50,6 +50,26 @@
       "exe": "./node_modules/.bin/saucie",
       "args": ["-b", "internet explorer", "-v", "11", "--no-ct", "--at", "-u"],
       "protocol": "browser"
+    },
+    "SL_iOS_Current": {
+      "exe": "./node_modules/.bin/saucie",
+      "args": ["-b", "iphone" ,"-p", "OS X 10.10", "-v", "9.1", "--dn", "iPhone 6", "--do", "portrait", "--no-ct", "--at", "-u"],
+      "protocol": "browser"
+    },
+    "SL_Android_Current": {
+      "exe": "./node_modules/.bin/saucie",
+      "args": ["-b", "android" ,"-p", "Linux", "-v", "5.1", "--dn", "Android Emulator", "--do", "portrait", "--no-ct", "--at", "-u"],
+      "protocol": "browser"
+    },
+    "SL_iOS_Last": {
+      "exe": "./node_modules/.bin/saucie",
+      "args": ["-b", "iphone" ,"-p", "OS X 10.10", "-v", "8.4", "--dn", "iPhone 6", "--do", "portrait", "--no-ct", "--at", "-u"],
+      "protocol": "browser"
+    },
+    "SL_Android_Last": {
+      "exe": "./node_modules/.bin/saucie",
+      "args": ["-b", "android" ,"-p", "Linux", "-v", "4.4", "--dn", "Android Emulator", "--do", "portrait", "--no-ct", "--at", "-u"],
+      "protocol": "browser"
     }
   },
   "launch_in_dev": [
@@ -62,6 +82,10 @@
     "SL_Safari_Current",
     "SL_Safari_Last",
     "SL_MS_Edge",
-    "SL_IE_11"
+    "SL_IE_11",
+    "SL_iOS_Current",
+    "SL_Android_Current",
+    "SL_iOS_Last",
+    "SL_Android_Last"
   ]
 }
