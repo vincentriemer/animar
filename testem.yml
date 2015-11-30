@@ -24,7 +24,6 @@ launchers:
     command: >
       ./node_modules/.bin/saucie
       --browserNameSL="chrome"
-      --sessionNameSL="Animar Chrome-Current Unit Tests"
       --no-ct --at -u
     protocol: browser
   SL_Firefox_Current:
@@ -32,7 +31,6 @@ launchers:
       ./node_modules/.bin/saucie
       --browserNameSL="firefox"
       --versionSL="42"
-      --sessionNameSL="Animar Firefox-Current Unit Tests"
       --no-ct --at -u
     protocol: browser
   SL_Safari_Current:
@@ -40,7 +38,6 @@ launchers:
       ./node_modules/.bin/saucie
       --browserNameSL="safari"
       --versionSL="9"
-      --sessionNameSL="Animar Safari-Current Unit Tests"
       --no-ct --at -u
     protocol: browser
   SL_Safari_Last:
@@ -48,14 +45,12 @@ launchers:
       ./node_modules/.bin/saucie
       --browserNameSL="safari"
       --versionSL="8"
-      --sessionNameSL="Animar Safari-Last Unit Tests"
       --no-ct --at -u
     protocol: browser
   SL_MS_Edge:
     command: >
       ./node_modules/.bin/saucie
       --browserNameSL="microsoftedge"
-      --sessionNameSL="Animar Edge Unit Tests"
       --no-ct --at -u
     protocol: browser
   SL_IE_11:
@@ -63,7 +58,6 @@ launchers:
       ./node_modules/.bin/saucie
       --browserNameSL="internet explorer"
       --versionSL="11"
-      --sessionNameSL="Animar Internet Explorer 11 Unit Tests"
       --no-ct --at -u
     protocol: browser
   SL_iOS_Current:
@@ -73,7 +67,6 @@ launchers:
       --platformSL="OS X 10.10"
       --versionSL="9.1"
       --deviceNameSL="iPhone 6"
-      --sessionNameSL="Animar iOS 9 Unit Tests"
       --no-ct --at -u
     protocol: browser
 launch_in_dev:
