@@ -133,13 +133,13 @@ launch_in_dev:
   - Node
   - PhantomJS
 launch_in_ci:
-  # - SL_Chrome_Current
-  # - SL_Firefox_Current
-  # - SL_Safari_Current
-  # - SL_Safari_Last
-  # - SL_MS_Edge
-  # - SL_IE_11
-  # - SL_iOS_Current
-  # - SL_iOS_Last
+  - SL_Chrome_Current
+  - SL_Firefox_Current
+  - SL_Safari_Current
+  - SL_Safari_Last
+  - SL_MS_Edge
+  - SL_IE_11
+  - SL_iOS_Current
+  - SL_iOS_Last
   - SL_Android_5
   - SL_Android_4
