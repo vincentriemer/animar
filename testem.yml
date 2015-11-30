@@ -43,7 +43,6 @@ launchers:
     args:
       - --browserNameSL="safari"
       - --versionSL="9"
-      - --no-ct --at -u
       - --no-ct
       - --at
       - -u
