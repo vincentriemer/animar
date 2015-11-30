@@ -83,7 +83,6 @@
     "SL_Safari_Last",
     "SL_MS_Edge",
     "SL_IE_11",
-    "SL_iOS_Current",
-    "SL_Android_Current"
+    "SL_iOS_Current"
   ]
 }
