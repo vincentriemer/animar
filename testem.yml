@@ -129,9 +129,38 @@ launchers:
       - --at
       - -u
     protocol: browser
+  SL_Opera_Current:
+    exe: ./node_modules/.bin/saucie
+    args:
+      - --browserNameSL=opera
+      - --platformSL=Linux
+      - --versionSL=12.15
+      - --no-ct
+      - --at
+      - -u
+    protocol: browser
+  SL_IE_10:
+    exe: ./node_modules/.bin/saucie
+    args:
+      - --browserNameSL=internet explorer
+      - --platformSL=Windows 7
+      - --versionSL=10.0
+      - --no-ct
+      - --at
+      - -u
+    protocol: browser
+  SL_IE_9:
+    exe: ./node_modules/.bin/saucie
+    args:
+      - --browserNameSL=internet explorer
+      - --platformSL=Windows 7
+      - --versionSL=9.0
+      - --no-ct
+      - --at
+      - -u
+    protocol: browser
 launch_in_dev:
   - Node
-  - PhantomJS
 launch_in_ci:
   - SL_Chrome_Current
   - SL_Firefox_Current
@@ -143,3 +172,6 @@ launch_in_ci:
   - SL_iOS_Last
   - SL_Android_5
   - SL_Android_4
+  - SL_Opera_Current
+  - SL_IE_10
+  - SL_IE_9
