@@ -84,8 +84,8 @@ describe('Helpers', () => {
         Helpers.applyStyle(mockElement, 'blah', '20px');
       } catch (e) {} finally {
         assert.isTrue(Helpers.applyStyle.threw());
-        exceptionSpy.restore();
       }
+      exceptionSpy.restore();
     });
   });
 

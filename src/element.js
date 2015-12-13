@@ -1,4 +1,4 @@
-// @flow
+/* @flow */
 import type * as Attribute from './attribute.js';
 import type * as Animation from './animation.js';
 import { applyStyle } from './helpers.js';

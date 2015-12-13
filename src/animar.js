@@ -1,13 +1,8 @@
 /* @flow */
 /* global __DEV__ */
-import Animation from './animation.js';
-import Attribute from './attribute.js';
-import Element from './element.js';
-
-if (__DEV__) {
-  var Helpers = require('./helpers');
-  var getStartValue = Helpers.getStartValue;
-}
+const Animation = require('./animation'),
+  Attribute = require('./attribute'),
+  Element = require('./element');
 
 type ElementMap = Map<HTMLElement, Element>;
 type AnimationOptions = { // user-provided so can't assume correct type or existance
@@ -23,18 +18,15 @@ type ChainOptions = {
   totalDuration: number
 }
 type FullChainObject = {
-  start: Function,
-  loop: Function,
-  add: Function,
-  then: Function
+  start: StartFunction,
+  loop: LoopFunction,
+  add: AddFunction,
+  then: ThenFunction
 };
-type ThenChainObject = {
-  add: Function
-};
-type LoopChainObject = {
-  start: Function
-}
-type AddChainObject = FullChainObject;
+type AddFunction = (element: HTMLElement, attributes: AttributesOptions, options: AnimationOptions) => FullChainObject;
+type StartFunction = () => void;
+type ThenFunction = (wait: number) => { add: AddFunction };
+type LoopFunction = () => { start: StartFunction };
 
 const EMPTY_ANIMATION_OPTIONS = {
   delay: null,
@@ -112,13 +104,23 @@ module.exports = class Animar {
   }
 
   resolveStartValue(start: ?number, element: HTMLElement, attribute: string, currentChain: ElementMap): ?number {
+    // just return the start value if it was supplied
+    if (start != null) { return start; }
+
+    // check to see if start value can be inferred from current chain element map
     if (currentChain.has(element) && currentChain.get(element).hasAttribute(attribute)) {
       start = currentChain.get(element).getModelFromAttribute(attribute);
-    } else if (this.elementMap.has(element) && this.elementMap.get(element).hasAttribute(attribute)) {
+    }
+    // check to see if start value can be inferred from existing element map in Animar instance
+    else if (this.elementMap.has(element) && this.elementMap.get(element).hasAttribute(attribute)) {
       start = this.elementMap.get(element).getModelFromAttribute(attribute);
-    } else {
+    }
+    // if in development mode calculate the start value by querying the DOM
+    else {
+      /* istanbul ignore else */
       if (__DEV__) {
         // TODO: Add development warning
+          var getStartValue = require('./helpers').getStartValue;
           start = getStartValue(element, attribute);
       }
     }
@@ -197,7 +199,7 @@ module.exports = class Animar {
     };
   }
 
-  thenChainFunctionFactory(chainOptions: ChainOptions, chain: ElementMap): Function {
+  thenChainFunctionFactory(chainOptions: ChainOptions, chain: ElementMap): ThenFunction {
     return (wait=0) => {
       chainOptions.totalDuration += (chainOptions.currentDuration + wait);
       chainOptions.currentDuration = 0;
@@ -208,14 +210,14 @@ module.exports = class Animar {
     };
   }
 
-  addChainFunctionFactory(chainOptions: ChainOptions, chain: ElementMap): Function {
+  addChainFunctionFactory(chainOptions: ChainOptions, chain: ElementMap): AddFunction {
     return (element, attributes, options) => {
       let resolvedOptions = typeof options === 'undefined' ? EMPTY_ANIMATION_OPTIONS : options;
       return this._add(element, attributes, resolvedOptions, chainOptions, chain);
     };
   }
 
-  loopChainFunctionFactory(chainOptions: ChainOptions, chain: ElementMap): Function {
+  loopChainFunctionFactory(chainOptions: ChainOptions, chain: ElementMap): LoopFunction {
     return () => {
       chainOptions.totalDuration += chainOptions.currentDuration;
 
@@ -240,7 +242,7 @@ module.exports = class Animar {
     };
   }
 
-  startChainFunctionFactory(chain: ElementMap): Function {
+  startChainFunctionFactory(chain: ElementMap): StartFunction {
     return () => {
       console.log(chain);
       this.elementMap = this.mergeElementMaps(this.elementMap, chain);

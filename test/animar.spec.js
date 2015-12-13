@@ -6,6 +6,8 @@ require('core-js/es6/map');
 global.__DEV__ = true;
 
 var Animar = require('../src/animar');
+var Element = require('../src/element');
+var Attribute = require('../src/attribute');
 var assert = chai.assert;
 
 const EMPTY_ANIMATION_OPTIONS = {
@@ -180,6 +182,51 @@ describe('Animar', () => {
       assert.isTrue(mergeStub.called);
       assert.isTrue(mergeStub.calledWith(targetMap.get('test')));
       assert.equal(result.get('test'), 'foo');
+    });
+  });
+
+  describe('#resolveStartValue', () => {
+    let testElement;
+    beforeEach(() => {
+      testElement = document.getElementById('target1');
+    });
+
+    it('should return the provided start value if it is provided', () => {
+      let result = animar.resolveStartValue(13, testElement, 'translateX', new Map());
+      assert.equal(result, 13);
+    });
+
+    it('should return an inferred start value from the current chain', () => {
+      let exampleElement = new Element(testElement);
+      let exampleAttribute = new Attribute('translateX', 13);
+      exampleElement.addAttribute('translateX', exampleAttribute);
+      let testChain = new Map().set(testElement, exampleElement);
+
+      let result = animar.resolveStartValue(null, testElement, 'translateX', testChain);
+      assert.equal(result, 13);
+    });
+
+    it('should return an inferred start value from animar\'s element map', () => {
+      let exampleElement = new Element(testElement);
+      let exampleAttribute = new Attribute('translateX', 13);
+      exampleElement.addAttribute('translateX', exampleAttribute);
+      animar.elementMap = new Map().set(testElement, exampleElement);
+
+      let result = animar.resolveStartValue(null, testElement, 'translateX', new Map());
+      assert.equal(result, 13);
+    });
+
+    it('should call the helper getStartValue if the start value cannot be inferred', () => {
+      let Helpers = require('../src/helpers');
+      let getStartValueStub = sinon.stub(Helpers, 'getStartValue').returns(13);
+      let attributeString = 'translateX';
+      let result = animar.resolveStartValue(null, testElement, attributeString, new Map());
+
+      assert.equal(result, 13);
+      assert.isTrue(getStartValueStub.called);
+      assert.isTrue(getStartValueStub.calledWith(testElement, attributeString));
+
+      getStartValueStub.restore();
     });
   });
 });
