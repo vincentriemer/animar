@@ -18,7 +18,7 @@ const EMPTY_ANIMATION_OPTIONS = {
   loop: null
 };
 
-function propagateToGlobal (window) {
+function propagateToGlobal(window) {
   for (let key in window) {
     if (!window.hasOwnProperty(key)) continue;
     if (key in global) continue;
@@ -64,7 +64,7 @@ describe('Animar', () => {
   afterEach(() => {
     if (BROWSER) {
       let wrapper = document.getElementById('wrapper');
-      while(wrapper.hasChildNodes()) {
+      while (wrapper.hasChildNodes()) {
         wrapper.removeChild(wrapper.lastChild);
       }
     }
@@ -94,8 +94,11 @@ describe('Animar', () => {
       expectedResult = 'chain object';
       animar._add = sinon.stub().returns(expectedResult);
       testElement = window.document.getElementById('target1');
-      testAttributes = { test: [0, 100] };
-      testOptions = { delay: 0, easingFunction: () => {}, duration: 60, loop: false };
+      testAttributes = {test: [0, 100]};
+      testOptions = {
+        delay: 0, easingFunction: () => {
+        }, duration: 60, loop: false
+      };
     });
 
     it('should call the private _add function passing in chain defaults and parameters provided to it', () => {
@@ -157,17 +160,18 @@ describe('Animar', () => {
       assert.equal(result.get('foo'), expected);
     });
 
-    it('should call the merge function on elements which exist in both maps and put the output into the result', () => {
-      let mergeStub = sinon.stub().returns('foo');
-      sourceMap.set('test', { merge: mergeStub });
-      targetMap.set('test', { foo: 'bar' });
+    it('should call the merge function on elements which exist in both maps and put the output into the result',
+      () => {
+        let mergeStub = sinon.stub().returns('foo');
+        sourceMap.set('test', {merge: mergeStub});
+        targetMap.set('test', {foo: 'bar'});
 
-      let result = animar.mergeElementMaps(sourceMap, targetMap);
+        let result = animar.mergeElementMaps(sourceMap, targetMap);
 
-      assert.isTrue(mergeStub.called);
-      assert.isTrue(mergeStub.calledWith(targetMap.get('test')));
-      assert.equal(result.get('test'), 'foo');
-    });
+        assert.isTrue(mergeStub.called);
+        assert.isTrue(mergeStub.calledWith(targetMap.get('test')));
+        assert.equal(result.get('test'), 'foo');
+      });
   });
 
   describe('#resolveStartValue', () => {
@@ -212,6 +216,33 @@ describe('Animar', () => {
       assert.isTrue(getStartValueStub.calledWith(testElement, attributeString));
 
       getStartValueStub.restore();
+    });
+  });
+
+  describe('#resolveAnimationOptions', () => {
+    it('should return the same object provided to it if all properties are provided', () => {
+      let testOptions = {
+        delay: 0,
+        easingFunction: () => {
+        },
+        duration: 60,
+        loop: false
+      };
+
+      let result = animar.resolveAnimationOptions(testOptions);
+      assert.deepEqual(result, testOptions);
+    });
+
+    it('should return defaults for the properties that are not provided', () => {
+      let defaultOptions = {
+        delay: animar.defaults.delay,
+        easingFunction: animar.defaults.easingFunction,
+        duration: animar.defaults.duration,
+        loop: animar.defaults.loop
+      };
+
+      let result = animar.resolveAnimationOptions({});
+      assert.deepEqual(result, defaultOptions);
     });
   });
 });

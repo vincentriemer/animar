@@ -29,9 +29,9 @@ type FullChainObject = {
   add: AddFunction,
   then: ThenFunction
 };
-type AddFunction = (element: HTMLElement, attributes: AttributesOptions, options: AnimationOptions) => FullChainObject;
+type AddFunction = (element:HTMLElement, attributes:AttributesOptions, options:AnimationOptions) => FullChainObject;
 type StartFunction = () => void;
-type ThenFunction = (wait: number) => { add: AddFunction };
+type ThenFunction = (wait:number) => { add: AddFunction };
 type LoopFunction = () => { start: StartFunction };
 
 const EMPTY_ANIMATION_OPTIONS = {
@@ -42,24 +42,26 @@ const EMPTY_ANIMATION_OPTIONS = {
 };
 
 class Animar {
-  ticking: boolean;
-  elementMap: ElementMap;
-  defaults: { delay: number, easingFunction: Function, duration: number, loop: boolean };
-  timescale: number;
+  ticking:boolean;
+  elementMap:ElementMap;
+  defaults:{ delay: number, easingFunction: Function, duration: number, loop: boolean };
+  timescale:number;
 
   constructor() {
     this.ticking = false;
     this.elementMap = new Map();
     this.defaults = {
       delay: 0,
-      easingFunction: (t, b, c, d) => { return c * t / d + b; }, // linear easing function
+      easingFunction: (t, b, c, d) => {
+        return c * t / d + b;
+      }, // linear easing function
       duration: 60,
       loop: false
     };
     this.timescale = 1;
   }
 
-  add(element: HTMLElement, attributes: AttributesOptions, options: AnimationOptions): FullChainObject {
+  add(element:HTMLElement, attributes:AttributesOptions, options:AnimationOptions):FullChainObject {
     let resolvedOptions = options == null ? EMPTY_ANIMATION_OPTIONS : options;
 
     /* istanbul ignore else */
@@ -77,6 +79,7 @@ class Animar {
         throw "Parameter 'attributes' should be of type Object";
       }
       // TODO: Validate attributes contents
+      // TODO: Validate option types
     }
 
     return this._add(
@@ -92,7 +95,7 @@ class Animar {
     );
   }
 
-  mergeElementMaps(src: ElementMap, target: ElementMap): ElementMap {
+  mergeElementMaps(src:ElementMap, target:ElementMap):ElementMap {
     let result = new Map(src);
 
     target.forEach((element, elementRef) => {
@@ -110,9 +113,11 @@ class Animar {
     return result;
   }
 
-  resolveStartValue(start: ?number, element: HTMLElement, attribute: string, currentChain: ElementMap): ?number {
+  resolveStartValue(start:?number, element:HTMLElement, attribute:string, currentChain:ElementMap):?number {
     // just return the start value if it was supplied
-    if (start != null) { return start; }
+    if (start != null) {
+      return start;
+    }
 
     // TODO: Replace existence logic with hasAttribute once FlowType has fixed its bug
     let currentChainElement = currentChain.get(element);
@@ -131,14 +136,14 @@ class Animar {
       /* istanbul ignore else */
       if (__DEV__) {
         // TODO: Add development warning
-          var getStartValue = require('./helpers').getStartValue;
-          start = getStartValue(element, attribute);
+        var getStartValue = require('./helpers').getStartValue;
+        start = getStartValue(element, attribute);
       }
     }
     return start;
   }
 
-  resolveAnimationOptions(options: AnimationOptions): ResolvedAnimationOptions {
+  resolveAnimationOptions(options:AnimationOptions):ResolvedAnimationOptions {
     return {
       delay: options.delay == null ?
         this.defaults.delay : options.delay,
@@ -151,14 +156,12 @@ class Animar {
     };
   }
 
-  _add(element: HTMLElement,
-       attributes: { [key: string]: number | Array<number> },
-       options: AnimationOptions,
-       chainOptions: ChainOptions,
-       currentChain: ElementMap): FullChainObject
-   {
-    const resolvedOptions = this.resolveAnimationOptions(options);
-
+  _add(element:HTMLElement,
+       attributes:{ [key: string]: number | Array<number> },
+       options:AnimationOptions,
+       chainOptions:ChainOptions,
+       currentChain:ElementMap):FullChainObject {
+    let resolvedOptions = this.resolveAnimationOptions(options);
     for (const attribute in attributes) {
       if (attributes.hasOwnProperty(attribute)) {
         const attributeValue = attributes[attribute];
@@ -174,38 +177,50 @@ class Animar {
         start = this.resolveStartValue(start, element, attribute, currentChain);
 
         if (start == null) {
-          throw 'Animation start value is not provided and cannot be infered';
+          throw 'Animation start value is not provided and cannot be inferred';
         } else {
-          start -= destination;
-          let newAnimation = new Animation(
-            0 - (resolvedOptions.delay + chainOptions.delay),
-            start,
-            0 - start,
-            resolvedOptions.duration,
-            resolvedOptions.easingFunction,
-            resolvedOptions.loop,
-            resolvedOptions.delay + chainOptions.delay,
-            0
-          );
-
-          let newAttribute = new Attribute(attribute, destination);
-          newAttribute.addAnimation(newAnimation);
-
-          let newElement = new Element(element);
-          newElement.addAttribute(attribute, newAttribute);
-
-          let tempEMap = new Map();
-          tempEMap.set(element, newElement);
-
-          currentChain = this.mergeElementMaps(currentChain, tempEMap);
+          currentChain = this.addAnimationToChain(start, destination, resolvedOptions, chainOptions, attribute,
+            element, currentChain);
         }
       }
     }
-    chainOptions.currentDuration = Math.max(chainOptions.currentDuration, resolvedOptions.delay + resolvedOptions.duration);
+    chainOptions.currentDuration = Math.max(chainOptions.currentDuration,
+      resolvedOptions.delay + resolvedOptions.duration);
     return this.fullChainObjectFactory(chainOptions, currentChain);
   }
 
-  fullChainObjectFactory(chainOptions: ChainOptions, chain: ElementMap): FullChainObject {
+  addAnimationToChain(start:number,
+                      destination:number,
+                      resolvedOptions:ResolvedAnimationOptions,
+                      chainOptions:ChainOptions,
+                      attribute:string,
+                      element:HTMLElement,
+                      currentChain:ElementMap):ElementMap {
+    start -= destination;
+    let newAnimation = new Animation(
+      0 - (resolvedOptions.delay + chainOptions.delay),
+      start,
+      0 - start,
+      resolvedOptions.duration,
+      resolvedOptions.easingFunction,
+      resolvedOptions.loop,
+      resolvedOptions.delay + chainOptions.delay,
+      0
+    );
+
+    let newAttribute = new Attribute(attribute, destination);
+    newAttribute.addAnimation(newAnimation);
+
+    let newElement = new Element(element);
+    newElement.addAttribute(attribute, newAttribute);
+
+    let tempEMap = new Map();
+    tempEMap.set(element, newElement);
+
+    return this.mergeElementMaps(currentChain, tempEMap);
+  }
+
+  fullChainObjectFactory(chainOptions:ChainOptions, chain:ElementMap):FullChainObject {
     return {
       start: this.startChainFunctionFactory(chain),
       loop: this.loopChainFunctionFactory(chainOptions, chain),
@@ -214,8 +229,8 @@ class Animar {
     };
   }
 
-  thenChainFunctionFactory(chainOptions: ChainOptions, chain: ElementMap): ThenFunction {
-    return (wait=0) => {
+  thenChainFunctionFactory(chainOptions:ChainOptions, chain:ElementMap):ThenFunction {
+    return (wait = 0) => {
       chainOptions.totalDuration += (chainOptions.currentDuration + wait);
       chainOptions.currentDuration = 0;
       chainOptions.delay = chainOptions.totalDuration;
@@ -225,14 +240,14 @@ class Animar {
     };
   }
 
-  addChainFunctionFactory(chainOptions: ChainOptions, chain: ElementMap): AddFunction {
+  addChainFunctionFactory(chainOptions:ChainOptions, chain:ElementMap):AddFunction {
     return (element, attributes, options) => {
       let resolvedOptions = typeof options === 'undefined' ? EMPTY_ANIMATION_OPTIONS : options;
       return this._add(element, attributes, resolvedOptions, chainOptions, chain);
     };
   }
 
-  loopChainFunctionFactory(chainOptions: ChainOptions, chain: ElementMap): LoopFunction {
+  loopChainFunctionFactory(chainOptions:ChainOptions, chain:ElementMap):LoopFunction {
     return () => {
       chainOptions.totalDuration += chainOptions.currentDuration;
 
@@ -257,7 +272,7 @@ class Animar {
     };
   }
 
-  startChainFunctionFactory(chain: ElementMap): StartFunction {
+  startChainFunctionFactory(chain:ElementMap):StartFunction {
     return () => {
       this.elementMap = this.mergeElementMaps(this.elementMap, chain);
       this.requestTick();
@@ -287,7 +302,7 @@ class Animar {
     });
   }
 
-  step(): boolean {
+  step():boolean {
     let somethingChanged = false;
     this.elementMap.forEach(element => {
       if (element.step(this.timescale)) {

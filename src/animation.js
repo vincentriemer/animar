@@ -1,24 +1,22 @@
 /* @flow */
 class Animation {
-  currentIteration: number;
-  startValue: number;
-  changeInValue: number;
-  totalIterations: number;
-  easingFunction: Function;
-  loop: boolean;
-  delay: number;
-  wait: number;
+  currentIteration:number;
+  startValue:number;
+  changeInValue:number;
+  totalIterations:number;
+  easingFunction:Function;
+  loop:boolean;
+  delay:number;
+  wait:number;
 
-  constructor(
-    currentIteration: number,
-    startValue: number,
-    changeInValue: number,
-    totalIterations:number,
-    easingFunction: Function,
-    loop: boolean,
-    delay: number,
-    wait: number
-  ) {
+  constructor(currentIteration:number,
+              startValue:number,
+              changeInValue:number,
+              totalIterations:number,
+              easingFunction:Function,
+              loop:boolean,
+              delay:number,
+              wait:number) {
     this.currentIteration = currentIteration;
     this.startValue = startValue;
     this.changeInValue = changeInValue;
@@ -29,7 +27,7 @@ class Animation {
     this.wait = wait;
   }
 
-  step(timescale: number): boolean {
+  step(timescale:number):boolean {
     if (this.currentIteration < (this.totalIterations + this.wait)) {
       this.currentIteration += timescale;
     } else if (this.loop) {

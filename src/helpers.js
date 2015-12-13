@@ -1,5 +1,6 @@
 /* @flow */
 /// <reference path="../typings/tsd.d.ts"/>
+import type Animation from './animation';
 
 export const TRANSFORM_ATTRIBUTES = [
   'translateX',
@@ -14,22 +15,25 @@ export const TRANSFORM_ATTRIBUTES = [
   'rotateZ'
 ];
 
-export function getTransformMatrix(element: HTMLElement): Array<number> {
+export function getTransformMatrix(element:HTMLElement):Array<number> {
   let computedStyle = window.getComputedStyle(element, null);
   /* istanbul ignore next */
   let transformString = computedStyle.getPropertyValue('-webkit-transform') ||
-                        computedStyle.getPropertyValue('-moz-transform') ||
-                        computedStyle.getPropertyValue('-ms-transform') ||
-                        computedStyle.getPropertyValue('-o-transform') ||
-                        computedStyle.getPropertyValue('transform') ||
-                        'none';
-  if (transformString === 'none') { transformString = 'matrix(1, 0, 0, 1, 0, 0)'; }
+    computedStyle.getPropertyValue('-moz-transform') ||
+    computedStyle.getPropertyValue('-ms-transform') ||
+    computedStyle.getPropertyValue('-o-transform') ||
+    computedStyle.getPropertyValue('transform') ||
+    'none';
+  if (transformString === 'none') {
+    transformString = 'matrix(1, 0, 0, 1, 0, 0)';
+  }
   const values = transformString.split('(')[1].split(')')[0].split(',');
-  const floatValues = values.map(function(x) { return parseFloat(x, 10); } );
-  return floatValues;
+  return values.map(function (x) {
+    return parseFloat(x, 10);
+  });
 }
 
-export function getTransform(element: HTMLElement, attribute: string): number {
+export function getTransform(element:HTMLElement, attribute:string):number {
   let values = this.getTransformMatrix(element);
   switch (attribute) {
     case ('translateX'):
@@ -47,17 +51,17 @@ export function getTransform(element: HTMLElement, attribute: string): number {
   }
 }
 
-export function getOpacity(element: HTMLElement): number {
+export function getOpacity(element:HTMLElement):number {
   let computedStyle = window.getComputedStyle(element, null);
   return parseFloat(computedStyle.getPropertyValue('opacity'));
 }
 
-export function setTransform(element: HTMLElement, transformString: string): HTMLElement {
+export function setTransform(element:HTMLElement, transformString:string):HTMLElement {
   element.style.transform = transformString;
   return element;
 }
 
-export function applyStyle(element: HTMLElement, attributeName: string, attributeValue: string) {
+export function applyStyle(element:HTMLElement, attributeName:string, attributeValue:string) {
   switch (attributeName) {
     case ('transform'):
       setTransform(element, attributeValue);
@@ -73,24 +77,26 @@ export function applyStyle(element: HTMLElement, attributeName: string, attribut
   }
 }
 
-export function calculateAnimationValue(animations: Array<any>): number {
+export function calculateAnimationValue(animations:Array<?Animation>):number {
   var result = 0;
 
   animations.forEach(animation => {
-    var currentIteration = animation.currentIteration;
-    if (currentIteration < 0) {
-      currentIteration = 0;
+    if (animation != null) {
+      var currentIteration = animation.currentIteration;
+      if (currentIteration < 0) {
+        currentIteration = 0;
+      }
+      if (currentIteration >= animation.totalIterations) {
+        currentIteration = animation.totalIterations;
+      }
+      result += animation.easingFunction(currentIteration, animation.startValue, animation.changeInValue, animation.totalIterations);
     }
-    if (currentIteration >= animation.totalIterations) {
-      currentIteration = animation.totalIterations;
-    }
-    result += animation.easingFunction(currentIteration, animation.startValue, animation.changeInValue, animation.totalIterations);
   });
 
   return result;
 }
 
-export function getStartValue(element: HTMLElement, attribute: string): number {
+export function getStartValue(element:HTMLElement, attribute:string):number {
   let result = 0;
 
   if (TRANSFORM_ATTRIBUTES.indexOf(attribute) !== -1) {

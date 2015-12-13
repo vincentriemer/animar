@@ -3,51 +3,51 @@ import type Animation from './animation';
 import { calculateAnimationValue, applyStyle, TRANSFORM_ATTRIBUTES} from './helpers';
 
 class Attribute {
-  model: number;
-  animations: Array<?Animation>;
-  name: string;
+  model:number;
+  animations:Array<?Animation>;
+  name:string;
 
-  constructor(name: string, model: number) {
+  constructor(name:string, model:number) {
     this.model = model;
     this.animations = [];
     this.name = name;
   }
 
-  addAnimation(animation: Animation) {
+  addAnimation(animation:Animation) {
     this.animations.push(animation);
   }
 
-  merge(target: Attribute): Attribute {
+  merge(target:Attribute):Attribute {
     let newAttribute = new Attribute(target.name, target.model);
     newAttribute.animations = this.animations.concat(target.animations);
     return newAttribute;
   }
 
-  forEachAnimation(callback: (animation: ?Animation) => ?Animation) {
+  forEachAnimation(callback:(animation:?Animation) => ?Animation) {
     this.animations = this.animations
       .map(callback)
       .filter((x) => x != null);
   }
 
-  step(timescale: number): boolean {
+  step(timescale:number):boolean {
     let somethingChanged = false;
 
     this.animations = this.animations.map(animation => {
-        if (animation != null && animation.step(timescale)) {
-          somethingChanged = true;
-          return animation;
-        }
-      }).filter((x) => x != null);
+      if (animation != null && animation.step(timescale)) {
+        somethingChanged = true;
+        return animation;
+      }
+    }).filter((x) => x != null);
 
     return somethingChanged;
   }
 
-  render(domElement: HTMLElement): string {
+  render(domElement:HTMLElement):string {
     let transformValue = '';
     let targetValue = String(this.model + calculateAnimationValue(this.animations));
 
     const pxRegex = /(perspective)|(translate[XYZ])/,
-          degRegex = /rotate[XYZ]?/;
+      degRegex = /rotate[XYZ]?/;
 
     targetValue += (
       pxRegex.test(this.name) ? 'px' : (

@@ -4,10 +4,10 @@ import type Animation from './animation';
 import { applyStyle } from './helpers';
 
 class Element {
-  attributes: Map<string, Attribute>;
-  domElement: HTMLElement;
+  attributes:Map<string, Attribute>;
+  domElement:HTMLElement;
 
-  constructor(element: HTMLElement) {
+  constructor(element:HTMLElement) {
     this.attributes = new Map();
     this.domElement = element;
   }
@@ -25,7 +25,7 @@ class Element {
     }
   }
 
-  merge(target: Element): Element {
+  merge(target:Element):Element {
     let mergedElement = new Element(this.domElement);
     mergedElement.attributes = new Map(this.attributes);
     target.attributes.forEach((attr, attrName) => {
@@ -45,21 +45,21 @@ class Element {
     return mergedElement;
   }
 
-  addAttribute(attrName: string, attribute: Attribute) {
+  addAttribute(attrName:string, attribute:Attribute) {
     this.attributes.set(attrName, attribute);
   }
 
-  forEachAnimationInAttribute(callback: (animation: ?Animation) => ?Animation) {
+  forEachAnimationInAttribute(callback:(animation:?Animation) => ?Animation) {
     this.attributes.forEach(attribute => {
       attribute.forEachAnimation(callback);
     });
   }
 
-  hasAttribute(attributeName: string): boolean {
+  hasAttribute(attributeName:string):boolean {
     return this.attributes.has(attributeName);
   }
 
-  getModelFromAttribute(attributeName: string): number {
+  getModelFromAttribute(attributeName:string):number {
     let result = null;
 
     // TODO: Replace existence logic with hasAttribute once FlowType has fixed its bug
@@ -73,7 +73,7 @@ class Element {
     return result;
   }
 
-  step(timescale: number): boolean {
+  step(timescale:number):boolean {
     let somethingChanged = false;
     this.attributes.forEach(attribute => {
       if (attribute.step(timescale)) {
