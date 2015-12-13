@@ -244,7 +244,6 @@ module.exports = class Animar {
 
   startChainFunctionFactory(chain: ElementMap): StartFunction {
     return () => {
-      console.log(chain);
       this.elementMap = this.mergeElementMaps(this.elementMap, chain);
       this.requestTick();
     };

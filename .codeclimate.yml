@@ -12,3 +12,4 @@ exclude_paths:
 - test/**/*
 - lib/**/*
 - dist/**/*
+- .codeclimate.yml
