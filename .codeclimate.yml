@@ -4,12 +4,19 @@ engines:
     enabled: true
   fixme:
     enabled: true
+  duplication:
+    enabled: true
+    config:
+      languages:
+      - javascript
 ratings:
   paths:
-  - "src/**.js"
+  - src/*.js
 exclude_paths:
-- node_modules/**/*
-- test/**/*
-- lib/**/*
-- dist/**/*
-- .codeclimate.yml
+- "node_modules/**/*"
+- "test/**/*"
+- "lib/**/*"
+- "dist/**/*"
+- "webpack.*"
+- "test-scripts/**/*"
+- ".codeclimate.yml"

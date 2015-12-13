@@ -1,7 +1,7 @@
 /* @flow */
-import type * as Attribute from './attribute.js';
-import type * as Animation from './animation.js';
-import { applyStyle } from './helpers.js';
+import type Attribute from './attribute';
+import type Animation from './animation';
+import { applyStyle } from './helpers';
 
 module.exports = class Element {
   attributes: Map<string, Attribute>;
@@ -31,8 +31,9 @@ module.exports = class Element {
     target.attributes.forEach((attr, attrName) => {
       let mergedAttribute;
 
-      if (mergedElement.attributes.has(attrName)) {
-        mergedAttribute = mergedElement.attributes.get(attrName).merge(attr);
+      let existingAttribute = mergedElement.attributes.get(attrName);
+      if (existingAttribute != null) {
+        mergedAttribute = existingAttribute.merge(attr);
       } else {
         mergedAttribute = attr;
       }
@@ -58,7 +59,16 @@ module.exports = class Element {
   }
 
   getModelFromAttribute(attributeName: string): number {
-    return this.attributes.get(attributeName).model;
+    let result = null;
+
+    let attribute = this.attributes.get(attributeName);
+    if (attribute != null) {
+      result = attribute.model;
+    } else {
+      throw `No such attribute ${attributeName}`;
+    }
+
+    return result;
   }
 
   step(timescale: number): boolean {

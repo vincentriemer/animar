@@ -1,6 +1,6 @@
 /* @flow */
-import type * as Animation from './animation.js';
-import { calculateAnimationValue, applyStyle, TRANSFORM_ATTRIBUTES} from './helpers.js';
+import type Animation from './animation';
+import { calculateAnimationValue, applyStyle, TRANSFORM_ATTRIBUTES} from './helpers';
 
 module.exports = class Attribute {
   model: number;
@@ -49,13 +49,11 @@ module.exports = class Attribute {
     const pxRegex = /(perspective)|(translate[XYZ])/,
           degRegex = /rotate[XYZ]?/;
 
-    const unit = (
+    targetValue += (
       pxRegex.test(this.name) ? 'px' : (
         degRegex.test(this.name) ? 'deg' : ''
       )
     );
-
-    targetValue += unit;
 
     if (TRANSFORM_ATTRIBUTES.indexOf(this.name) !== -1) {
       transformValue += `${this.name}(${targetValue}) `;

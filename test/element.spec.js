@@ -116,6 +116,12 @@ describe('Element', () => {
 
       assert.equal(testElement.getModelFromAttribute('test'), 23);
     });
+
+    it('should throw an error if attribute doesn\'t exist', () => {
+      assert.throw(() => {
+        testElement.getModelFromAttribute('test');
+      });
+    });
   });
 
   describe('#step()', () => {

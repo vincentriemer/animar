@@ -1,5 +1,6 @@
 [ignore]
-lib
+.*/lib/.*
+.*/node_modules/.*
 [include]
 src
 [libs]

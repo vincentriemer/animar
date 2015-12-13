@@ -11,6 +11,12 @@ type AnimationOptions = { // user-provided so can't assume correct type or exist
   duration: ?any,
   loop: ?any
 };
+type ResolvedAnimationOptions = {
+  delay: number,
+  easingFunction: Function,
+  duration: number,
+  loop: boolean
+};
 type AttributesOptions = { [key: string]: number | Array<number> };
 type ChainOptions = {
   delay: number,
@@ -35,7 +41,7 @@ const EMPTY_ANIMATION_OPTIONS = {
   loop: null
 };
 
-module.exports = class Animar {
+class Animar {
   ticking: boolean;
   elementMap: ElementMap;
   defaults: { delay: number, easingFunction: Function, duration: number, loop: boolean };
@@ -92,8 +98,9 @@ module.exports = class Animar {
     target.forEach((element, elementRef) => {
       let mergedElement;
 
-      if (result.has(elementRef)) {
-        mergedElement = result.get(elementRef).merge(element);
+      let existingElement = result.get(elementRef);
+      if (existingElement != null) {
+        mergedElement = existingElement.merge(element);
       } else {
         mergedElement = element;
       }
@@ -107,13 +114,17 @@ module.exports = class Animar {
     // just return the start value if it was supplied
     if (start != null) { return start; }
 
+    // TODO: Replace existance logic with hasAttribute once FlowType has fixed its bug
+    let currentChainElement = currentChain.get(element);
+    let animarMapElement = this.elementMap.get(element);
+
     // check to see if start value can be inferred from current chain element map
-    if (currentChain.has(element) && currentChain.get(element).hasAttribute(attribute)) {
-      start = currentChain.get(element).getModelFromAttribute(attribute);
+    if (currentChainElement != null && currentChainElement.hasAttribute(attribute)) {
+      start = currentChainElement.getModelFromAttribute(attribute);
     }
     // check to see if start value can be inferred from existing element map in Animar instance
-    else if (this.elementMap.has(element) && this.elementMap.get(element).hasAttribute(attribute)) {
-      start = this.elementMap.get(element).getModelFromAttribute(attribute);
+    else if (animarMapElement != null && animarMapElement.hasAttribute(attribute)) {
+      start = animarMapElement.getModelFromAttribute(attribute);
     }
     // if in development mode calculate the start value by querying the DOM
     else {
@@ -127,13 +138,8 @@ module.exports = class Animar {
     return start;
   }
 
-  _add(element: HTMLElement,
-       attributes: { [key: string]: number | Array<number> },
-       options: AnimationOptions,
-       chainOptions: ChainOptions,
-       currentChain: ElementMap): FullChainObject
-   {
-    const resolvedOptions = {
+  resolveAnimationOptions(options: AnimationOptions): ResolvedAnimationOptions {
+    return {
       delay: options.delay == null ?
         this.defaults.delay : options.delay,
       easingFunction: options.easingFunction == null ?
@@ -143,6 +149,15 @@ module.exports = class Animar {
       loop: options.loop == null ?
         this.defaults.loop : options.loop
     };
+  }
+
+  _add(element: HTMLElement,
+       attributes: { [key: string]: number | Array<number> },
+       options: AnimationOptions,
+       chainOptions: ChainOptions,
+       currentChain: ElementMap): FullChainObject
+   {
+    const resolvedOptions = this.resolveAnimationOptions(options);
 
     for (const attribute in attributes) {
       if (attributes.hasOwnProperty(attribute)) {
@@ -281,4 +296,6 @@ module.exports = class Animar {
     });
     return somethingChanged;
   }
-};
+}
+
+module.exports = Animar;
