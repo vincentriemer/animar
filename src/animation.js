@@ -1,6 +1,5 @@
 /* @flow */
-
-module.exports = class Animation {
+class Animation {
   currentIteration: number;
   startValue: number;
   changeInValue: number;
@@ -40,4 +39,6 @@ module.exports = class Animation {
     }
     return true;
   }
-};
+}
+
+export default Animation;

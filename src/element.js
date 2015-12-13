@@ -3,7 +3,7 @@ import type Attribute from './attribute';
 import type Animation from './animation';
 import { applyStyle } from './helpers';
 
-module.exports = class Element {
+class Element {
   attributes: Map<string, Attribute>;
   domElement: HTMLElement;
 
@@ -31,6 +31,7 @@ module.exports = class Element {
     target.attributes.forEach((attr, attrName) => {
       let mergedAttribute;
 
+      // TODO: Replace existence logic with hasAttribute once FlowType has fixed its bug
       let existingAttribute = mergedElement.attributes.get(attrName);
       if (existingAttribute != null) {
         mergedAttribute = existingAttribute.merge(attr);
@@ -61,6 +62,7 @@ module.exports = class Element {
   getModelFromAttribute(attributeName: string): number {
     let result = null;
 
+    // TODO: Replace existence logic with hasAttribute once FlowType has fixed its bug
     let attribute = this.attributes.get(attributeName);
     if (attribute != null) {
       result = attribute.model;
@@ -80,4 +82,6 @@ module.exports = class Element {
     });
     return somethingChanged;
   }
-};
+}
+
+export default Element;

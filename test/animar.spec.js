@@ -5,9 +5,10 @@ require('core-js/es6/map');
 
 global.__DEV__ = true;
 
+import Element from '../src/element';
+import Attribute from '../src/attribute';
+
 var Animar = require('../src/animar');
-var Element = require('../src/element');
-var Attribute = require('../src/attribute');
 var assert = chai.assert;
 
 const EMPTY_ANIMATION_OPTIONS = {
@@ -19,8 +20,8 @@ const EMPTY_ANIMATION_OPTIONS = {
 
 function propagateToGlobal (window) {
   for (let key in window) {
-    if (!window.hasOwnProperty(key)) continue
-    if (key in global) continue
+    if (!window.hasOwnProperty(key)) continue;
+    if (key in global) continue;
 
     global[key] = window[key]
   }
@@ -124,35 +125,19 @@ describe('Animar', () => {
     });
 
     it('should throw an error if an element is not provided', () => {
-      let spy = sinon.spy(animar, 'add');
-      try {
-        animar.add(null, testAttributes, testOptions);
-      } catch(e) {};
-      assert.isTrue(spy.threw());
+      assert.throw(() => animar.add(null, testAttributes, testOptions));
     });
 
     it('should throw an error if the element provided is not an instance of HTMLElement', () => {
-      let spy = sinon.spy(animar, 'add');
-      try {
-        animar.add({}, testAttributes, testOptions);
-      } catch(e) {};
-      assert.isTrue(spy.threw());
+      assert.throw(() => animar.add({}, testAttributes, testOptions));
     });
 
     it('should throw an error if the attributes parameter is not provided', () => {
-      let spy = sinon.spy(animar, 'add');
-      try {
-        animar.add(testElement, null, testOptions);
-      } catch(e) {};
-      assert.isTrue(spy.threw());
+      assert.throw(() => animar.add(testElement, null, testOptions));
     });
 
     it('should throw an error if the attributes parameter is of the wrong type', () => {
-      let spy = sinon.spy(animar, 'add');
-      try {
-        animar.add(testElement, [], testOptions);
-      } catch(e) {};
-      assert.isTrue(spy.threw());
+      assert.throw(() => animar.add(testElement, [], testOptions));
     });
   });
 

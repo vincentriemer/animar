@@ -2,7 +2,7 @@
 import type Animation from './animation';
 import { calculateAnimationValue, applyStyle, TRANSFORM_ATTRIBUTES} from './helpers';
 
-module.exports = class Attribute {
+class Attribute {
   model: number;
   animations: Array<?Animation>;
   name: string;
@@ -63,4 +63,6 @@ module.exports = class Attribute {
 
     return transformValue;
   }
-};
+}
+
+export default Attribute;

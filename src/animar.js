@@ -1,8 +1,8 @@
 /* @flow */
 /* global __DEV__ */
-const Animation = require('./animation'),
-  Attribute = require('./attribute'),
-  Element = require('./element');
+import Animation from './animation';
+import Attribute from './attribute';
+import Element from './element';
 
 type ElementMap = Map<HTMLElement, Element>;
 type AnimationOptions = { // user-provided so can't assume correct type or existance
@@ -114,7 +114,7 @@ class Animar {
     // just return the start value if it was supplied
     if (start != null) { return start; }
 
-    // TODO: Replace existance logic with hasAttribute once FlowType has fixed its bug
+    // TODO: Replace existence logic with hasAttribute once FlowType has fixed its bug
     let currentChainElement = currentChain.get(element);
     let animarMapElement = this.elementMap.get(element);
 

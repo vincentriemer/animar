@@ -1,8 +1,0 @@
-// Place your settings in this file to overwrite default and user settings.
-{
-  "javascript.validate.lint.undeclaredVariables": "ignore",
-  "javascript.validate.lint.primitivesInInstanceOf": "ignore",
-  "travis.username": "vincentriemer",
-  "travis.repository": "animar",
-  "eslint.enable": true
-}
