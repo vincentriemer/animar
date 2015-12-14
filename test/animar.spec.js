@@ -395,4 +395,44 @@ describe('Animar', () => {
       sinon.assert.calledWith(mergeElementStub, new Map(), new Map([[testElement, elementInstanceStub]]));
     });
   });
+
+  describe('#fullChainObjectFactory', () => {
+    let startStub, loopStub, addStub, thenStub;
+
+    beforeEach(() => {
+      startStub = sinon.stub(animar, 'startChainFunctionFactory').returns(0);
+      loopStub = sinon.stub(animar, 'loopChainFunctionFactory').returns(1);
+      addStub = sinon.stub(animar, 'addChainFunctionFactory').returns(2);
+      thenStub = sinon.stub(animar, 'thenChainFunctionFactory').returns(3);
+    });
+
+    afterEach(() => {
+      startStub.restore();
+      loopStub.restore();
+      addStub.restore();
+      thenStub.restore();
+    });
+
+    it('should return an object with all the chain functions initialized from their factories', () => {
+      let chainOptions = {
+        delay: 0,
+        currentDuration: 0,
+        totalDuration: 0
+      };
+      let chain = new Map([['foo', 'bar']]);
+
+      let result = animar.fullChainObjectFactory(chainOptions, chain);
+
+      assert.deepEqual(result, {
+        start: 0,
+        loop: 1,
+        add: 2,
+        then: 3
+      });
+      sinon.assert.calledWith(startStub, chain);
+      sinon.assert.calledWith(loopStub, chainOptions, chain);
+      sinon.assert.calledWith(addStub, chainOptions, chain);
+      sinon.assert.calledWith(thenStub, chainOptions, chain);
+    });
+  })
 });
