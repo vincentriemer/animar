@@ -456,7 +456,7 @@ describe('Animar', () => {
 
     it('should return a function which returns an object with an add chain function', () => {
       let result = animar.thenChainFunctionFactory(chainOptions, chain);
-      assert.deepEqual(result(), { add: 'addChainFunctionFactory'});
+      assert.deepEqual(result(), {add: 'addChainFunctionFactory'});
     });
 
     it('should increment the chainOptions totalDuration by the currentDuration + provided wait', () => {
@@ -514,7 +514,8 @@ describe('Animar', () => {
       };
       animationOptions = {
         delay: 0,
-        easingFunction: () => {},
+        easingFunction: () => {
+        },
         duration: 60,
         loop: false
       };
@@ -611,6 +612,49 @@ describe('Animar', () => {
       animar.requestTick();
 
       sinon.assert.calledWith(window.requestAnimationFrame, updateStub);
+    });
+  });
+
+  describe('#update', () => {
+    let stepStub, renderStub, requestTickStub;
+    beforeEach(() => {
+      stepStub = sinon.stub(animar, 'step').returns(false);
+      renderStub = sinon.stub(animar, 'render');
+      requestTickStub = sinon.stub(animar, 'requestTick');
+    });
+
+    afterEach(() => {
+      stepStub.restore();
+      renderStub.restore();
+      requestTickStub.restore();
+    });
+
+    it('should set the instance\'s ticking to false', () => {
+      animar.ticking = true;
+      animar.update();
+      assert.isFalse(animar.ticking);
+    });
+
+    it('should always call the step function', () => {
+      stepStub.returns(false);
+      animar.update();
+      stepStub.returns(true);
+      animar.update();
+
+      sinon.assert.callCount(stepStub, 2);
+    });
+
+    it('should only call the render and requestTick functions if the step function has indicated that' +
+      'something has changed', () => {
+      stepStub.returns(false);
+      animar.update();
+      sinon.assert.notCalled(renderStub);
+      sinon.assert.notCalled(requestTickStub);
+
+      stepStub.returns(true);
+      animar.update();
+      sinon.assert.called(renderStub);
+      sinon.assert.called(requestTickStub);
     });
   });
 });
