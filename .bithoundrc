@@ -1,0 +1,13 @@
+{
+  "ignore": [
+    "**/deps/**",
+    "**/node_modules/**",
+    "sauce-scripts/**",
+    "interfaces/**",
+    "test-scripts/**",
+    "wallaby.js"
+  ],
+  "test": [
+    "**/test/**"
+  ]
+}
