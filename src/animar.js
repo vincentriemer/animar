@@ -61,7 +61,7 @@ class Animar {
     this.timescale = 1;
   }
 
-  validateAddParameters(element:HTMLElement, attributes:AttributesOptions, options:AnimationOptions) {
+  static validateAddParameters(element:HTMLElement, attributes:AttributesOptions/*, options:AnimationOptions */) {
     if (element == null) {
       throw 'Missing or null parameter: element';
     }
@@ -83,7 +83,7 @@ class Animar {
 
     /* istanbul ignore else */
     if (__DEV__) {
-      this.validateAddParameters(element, attributes, resolvedOptions);
+      Animar.validateAddParameters(element, attributes, resolvedOptions);
     }
 
     return this._add(
@@ -249,7 +249,7 @@ class Animar {
 
       /* istanbul ignore else */
       if (__DEV__) {
-        this.validateAddParameters(element, attributes, resolvedOptions);
+        Animar.validateAddParameters(element, attributes, resolvedOptions);
       }
 
       return this._add(element, attributes, resolvedOptions, chainOptions, chain);

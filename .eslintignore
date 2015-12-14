@@ -1,5 +1,8 @@
 dist
 lib
 node_modules
-flow
-test
+interfaces
+coverage
+test-scripts
+typings
+scripts

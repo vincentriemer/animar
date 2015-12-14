@@ -43,7 +43,7 @@ describe('Animation', () => {
   describe('#step()', () => {
     it('should increment the currentIteration value by the given timescale value', () => {
       let testAnimation = new Animation(0, -20, 20, 60, () => { }, false, 0, 0);
-      let timescale = 0.5
+      let timescale = 0.5;
       testAnimation.step(timescale);
 
       assert.equal(testAnimation.currentIteration, timescale);

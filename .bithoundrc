@@ -1,6 +1,8 @@
 {
   "ignore": [
-    "**/deps/**",
+    "dist/**",
+    "coverage/**",
+    "scripts/**",
     "**/node_modules/**",
     "sauce-scripts/**",
     "interfaces/**",
@@ -9,6 +11,9 @@
     "webpack.*"
   ],
   "test": [
-    "**/test/**"
-  ]
+    "test/*.js"
+  ],
+  "critics": {
+    "wc": { "limit": 3000 }
+  }
 }

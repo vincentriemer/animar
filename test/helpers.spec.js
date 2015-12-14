@@ -1,4 +1,4 @@
-/* global GLOBAL */
+/* global global */
 /// <reference path="../typings/tsd.d.ts"/>
 
 // Compatibility Polyfills
@@ -11,8 +11,8 @@ var assert = chai.assert;
 
 function propagateToGlobal (window) {
   for (let key in window) {
-    if (!window.hasOwnProperty(key)) continue
-    if (key in global) continue
+    if (!window.hasOwnProperty(key)) continue;
+    if (key in global) continue;
 
     global[key] = window[key]
   }
@@ -128,7 +128,7 @@ describe('Helpers', () => {
     });
   });
 
-  describe("#getStartValue()", () => {
+  describe('#getStartValue()', () => {
     let getTransformStub, getOpacityStub;
 
     beforeEach(() => {
@@ -141,21 +141,21 @@ describe('Helpers', () => {
       getOpacityStub.restore();
     });
 
-    it("should get a transform value", () => {
+    it('should get a transform value', () => {
       let testAttribute = 'translateX';
       let result = Helpers.getStartValue(mockElement, testAttribute);
       assert.isTrue(getTransformStub.called);
       assert.equal(result, 5);
     });
 
-    it("should get an opacity value", () => {
+    it('should get an opacity value', () => {
       let testAttribute = 'opacity';
       let result = Helpers.getStartValue(mockElement, testAttribute);
       assert.isTrue(getOpacityStub.called);
       assert.equal(result, 0.5);
     });
 
-    it("should throw an error if it's provided an unknown attribute", () => {
+    it('should throw an error if it\'s provided an unknown attribute', () => {
       let testAttribute = 'foo';
       let getStartValueSpy = sinon.spy(Helpers, 'getStartValue');
       try {
@@ -167,15 +167,15 @@ describe('Helpers', () => {
     });
   });
 
-  describe("#getOpacity()", () => {
-    it("should get the computed opacity value for a dom element", () => {
+  describe('#getOpacity()', () => {
+    it('should get the computed opacity value for a dom element', () => {
       mockElement.style.opacity = 0.5;
       let result = Helpers.getOpacity(mockElement);
       assert.equal(result, 0.5);
     });
   });
 
-  describe("#getTransform()", () => {
+  describe('#getTransform()', () => {
 
     // EXPECTED TRANSFORM RESULT = translateX(10px) translateY(10px) scaleX(5) scaleY(5) rotate(45deg)
 
@@ -189,32 +189,32 @@ describe('Helpers', () => {
       getTransformMatrixStub.restore();
     });
 
-    it("should get the correct translateX value", () => {
+    it('should get the correct translateX value', () => {
       let result = Helpers.getTransform(mockElement, 'translateX');
       assert.equal(result, 10);
     });
 
-    it("should get the correct translateY value", () => {
+    it('should get the correct translateY value', () => {
       let result = Helpers.getTransform(mockElement, 'translateY');
       assert.equal(result, 10);
     });
 
-    it("should get the correct scaleX value", () => {
+    it('should get the correct scaleX value', () => {
       let result = Helpers.getTransform(mockElement, 'scaleX');
       assert.equal(result, 5);
     });
 
-    it("should get the correct scaleY value", () => {
+    it('should get the correct scaleY value', () => {
       let result = Helpers.getTransform(mockElement, 'scaleY');
       assert.equal(result, 5);
     });
 
-    it("should should get the correct rotate value", () => {
+    it('should should get the correct rotate value', () => {
       let result = Helpers.getTransform(mockElement, 'rotate');
       assert.equal(result, 45);
     });
 
-    it("should throw an error if it is provided an unsupported transformation name", () => {
+    it('should throw an error if it is provided an unsupported transformation name', () => {
       let getTransformSpy = sinon.spy(Helpers, 'getTransform');
       try {
         Helpers.getTransform(mockElement, 'foo');
@@ -225,10 +225,10 @@ describe('Helpers', () => {
     });
   });
 
-  describe("#getTransformMatrix()", () => {
-    it("should correctly parse the matrix string", () => {
+  describe('#getTransformMatrix()', () => {
+    it('should correctly parse the matrix string', () => {
       window.getComputedStyle = sinon.stub().returns({
-        getPropertyValue: function (arg) {
+        getPropertyValue: function () {
           return 'matrix(3.5355339059327378, 3.5355339059327373, -3.5355339059327373, 3.5355339059327378, 10, 10)';
         }
       });
@@ -240,7 +240,7 @@ describe('Helpers', () => {
 
     it("should correctly handle an element that hasn't been transformed", () => {
       window.getComputedStyle = sinon.stub().returns({
-        getPropertyValue: function (arg) {
+        getPropertyValue: function () {
           return 'none';
         }
       });

@@ -75,7 +75,7 @@ describe('Attribute', () => {
     beforeEach(() => {
       applyStyleStub = sinon.stub(Helper, 'applyStyle');
       calculateStub = sinon.stub(Helper, 'calculateAnimationValue').returns(10);
-    })
+    });
 
     afterEach(() => {
       applyStyleStub.restore();
