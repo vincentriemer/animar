@@ -332,7 +332,8 @@ describe('Animar', () => {
   });
 
   //describe('#addAnimationToChain', () => {
-  //  let animationInstanceStub, attributeInstanceStub, elementInstanceStub;
+  //  let animationInstanceStub, attributeInstanceStub, elementInstanceStub,
+  //    animationSpy, attributeSpy, elementSpy;
   //  beforeEach(() => {
   //    animationInstanceStub = sinon.createStubInstance(Animation);
   //    attributeInstanceStub = sinon.createStubInstance(Attribute);
@@ -340,7 +341,7 @@ describe('Animar', () => {
   //
   //    animationSpy = sinon.spy(() => animationInstanceStub);
   //    attributeSpy = sinon.spy(() => attributeInstanceStub);
-  //
+  //    elementSpy = sinon.spy(() => elementInstanceStub);
   //  });
   //});
 });

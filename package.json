@@ -58,7 +58,7 @@
     "mocha": "^2.3.4",
     "rimraf": "^2.3.1",
     "saucie": "^1.3.1",
-    "sinon": "^1.15.4",
+    "sinon": "^2.0.0-pre",
     "testem": "^0.9.11",
     "travis-weigh-in": "^1.0.2",
     "tsd": "^0.6.3",
