@@ -676,4 +676,43 @@ describe('Animar', () => {
       sinon.assert.calledWith(renderSpy2, testElement2);
     });
   });
+
+  describe('#step', () => {
+    let testElement1, testElement2, stepStub1, stepStub2;
+
+    beforeEach(() => {
+      testElement1 = document.getElementById('target1');
+      testElement2 = document.getElementById('target2');
+      stepStub1 = sinon.stub();
+      stepStub2 = sinon.stub();
+    });
+
+    it('should call the step function (with timestamp argument) on every element in elementMap', () => {
+      animar.elementMap.set(testElement1, { step: stepStub1 });
+      animar.elementMap.set(testElement2, { step: stepStub2 });
+
+      animar.step();
+
+      sinon.assert.calledWith(stepStub1, animar.timescale);
+      sinon.assert.calledWith(stepStub2, animar.timescale);
+    });
+
+    it('should return false if every step function returns false', () => {
+      animar.elementMap.set(testElement1, { step: stepStub1.returns(false) });
+      animar.elementMap.set(testElement2, { step: stepStub2.returns(false) });
+
+      let result = animar.step();
+
+      assert.isFalse(result);
+    });
+
+    it('should return true if at least one step function returns true', () => {
+      animar.elementMap.set(testElement1, { step: stepStub1.returns(true) });
+      animar.elementMap.set(testElement2, { step: stepStub2.returns(false) });
+
+      let result = animar.step();
+
+      assert.isTrue(result);
+    });
+  });
 });
