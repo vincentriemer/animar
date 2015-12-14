@@ -1,5 +1,6 @@
 /* @flow */
 import type Animation from './animation';
+import type { ChainOptions } from './animar';
 import { calculateAnimationValue, applyStyle, TRANSFORM_ATTRIBUTES} from './helpers';
 
 class Attribute {
@@ -62,6 +63,14 @@ class Attribute {
     }
 
     return transformValue;
+  }
+
+  loop(chainOptions:ChainOptions) {
+    this.animations.forEach(animation => {
+      if (animation != null) {
+        animation.loop(chainOptions);
+      }
+    });
   }
 }
 

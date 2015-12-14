@@ -13,6 +13,7 @@ describe('Element', () => {
   let testDomElement, testElement;
 
   beforeEach(() => {
+    // TODO: use actual HTMLElement instead of mock object
     testDomElement = {};
     testElement = new Element(testDomElement);
   });
@@ -86,21 +87,6 @@ describe('Element', () => {
     });
   });
 
-  describe('#forEachAnimationInAttribute()', () => {
-    it('should perform an attribute\'s forEachAnimation passing the callback', () => {
-      let forEachStub = sinon.stub();
-      let testAttribute = { forEachAnimation: forEachStub };
-
-      testElement.addAttribute('test', testAttribute);
-
-      let testCallback = () => {};
-      testElement.forEachAnimationInAttribute(testCallback);
-
-      assert.isTrue(forEachStub.calledOnce);
-      assert.isTrue(forEachStub.calledWith(testCallback));
-    });
-  });
-
   describe('#hasAttribute()', () => {
     it('should return a boolean representing the existance of an attribute', () => {
       testElement.addAttribute('test', {});
@@ -169,6 +155,26 @@ describe('Element', () => {
       let result = testElement.step(timescale);
 
       assert.equal(result, true);
+    });
+  });
+
+  describe('#loop', () => {
+    let chainOptions;
+    beforeEach(() => {
+      chainOptions = {totalDuration: 100};
+    });
+
+    it('should call the loop function on each of its animations', () => {
+      let testAttribute1 = {loop: sinon.spy()};
+      let testAttribute2 = {loop: sinon.spy()};
+
+      testElement.addAttribute('test1', testAttribute1);
+      testElement.addAttribute('test2', testAttribute2);
+
+      testElement.loop(chainOptions);
+
+      sinon.assert.calledWith(testAttribute1.loop, chainOptions);
+      sinon.assert.calledWith(testAttribute2.loop, chainOptions);
     });
   });
 });

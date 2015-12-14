@@ -34,7 +34,7 @@ describe('Animation', () => {
       assert.equal(testAnimation.changeInValue, changeInVal);
       assert.equal(testAnimation.totalIterations, totalIter);
       assert.equal(testAnimation.easingFunction, testEasingFunction);
-      assert.equal(testAnimation.loop, loopVal);
+      assert.equal(testAnimation.looping, loopVal);
       assert.equal(testAnimation.delay, delayVal);
       assert.equal(testAnimation.wait, waitVal);
     });
@@ -73,5 +73,28 @@ describe('Animation', () => {
       assert.equal(testAnimation.currentIteration, 60);
     });
 
+  });
+
+  describe('#loop', () => {
+    let chainOptions;
+    beforeEach(() => {
+      chainOptions = {totalDuration: 100};
+    });
+
+    it('should set the animation\'s looping property to true', () => {
+      let testAnimation = new Animation(0, -20, 20, 60, () => {
+      }, false, 0, 0);
+      testAnimation.loop(chainOptions);
+
+      assert.isTrue(testAnimation.looping);
+    });
+    it('should set the animation\'s wait value to the chain\'s totalDuration minus the animation\'s ' +
+      'delay and totalIterations', () => {
+      let testAnimation = new Animation(0, -20, 20, 60, () => {
+      }, false, 0, 0);
+      testAnimation.loop(chainOptions);
+
+      assert.equal(testAnimation.wait, 40);
+    });
   });
 });

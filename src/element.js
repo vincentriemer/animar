@@ -1,6 +1,7 @@
 /* @flow */
 import type Attribute from './attribute';
 import type Animation from './animation';
+import type { ChainOptions } from './animar';
 import { applyStyle } from './helpers';
 
 class Element {
@@ -49,12 +50,6 @@ class Element {
     this.attributes.set(attrName, attribute);
   }
 
-  forEachAnimationInAttribute(callback:(animation:?Animation) => ?Animation) {
-    this.attributes.forEach(attribute => {
-      attribute.forEachAnimation(callback);
-    });
-  }
-
   hasAttribute(attributeName:string):boolean {
     return this.attributes.has(attributeName);
   }
@@ -81,6 +76,12 @@ class Element {
       }
     });
     return somethingChanged;
+  }
+
+  loop(chainOptions:ChainOptions) {
+    this.attributes.forEach(attribute => {
+      attribute.loop(chainOptions);
+    });
   }
 }
 

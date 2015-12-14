@@ -18,7 +18,7 @@ type ResolvedAnimationOptions = {
   loop: boolean
 };
 type AttributesOptions = { [key: string]: number | Array<number> };
-type ChainOptions = {
+export type ChainOptions = {
   delay: number,
   currentDuration: number,
   totalDuration: number
@@ -256,23 +256,16 @@ class Animar {
     };
   }
 
+
   loopChainFunctionFactory(chainOptions:ChainOptions, chain:ElementMap):LoopFunction {
     return () => {
       chainOptions.totalDuration += chainOptions.currentDuration;
 
       let newElementMap = new Map();
-
       chain.forEach((element, elementRef) => {
-        element.forEachAnimationInAttribute(animation => {
-          if (animation != null) {
-            animation.loop = true;
-            animation.wait = chainOptions.totalDuration - animation.delay - animation.totalIterations;
-            return animation;
-          }
-        });
+        element.loop(chainOptions);
         newElementMap.set(elementRef, element);
       });
-
       chain = newElementMap;
 
       return {

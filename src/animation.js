@@ -1,11 +1,13 @@
 /* @flow */
+import type { ChainOptions } from './animar';
+
 class Animation {
   currentIteration:number;
   startValue:number;
   changeInValue:number;
   totalIterations:number;
   easingFunction:Function;
-  loop:boolean;
+  looping:boolean;
   delay:number;
   wait:number;
 
@@ -22,7 +24,7 @@ class Animation {
     this.changeInValue = changeInValue;
     this.totalIterations = totalIterations;
     this.easingFunction = easingFunction;
-    this.loop = loop;
+    this.looping = loop;
     this.delay = delay;
     this.wait = wait;
   }
@@ -30,12 +32,17 @@ class Animation {
   step(timescale:number):boolean {
     if (this.currentIteration < (this.totalIterations + this.wait)) {
       this.currentIteration += timescale;
-    } else if (this.loop) {
+    } else if (this.looping) {
       this.currentIteration = 0 - this.delay;
     } else {
       return false;
     }
     return true;
+  }
+
+  loop(chainOptions:ChainOptions) {
+    this.looping = true;
+    this.wait = chainOptions.totalDuration - this.delay - this.totalIterations;
   }
 }
 

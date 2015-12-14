@@ -237,4 +237,24 @@ describe('Attribute', () => {
       assert.isFalse(result);
     });
   });
+
+  describe('#loop', () => {
+    let chainOptions;
+    beforeEach(() => {
+      chainOptions = {totalDuration: 100};
+    });
+
+    it('should call the loop function on each of its animations', () => {
+      let testAnimation1 = {loop: sinon.spy()};
+      let testAnimation2 = {loop: sinon.spy()};
+      let testAttribute = new Attribute('test', 20);
+      testAttribute.animations.push(testAnimation1);
+      testAttribute.animations.push(testAnimation2);
+
+      testAttribute.loop(chainOptions);
+
+      sinon.assert.calledWith(testAnimation1.loop, chainOptions);
+      sinon.assert.calledWith(testAnimation2.loop, chainOptions);
+    });
+  });
 });
