@@ -660,4 +660,20 @@ describe('Animar', () => {
       sinon.assert.called(requestTickStub);
     });
   });
+
+  describe('#render', () => {
+    it('should call the render function on every element in elementMap', () => {
+      let renderSpy1 = sinon.spy();
+      let renderSpy2 = sinon.spy();
+      let testElement1 = document.getElementById('target1');
+      let testElement2 = document.getElementById('target2');
+      animar.elementMap.set(testElement1, { render: renderSpy1 });
+      animar.elementMap.set(testElement2, { render: renderSpy2 });
+
+      animar.render();
+
+      sinon.assert.calledWith(renderSpy1, testElement1);
+      sinon.assert.calledWith(renderSpy2, testElement2);
+    });
+  });
 });
