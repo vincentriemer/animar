@@ -2,8 +2,6 @@
 
 // Compatibility Polyfills
 require('core-js/es6/map');
-require('core-js/es6/object');
-require('core-js/es6/array');
 
 global.__DEV__ = true;
 

@@ -162,7 +162,7 @@ class Animar {
        chainOptions:ChainOptions,
        currentChain:ElementMap):FullChainObject {
     let resolvedOptions = this.resolveAnimationOptions(options);
-    for (const attribute of Object.keys(attributes)) {
+    Object.keys(attributes).forEach((attribute) => {
       const attributeValue = attributes[attribute];
       let start, destination;
 
@@ -181,7 +181,7 @@ class Animar {
         currentChain = this.addAnimationToChain(start, destination, resolvedOptions, chainOptions, attribute,
           element, currentChain);
       }
-    }
+    });
     chainOptions.currentDuration = Math.max(chainOptions.currentDuration,
       resolvedOptions.delay + resolvedOptions.duration);
     return this.fullChainObjectFactory(chainOptions, currentChain);
