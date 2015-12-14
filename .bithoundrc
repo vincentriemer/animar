@@ -5,7 +5,8 @@
     "sauce-scripts/**",
     "interfaces/**",
     "test-scripts/**",
-    "wallaby.js"
+    "wallaby.js",
+    "webpack.*"
   ],
   "test": [
     "**/test/**"
