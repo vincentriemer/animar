@@ -501,4 +501,52 @@ describe('Animar', () => {
       assert.equal(noWaitCall.args[0].delay, 60);
     });
   });
+
+  describe('#addChainFunctionFactory', () => {
+    let validateStub, _addStub, testElement, attributeOptions, animationOptions, chainOptions, chain;
+
+    beforeEach(() => {
+      validateStub = sinon.stub(Animar, 'validateAddParameters');
+      _addStub = sinon.stub(animar, '_add').returns('fullChainObjectFactory');
+      testElement = document.getElementById('target1');
+      attributeOptions = {
+        translateX: [0, 100]
+      };
+      animationOptions = {
+        delay: 0,
+        easingFunction: () => {},
+        duration: 60,
+        loop: false
+      };
+      chainOptions = {
+        delay: 0,
+        currentDuration: 0,
+        totalDuration: 0
+      };
+      chain = new Map([['foo', 'bar']]);
+    });
+
+    afterEach(() => {
+      validateStub.restore();
+      _addStub.restore();
+    });
+
+    it('should return a function that validates all its provided arguments', () => {
+      let result = animar.addChainFunctionFactory(chainOptions, chain);
+      result(testElement, attributeOptions, animationOptions);
+      sinon.assert.calledWith(validateStub, testElement, attributeOptions, animationOptions);
+    });
+
+    it('should return a function that properly initializes the options argument if it is not provided', () => {
+      let result = animar.addChainFunctionFactory(chainOptions, chain);
+      result(testElement, attributeOptions);
+      sinon.assert.calledWith(validateStub, testElement, attributeOptions, EMPTY_ANIMATION_OPTIONS);
+    });
+
+    it('should return a function that properly passes its arguments to the _add function', () => {
+      let result = animar.addChainFunctionFactory(chainOptions, chain);
+      result(testElement, attributeOptions, animationOptions);
+      sinon.assert.calledWith(_addStub, testElement, attributeOptions, animationOptions, chainOptions, chain);
+    });
+  });
 });
