@@ -1,5 +1,7 @@
 var babel = require('babel-core');
 
+process.env.NODE_ENV = 'test';
+
 var babelConfig = JSON.parse(require('fs').readFileSync(require('path').join(__dirname, '.babelrc')));
 babelConfig.babel = babel;
 

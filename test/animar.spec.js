@@ -5,10 +5,12 @@ require('core-js/es6/map');
 
 global.__DEV__ = true;
 
+import Animation from '../src/animation';
 import Element from '../src/element';
 import Attribute from '../src/attribute';
 
 var Animar = require('../src/animar');
+
 var assert = chai.assert;
 
 const EMPTY_ANIMATION_OPTIONS = {
@@ -331,17 +333,67 @@ describe('Animar', () => {
     });
   });
 
-  //describe('#addAnimationToChain', () => {
-  //  let animationInstanceStub, attributeInstanceStub, elementInstanceStub,
-  //    animationSpy, attributeSpy, elementSpy;
-  //  beforeEach(() => {
-  //    animationInstanceStub = sinon.createStubInstance(Animation);
-  //    attributeInstanceStub = sinon.createStubInstance(Attribute);
-  //    elementInstanceStub = sinon.createStubInstance(Element);
-  //
-  //    animationSpy = sinon.spy(() => animationInstanceStub);
-  //    attributeSpy = sinon.spy(() => attributeInstanceStub);
-  //    elementSpy = sinon.spy(() => elementInstanceStub);
-  //  });
-  //});
+  describe('#addAnimationToChain', () => {
+    let animationInstanceStub, attributeInstanceStub, elementInstanceStub,
+      animationStub, attributeStub, elementStub, resolvedOptions, chainOptions,
+      testElement, mergeElementStub;
+    beforeEach(() => {
+      resolvedOptions = {
+        delay: 0,
+        easingFunction: ()=> {
+        },
+        duration: 60,
+        loop: false
+      };
+      chainOptions = {
+        delay: 0,
+        currentDuration: 0,
+        totalDuration: 0
+      };
+      testElement = document.getElementById('target1');
+
+      animationInstanceStub = sinon.createStubInstance(Animation);
+      attributeInstanceStub = sinon.createStubInstance(Attribute);
+      elementInstanceStub = sinon.createStubInstance(Element);
+
+      animationStub = sinon.spy(() => animationInstanceStub);
+      attributeStub = sinon.spy(() => attributeInstanceStub);
+      elementStub = sinon.spy(() => elementInstanceStub);
+
+      Animar.__Rewire__('Animation', animationStub);
+      Animar.__Rewire__('Attribute', attributeStub);
+      Animar.__Rewire__('Element', elementStub);
+
+      mergeElementStub = sinon.stub(animar, 'mergeElementMaps').returns(new Map([['foo', 'bar']]));
+    });
+
+    afterEach(() => {
+      Animar.__ResetDependency__('Animation');
+      Animar.__ResetDependency__('Attribute');
+      Animar.__ResetDependency__('Element');
+
+      mergeElementStub.restore();
+    });
+
+    // TODO: write a better description
+    it('do what it do', () => {
+      let result = animar.addAnimationToChain(0, 20, resolvedOptions, chainOptions,
+        'translateX', testElement, new Map());
+
+      assert.deepEqual(result, new Map([['foo', 'bar']]));
+      console.log(animationStub.firstCall.args);
+      sinon.assert.calledWithNew(animationStub);
+      sinon.assert.calledWith(animationStub, 0, -20, 20, 60, resolvedOptions.easingFunction, false, 0, 0);
+
+      sinon.assert.calledWithNew(attributeStub);
+      sinon.assert.calledWith(attributeStub, 'translateX', 20);
+      sinon.assert.calledWith(attributeInstanceStub.addAnimation, animationInstanceStub);
+
+      sinon.assert.calledWithNew(elementStub);
+      sinon.assert.calledWith(elementStub, testElement);
+      sinon.assert.calledWith(elementInstanceStub.addAttribute, 'translateX', attributeInstanceStub);
+
+      sinon.assert.calledWith(mergeElementStub, new Map(), new Map([[testElement, elementInstanceStub]]));
+    });
+  });
 });
