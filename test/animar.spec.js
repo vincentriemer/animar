@@ -2,6 +2,7 @@
 
 // Compatibility Polyfills
 require('core-js/es6/map');
+require('core-js/es6/symbol');
 
 global.__DEV__ = true;
 
@@ -330,4 +331,13 @@ describe('Animar', () => {
       assert.isTrue(addAnimationStub.calledTwice);
     });
   });
+
+  //describe('#addAnimationToChain', () => {
+  //
+  //  beforeEach(() => {
+  //    animationInstanceStub = sinon.createStubInstance(Animation);
+  //    attributeInstanceStub = sinon.createStubInstance(Attribute);
+  //    elementInstanceStub = sinon.createStubInstance(Element);
+  //  });
+  //});
 });
