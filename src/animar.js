@@ -233,11 +233,12 @@ class Animar {
 
   thenChainFunctionFactory(chainOptions:ChainOptions, chain:ElementMap):ThenFunction {
     return (wait = 0) => {
-      chainOptions.totalDuration += (chainOptions.currentDuration + wait);
-      chainOptions.currentDuration = 0;
-      chainOptions.delay = chainOptions.totalDuration;
+      let newChainOptions = Object.create(chainOptions);
+      newChainOptions.totalDuration += (chainOptions.currentDuration + wait);
+      newChainOptions.currentDuration = 0;
+      newChainOptions.delay = newChainOptions.totalDuration;
       return {
-        add: this.addChainFunctionFactory(chainOptions, chain)
+        add: this.addChainFunctionFactory(newChainOptions, chain)
       };
     };
   }

@@ -435,5 +435,70 @@ describe('Animar', () => {
       sinon.assert.calledWith(addStub, chainOptions, chain);
       sinon.assert.calledWith(thenStub, chainOptions, chain);
     });
-  })
+  });
+
+  describe('#thenChainFunctionFactory', () => {
+    let addChainStub, chainOptions, chain;
+
+    beforeEach(() => {
+      addChainStub = sinon.stub(animar, 'addChainFunctionFactory').returns('addChainFunctionFactory');
+      chainOptions = {
+        delay: 0,
+        currentDuration: 0,
+        totalDuration: 0
+      };
+      chain = new Map([['foo', 'bar']]);
+    });
+
+    afterEach(() => {
+      addChainStub.restore();
+    });
+
+    it('should return a function which returns an object with an add chain function', () => {
+      let result = animar.thenChainFunctionFactory(chainOptions, chain);
+      assert.deepEqual(result(), { add: 'addChainFunctionFactory'});
+    });
+
+    it('should increment the chainOptions totalDuration by the currentDuration + provided wait', () => {
+      chainOptions.currentDuration = 60;
+      let result = animar.thenChainFunctionFactory(chainOptions, chain);
+      result(0);
+
+      let noWaitCall = addChainStub.firstCall;
+      assert.equal(noWaitCall.args[0].totalDuration, 60);
+
+      addChainStub.reset();
+
+      result(20);
+      let waitCall = addChainStub.firstCall;
+      assert.equal(waitCall.args[0].totalDuration, 80);
+    });
+
+    it('should default the wait parameter to zero if it is not provided', () => {
+      chainOptions.currentDuration = 60;
+      let result = animar.thenChainFunctionFactory(chainOptions, chain);
+      result();
+
+      let noWaitCall = addChainStub.firstCall;
+      assert.equal(noWaitCall.args[0].totalDuration, 60);
+    });
+
+    it('should set the currentDuration to zero', () => {
+      chainOptions.currentDuration = 60;
+      let result = animar.thenChainFunctionFactory(chainOptions, chain);
+      result(0);
+
+      let curDurCall = addChainStub.firstCall;
+      assert.equal(curDurCall.args[0].currentDuration, 0);
+    });
+
+    it('should set the delay chainOptions to whatever the new totalDuration is', () => {
+      chainOptions.currentDuration = 60;
+      let result = animar.thenChainFunctionFactory(chainOptions, chain);
+      result(0);
+
+      let noWaitCall = addChainStub.firstCall;
+      assert.equal(noWaitCall.args[0].delay, 60);
+    });
+  });
 });
