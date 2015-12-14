@@ -108,7 +108,6 @@ describe('Animar', () => {
 
       assert.equal(result, expectedResult);
       assert.isTrue(animar._add.calledOnce);
-      //noinspection JSUnresolvedFunction
       assert.isTrue(animar._add.calledWith(testElement, testAttributes, testOptions, {
         delay: 0,
         currentDuration: 0,
@@ -121,7 +120,6 @@ describe('Animar', () => {
 
       animar.add(testElement, testAttributes);
 
-      //noinspection JSUnresolvedFunction
       assert.isTrue(animar._add.calledWith(testElement, testAttributes, EMPTY_ANIMATION_OPTIONS, {
           delay: 0,
           currentDuration: 0,
@@ -363,22 +361,16 @@ describe('Animar', () => {
       attributeStub = sinon.spy(() => attributeInstanceStub);
       elementStub = sinon.spy(() => elementInstanceStub);
 
-      //noinspection JSUnresolvedFunction
       Animar.__Rewire__('Animation', animationStub);
-      //noinspection JSUnresolvedFunction
       Animar.__Rewire__('Attribute', attributeStub);
-      //noinspection JSUnresolvedFunction
       Animar.__Rewire__('Element', elementStub);
 
       mergeElementStub = sinon.stub(animar, 'mergeElementMaps').returns(new Map([['foo', 'bar']]));
     });
 
     afterEach(() => {
-      //noinspection JSUnresolvedFunction
       Animar.__ResetDependency__('Animation');
-      //noinspection JSUnresolvedFunction
       Animar.__ResetDependency__('Attribute');
-      //noinspection JSUnresolvedFunction
       Animar.__ResetDependency__('Element');
 
       mergeElementStub.restore();
