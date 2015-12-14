@@ -2,7 +2,8 @@
 
 // Compatibility Polyfills
 require('core-js/es6/map');
-require('core-js/es6/symbol');
+require('core-js/es6/object');
+require('core-js/es6/array');
 
 global.__DEV__ = true;
 
@@ -333,11 +334,15 @@ describe('Animar', () => {
   });
 
   //describe('#addAnimationToChain', () => {
-  //
+  //  let animationInstanceStub, attributeInstanceStub, elementInstanceStub;
   //  beforeEach(() => {
   //    animationInstanceStub = sinon.createStubInstance(Animation);
   //    attributeInstanceStub = sinon.createStubInstance(Attribute);
   //    elementInstanceStub = sinon.createStubInstance(Element);
+  //
+  //    animationSpy = sinon.spy(() => animationInstanceStub);
+  //    attributeSpy = sinon.spy(() => attributeInstanceStub);
+  //
   //  });
   //});
 });
