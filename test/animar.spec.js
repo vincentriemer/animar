@@ -578,4 +578,39 @@ describe('Animar', () => {
       sinon.assert.called(requestTickStub);
     });
   });
+
+  describe('#requestTick', () => {
+    let updateStub;
+
+    beforeEach(() => {
+      window.requestAnimationFrame = sinon.stub();
+      updateStub = sinon.stub(animar, 'update');
+    });
+
+    afterEach(() => {
+      updateStub.restore();
+    });
+
+    it('shouldn\'t do anything if the animar instance is already ticking', () => {
+      animar.ticking = true;
+      animar.requestTick();
+
+      sinon.assert.notCalled(window.requestAnimationFrame);
+      assert.isTrue(animar.ticking);
+    });
+
+    it('should set the instance\'s ticking to true if it is currently false', () => {
+      animar.ticking = false;
+      animar.requestTick();
+
+      assert.isTrue(animar.ticking);
+    });
+
+    it('should call requestAnimationFrame with the update function', () => {
+      animar.ticking = false;
+      animar.requestTick();
+
+      sinon.assert.calledWith(window.requestAnimationFrame, updateStub);
+    });
+  });
 });
