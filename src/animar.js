@@ -5,7 +5,7 @@ import Attribute from './attribute';
 import Element from './element';
 
 type ElementMap = Map<HTMLElement, Element>;
-type AnimationOptions = { // user-provided so can't assume correct type or existance
+type AnimationOptions = {
   delay: ?any,
   easingFunction: ?any,
   duration: ?any,

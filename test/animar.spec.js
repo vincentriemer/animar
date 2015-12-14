@@ -376,7 +376,7 @@ describe('Animar', () => {
     });
 
     // TODO: write a better description
-    it('do what it do', () => {
+    it('should do what it do', () => {
       let result = animar.addAnimationToChain(0, 20, resolvedOptions, chainOptions,
         'translateX', testElement, new Map());
 

@@ -1,0 +1,12 @@
+{
+  "predef": [
+    "chai",
+    "describe",
+    "beforeEach",
+    "afterEach",
+    "BROWSER",
+    "jsdom",
+    "sinon",
+    "it"
+  ]
+}
