@@ -245,4 +245,89 @@ describe('Animar', () => {
       assert.deepEqual(result, defaultOptions);
     });
   });
+
+  describe('#_add', () => {
+    let chainOptions, testElement, resolveOptionsStub, resolveStartStub, addAnimationStub, fullChainStub,
+      resolvedOptions;
+
+    beforeEach(() => {
+      resolvedOptions = {
+        delay: 0,
+        easingFunction: ()=> {
+        },
+        duration: 60,
+        loop: false
+      };
+      testElement = document.getElementById('target1');
+      resolveOptionsStub = sinon.stub(animar, 'resolveAnimationOptions').returns(resolvedOptions);
+      resolveStartStub = sinon.stub(animar, 'resolveStartValue').returns(10);
+      addAnimationStub = sinon.stub(animar, 'addAnimationToChain').returns(new Map([['foo', 'bar']]));
+      fullChainStub = sinon.stub(animar, 'fullChainObjectFactory');
+      chainOptions = {
+        delay: 0,
+        currentDuration: 0,
+        totalDuration: 0
+      };
+    });
+
+    afterEach(() => {
+      resolveOptionsStub.restore();
+      resolveStartStub.restore();
+      addAnimationStub.restore();
+      fullChainStub.restore();
+    });
+
+    it('should resolve it\'s provided options', () => {
+      animar._add(testElement, {}, {foo: 'bar'}, chainOptions, new Map());
+      sinon.assert.calledWith(resolveOptionsStub, {foo: 'bar'});
+    });
+
+    it('should properly handle only the destination value being provided', () => {
+      animar._add(testElement, {translateX: 40}, null, chainOptions, new Map());
+      sinon.assert.calledWith(resolveStartStub, undefined, testElement, 'translateX', new Map());
+    });
+
+    it('should properly handle the start and destination value being provided', () => {
+      animar._add(testElement, {translateX: [0, 40]}, null, chainOptions, new Map());
+      sinon.assert.calledWith(resolveStartStub, 0, testElement, 'translateX', new Map());
+    });
+
+    it('should throw an error if the start value cannot be resolved', () => {
+      resolveStartStub.returns(null);
+      assert.throw(() => animar._add(testElement, {translateX: 40}, null, chainOptions, new Map()));
+    });
+
+    it('should properly call addAnimationToChain', () => {
+      animar._add(testElement, {translateX: 40}, null, chainOptions, new Map());
+      sinon.assert.calledWith(addAnimationStub, 10, 40, resolvedOptions, chainOptions, 'translateX',
+        testElement, new Map());
+    });
+
+    // TODO: write better description
+    it('should set the chainOptions currentDuration properly', () => {
+      // case: when animation's duration is longer than the chainOptions' duration
+      animar._add(testElement, {translateX: 40}, null, chainOptions, new Map());
+      sinon.assert.calledWith(fullChainStub, {
+        delay: chainOptions.delay,
+        currentDuration: 60,
+        totalDuration: 0
+      }, new Map([['foo', 'bar']]));
+      fullChainStub.reset();
+
+      // case: when chainOptions' duration is longer than animation's
+      let longerChainOptions = {
+        delay: chainOptions.delay,
+        currentDuration: 120,
+        totalDuration: 0
+      };
+      animar._add(testElement, {translateX: 40}, null, longerChainOptions, new Map());
+      sinon.assert.calledWith(fullChainStub, longerChainOptions, new Map([['foo', 'bar']]));
+    });
+
+    it('should handle multiple attributes inside the attributes object', () => {
+      animar._add(testElement, {translateX: 40, translateY: 80}, chainOptions, new Map());
+      assert.isTrue(resolveStartStub.calledTwice);
+      assert.isTrue(addAnimationStub.calledTwice);
+    });
+  });
 });

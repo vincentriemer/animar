@@ -162,26 +162,24 @@ class Animar {
        chainOptions:ChainOptions,
        currentChain:ElementMap):FullChainObject {
     let resolvedOptions = this.resolveAnimationOptions(options);
-    for (const attribute in attributes) {
-      if (attributes.hasOwnProperty(attribute)) {
-        const attributeValue = attributes[attribute];
-        let start, destination;
+    for (const attribute of Object.keys(attributes)) {
+      const attributeValue = attributes[attribute];
+      let start, destination;
 
-        if (typeof attributeValue === 'number') {
-          destination = attributeValue;
-        } else {
-          start = attributeValue[0];
-          destination = attributeValue[1];
-        }
+      if (typeof attributeValue === 'number') {
+        destination = attributeValue;
+      } else {
+        start = attributeValue[0];
+        destination = attributeValue[1];
+      }
 
-        start = this.resolveStartValue(start, element, attribute, currentChain);
+      start = this.resolveStartValue(start, element, attribute, currentChain);
 
-        if (start == null) {
-          throw 'Animation start value is not provided and cannot be inferred';
-        } else {
-          currentChain = this.addAnimationToChain(start, destination, resolvedOptions, chainOptions, attribute,
-            element, currentChain);
-        }
+      if (start == null) {
+        throw 'Animation start value is not provided and cannot be inferred';
+      } else {
+        currentChain = this.addAnimationToChain(start, destination, resolvedOptions, chainOptions, attribute,
+          element, currentChain);
       }
     }
     chainOptions.currentDuration = Math.max(chainOptions.currentDuration,
