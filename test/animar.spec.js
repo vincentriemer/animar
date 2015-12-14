@@ -381,7 +381,6 @@ describe('Animar', () => {
         'translateX', testElement, new Map());
 
       assert.deepEqual(result, new Map([['foo', 'bar']]));
-      console.log(animationStub.firstCall.args);
       sinon.assert.calledWithNew(animationStub);
       sinon.assert.calledWith(animationStub, 0, -20, 20, 60, resolvedOptions.easingFunction, false, 0, 0);
 
