@@ -129,6 +129,7 @@ describe('Animar', () => {
       );
     });
 
+    // TODO: move validation tests to validateAddParameters
     it('should throw an error if an element is not provided', () => {
       assert.throw(() => animar.add(null, testAttributes, testOptions));
     });

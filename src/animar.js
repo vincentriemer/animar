@@ -61,25 +61,29 @@ class Animar {
     this.timescale = 1;
   }
 
+  validateAddParameters(element:HTMLElement, attributes:AttributesOptions, options:AnimationOptions) {
+    if (element == null) {
+      throw 'Missing or null parameter: element';
+    }
+    if (!(element instanceof HTMLElement)) {
+      throw "Parameter 'element' should be of type HTMLElement";
+    }
+    if (attributes == null) {
+      throw 'Missing or null parameter: attribtues';
+    }
+    if (Object.prototype.toString.call(attributes) !== '[object Object]') {
+      throw "Parameter 'attributes' should be of type Object";
+    }
+    // TODO: Validate attributes contents
+    // TODO: Validate option types
+  }
+
   add(element:HTMLElement, attributes:AttributesOptions, options:AnimationOptions):FullChainObject {
     let resolvedOptions = options == null ? EMPTY_ANIMATION_OPTIONS : options;
 
     /* istanbul ignore else */
     if (__DEV__) {
-      if (element == null) {
-        throw 'Missing or null parameter: element';
-      }
-      if (!(element instanceof HTMLElement)) {
-        throw "Parameter 'element' should be of type HTMLElement";
-      }
-      if (attributes == null) {
-        throw 'Missing or null parameter: attribtues';
-      }
-      if (Object.prototype.toString.call(attributes) !== '[object Object]') {
-        throw "Parameter 'attributes' should be of type Object";
-      }
-      // TODO: Validate attributes contents
-      // TODO: Validate option types
+      this.validateAddParameters(element, attributes, resolvedOptions);
     }
 
     return this._add(
@@ -240,7 +244,13 @@ class Animar {
 
   addChainFunctionFactory(chainOptions:ChainOptions, chain:ElementMap):AddFunction {
     return (element, attributes, options) => {
-      let resolvedOptions = typeof options === 'undefined' ? EMPTY_ANIMATION_OPTIONS : options;
+      let resolvedOptions = options == null ? EMPTY_ANIMATION_OPTIONS : options;
+
+      /* istanbul ignore else */
+      if (__DEV__) {
+        this.validateAddParameters(element, attributes, resolvedOptions);
+      }
+
       return this._add(element, attributes, resolvedOptions, chainOptions, chain);
     };
   }
