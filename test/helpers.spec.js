@@ -80,11 +80,7 @@ describe('Helpers', () => {
 
     it('should throw an error if it\'s provided an unknown attribute', () => {
       let exceptionSpy = sinon.spy(Helpers, 'applyStyle');
-      try {
-        Helpers.applyStyle(mockElement, 'blah', '20px');
-      } catch (e) {} finally {
-        assert.isTrue(Helpers.applyStyle.threw());
-      }
+      assert.throw(() => Helpers.applyStyle(mockElement, 'blah', '20px'));
       exceptionSpy.restore();
     });
   });
@@ -158,12 +154,8 @@ describe('Helpers', () => {
     it('should throw an error if it\'s provided an unknown attribute', () => {
       let testAttribute = 'foo';
       let getStartValueSpy = sinon.spy(Helpers, 'getStartValue');
-      try {
-        Helpers.getStartValue(mockElement, testAttribute);
-      } catch (e) { } finally {
-        assert.isTrue(getStartValueSpy.threw());
-        getStartValueSpy.restore();
-      }
+      assert.throw(() => Helpers.getStartValue(mockElement, testAttribute));
+      getStartValueSpy.restore();
     });
   });
 
@@ -178,7 +170,6 @@ describe('Helpers', () => {
   describe('#getTransform()', () => {
 
     // EXPECTED TRANSFORM RESULT = translateX(10px) translateY(10px) scaleX(5) scaleY(5) rotate(45deg)
-
     let getTransformMatrixStub;
 
     beforeEach(() => {
@@ -216,12 +207,8 @@ describe('Helpers', () => {
 
     it('should throw an error if it is provided an unsupported transformation name', () => {
       let getTransformSpy = sinon.spy(Helpers, 'getTransform');
-      try {
-        Helpers.getTransform(mockElement, 'foo');
-      } catch (e) { } finally {
-        assert.isTrue(getTransformSpy.threw());
-        getTransformSpy.restore();
-      }
+      assert.throw(() => Helpers.getTransform(mockElement, 'foo'));
+      getTransformSpy.restore();
     });
   });
 

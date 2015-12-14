@@ -5,6 +5,7 @@
   "globals": {
     "BROWSER": true,
     "jsdom": true,
-    "sinon": true
+    "sinon": true,
+    "chai": true
   }
 }
