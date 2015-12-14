@@ -290,12 +290,12 @@ class Animar {
 
   requestTick() {
     if (!this.ticking) {
-      window.requestAnimationFrame(this.update);
+      window.requestAnimationFrame(this.update.bind(this));
       this.ticking = true;
     }
   }
 
-  update = () => { // arrow closure to ensure instance binding when being called from requestAnimationFrame
+  update() {
     this.ticking = false;
     var hasChanged = this.step();
 

@@ -584,8 +584,10 @@ describe('Animar', () => {
     let updateStub;
 
     beforeEach(() => {
-      window.requestAnimationFrame = sinon.stub();
       updateStub = sinon.stub(animar, 'update');
+      window.requestAnimationFrame = sinon.spy((update) => {
+        update();
+      });
     });
 
     afterEach(() => {
@@ -611,7 +613,8 @@ describe('Animar', () => {
       animar.ticking = false;
       animar.requestTick();
 
-      sinon.assert.calledWith(window.requestAnimationFrame, updateStub);
+      sinon.assert.called(window.requestAnimationFrame);
+      sinon.assert.called(updateStub);
     });
   });
 
