@@ -549,4 +549,33 @@ describe('Animar', () => {
       sinon.assert.calledWith(_addStub, testElement, attributeOptions, animationOptions, chainOptions, chain);
     });
   });
+
+  describe('#startChainFunctionFactory', () => {
+    let mergeMapStub, requestTickStub, chain;
+    beforeEach(() => {
+      chain = new Map([['foo', 'bar']]);
+      mergeMapStub = sinon.stub(animar, 'mergeElementMaps').returns(chain);
+      requestTickStub = sinon.stub(animar, 'requestTick');
+    });
+
+    afterEach(() => {
+      mergeMapStub.restore();
+      requestTickStub.restore();
+    });
+
+    it('should return a function that merges the chain\'s map with instance\'s map', () => {
+      let result = animar.startChainFunctionFactory(chain);
+      result();
+
+      sinon.assert.calledWith(mergeMapStub, new Map(), chain);
+      assert.equal(animar.elementMap, chain);
+    });
+
+    it('should return a function that requests a requestAnimationFrame tick', () => {
+      let result = animar.startChainFunctionFactory(chain);
+      result();
+
+      sinon.assert.called(requestTickStub);
+    });
+  });
 });
