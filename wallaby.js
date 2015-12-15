@@ -26,8 +26,8 @@ module.exports = function (wallaby) {
         '**/*.js': wallaby.compilers.babel(babelConfig)
       },
 
-      bootstrap: function (wallaby) {
-        var mocha = wallaby.testFramework;
+      bootstrap: function (w) {
+        var mocha = w.testFramework;
 
         global.BROWSER = false;
         global.__DEV__ = true;
