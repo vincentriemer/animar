@@ -19,6 +19,7 @@ const EMPTY_ANIMATION_OPTIONS = {
   loop: null
 };
 
+/* istanbul ignore next */
 function propagateToGlobal (window) {
   for (let key in window) {
     if (!window.hasOwnProperty(key)) continue;
@@ -711,6 +712,47 @@ describe('Animar', () => {
       let result = animar.step();
 
       assert.isTrue(result);
+    });
+  });
+
+  describe('#loopChainFunctionFactory', () => {
+    let chainOptions, chain, startChainStub;
+
+    beforeEach(() => {
+      chainOptions = {
+        delay: 0,
+        currentDuration: 30,
+        totalDuration: 40
+      };
+      chain = new Map();
+      startChainStub = sinon.stub(animar, 'startChainFunctionFactory').returns('startFunction');
+    });
+
+    afterEach(() => {
+      startChainStub.restore();
+    });
+
+    it('should return a function which increments the totalDuration by the currentDuration of the chainOptions', () => {
+      let loopFunction = animar.loopChainFunctionFactory(chainOptions, chain);
+      loopFunction();
+      assert.equal(chainOptions.totalDuration, 70);
+    });
+
+    it('should return a function which calls the loop function on every element in the passed in chain', () => {
+      let loopSpy = sinon.spy();
+      chain.set('test', { loop: loopSpy });
+      let loopFunction = animar.loopChainFunctionFactory(chainOptions, chain);
+      loopFunction();
+
+      sinon.assert.calledWith(loopSpy, { delay: 0, currentDuration: 30, totalDuration: 70});
+    });
+
+    it('should return a function which returns an object that contains the start function', () => {
+      let loopFunction = animar.loopChainFunctionFactory(chainOptions, chain);
+      let result = loopFunction();
+
+      assert.deepEqual(result, { start: 'startFunction' });
+      sinon.assert.calledWith(startChainStub, chain);
     });
   });
 });
