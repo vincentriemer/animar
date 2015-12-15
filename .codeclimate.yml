@@ -14,3 +14,5 @@ exclude_paths:
 - "webpack.*"
 - "test-scripts/**/*"
 - ".codeclimate.yml"
+- "sauce-scripts/**/*"
+- "wallaby.js"

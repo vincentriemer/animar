@@ -6,3 +6,6 @@ coverage
 test-scripts
 typings
 scripts
+test-scripts
+sauce-scripts
+wallaby.js
