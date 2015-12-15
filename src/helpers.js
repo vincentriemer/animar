@@ -1,6 +1,7 @@
 /* @flow */
 /// <reference path="../typings/tsd.d.ts"/>
 import type Animation from './animation';
+import type {AttributesOptions} from './animar';
 
 export const TRANSFORM_ATTRIBUTES = [
   'translateX',
@@ -112,4 +113,21 @@ export function getStartValue(element:HTMLElement, attribute:string):number {
   }
 
   return result;
+}
+
+export function validateAddParameters(element:HTMLElement, attributes:AttributesOptions/*, options:AnimationOptions */) {
+  if (element == null) {
+    throw 'Missing or null parameter: element';
+  }
+  if (!(element instanceof HTMLElement)) {
+    throw "Parameter 'element' should be of type HTMLElement";
+  }
+  if (attributes == null) {
+    throw 'Missing or null parameter: attribtues';
+  }
+  if (Object.prototype.toString.call(attributes) !== '[object Object]') {
+    throw "Parameter 'attributes' should be of type Object";
+  }
+  // TODO: Validate attributes contents
+  // TODO: Validate option types
 }

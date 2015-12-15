@@ -17,7 +17,7 @@ type ResolvedAnimationOptions = {
   duration: number,
   loop: boolean
 };
-type AttributesOptions = { [key: string]: number | Array<number> };
+export type AttributesOptions = { [key: string]: number | Array<number> };
 export type ChainOptions = {
   delay: number,
   currentDuration: number,
@@ -61,29 +61,13 @@ class Animar {
     this.timescale = 1;
   }
 
-  static validateAddParameters(element:HTMLElement, attributes:AttributesOptions/*, options:AnimationOptions */) {
-    if (element == null) {
-      throw 'Missing or null parameter: element';
-    }
-    if (!(element instanceof HTMLElement)) {
-      throw "Parameter 'element' should be of type HTMLElement";
-    }
-    if (attributes == null) {
-      throw 'Missing or null parameter: attribtues';
-    }
-    if (Object.prototype.toString.call(attributes) !== '[object Object]') {
-      throw "Parameter 'attributes' should be of type Object";
-    }
-    // TODO: Validate attributes contents
-    // TODO: Validate option types
-  }
-
   add(element:HTMLElement, attributes:AttributesOptions, options:AnimationOptions):FullChainObject {
     let resolvedOptions = options == null ? EMPTY_ANIMATION_OPTIONS : options;
 
     /* istanbul ignore else */
     if (__DEV__) {
-      Animar.validateAddParameters(element, attributes, resolvedOptions);
+      var validateAddParameters = require('./helpers').validateAddParameters;
+      validateAddParameters(element, attributes, resolvedOptions);
     }
 
     return this._add(
@@ -249,7 +233,8 @@ class Animar {
 
       /* istanbul ignore else */
       if (__DEV__) {
-        Animar.validateAddParameters(element, attributes, resolvedOptions);
+        var validateAddParameters = require('./helpers').validateAddParameters;
+        validateAddParameters(element, attributes, resolvedOptions);
       }
 
       return this._add(element, attributes, resolvedOptions, chainOptions, chain);

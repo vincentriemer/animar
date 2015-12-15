@@ -8,6 +8,7 @@ global.__DEV__ = true;
 import Animation from '../src/animation';
 import Element from '../src/element';
 import Attribute from '../src/attribute';
+import * as Helpers from '../src/helpers';
 
 var Animar = require('../src/animar');
 
@@ -506,7 +507,7 @@ describe('Animar', () => {
     let validateStub, _addStub, testElement, attributeOptions, animationOptions, chainOptions, chain;
 
     beforeEach(() => {
-      validateStub = sinon.stub(Animar, 'validateAddParameters');
+      validateStub = sinon.stub(Helpers, 'validateAddParameters');
       _addStub = sinon.stub(animar, '_add').returns('fullChainObjectFactory');
       testElement = document.getElementById('target1');
       attributeOptions = {
