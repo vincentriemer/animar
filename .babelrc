@@ -9,6 +9,6 @@
   ],
   "plugins": [
     "flow-comments",
-    "transform-class-properties",
+    "transform-class-properties"
   ]
 }
