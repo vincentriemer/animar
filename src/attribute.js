@@ -61,6 +61,7 @@ class Attribute {
 
   loop (chainOptions:ChainOptions) {
     this.animations.forEach(animation => {
+      /* istanbul ignore else */
       if (animation != null) {
         animation.loop(chainOptions);
       }

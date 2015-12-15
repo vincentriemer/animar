@@ -17,6 +17,7 @@ const TRANSFORM_ATTRIBUTES = [
   'rotateZ'
 ];
 
+/* istanbul ignore else */
 if (__DEV__) {
   var getTransformMatrix = function (element:HTMLElement):Array<number> {
     let computedStyle = window.getComputedStyle(element, null);
@@ -126,6 +127,7 @@ var calculateAnimationValue = function (animations:Array<?Animation>):number {
   var result = 0;
 
   animations.forEach(animation => {
+    /* istanbul ignore else */
     if (animation != null) {
       var currentIteration = animation.currentIteration;
       if (currentIteration < 0) {
