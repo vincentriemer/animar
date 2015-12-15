@@ -296,7 +296,7 @@ class Animar {
       this.render();
       this.requestTick();
     }
-  };
+  }
 
   render() {
     this.elementMap.forEach((element, domElement) => {
