@@ -8,7 +8,7 @@
     "es2015"
   ],
   "plugins": [
-    "transform-flow-strip-types",
-    "transform-class-properties"
+    "flow-comments",
+    "transform-class-properties",
   ]
 }
