@@ -24,12 +24,6 @@ class Attribute {
     return newAttribute;
   }
 
-  forEachAnimation (callback:(animation:?Animation) => ?Animation) {
-    this.animations = this.animations
-      .map(callback)
-      .filter((x) => x != null);
-  }
-
   step (timescale:number):boolean {
     let somethingChanged = false;
 

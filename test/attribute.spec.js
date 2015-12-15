@@ -54,21 +54,6 @@ describe('Attribute', () => {
     });
   });
 
-  describe('#forEachAnimation()', () => {
-    it('should perform a mutating function on all animations', () => {
-      let testAttribute = new Attribute('test', 0);
-      testAttribute.animations = [0, 1, 2, 3, 4, 5, 6, 7];
-
-      testAttribute.forEachAnimation((animation) => {
-        return animation.toString();
-      });
-
-      testAttribute.animations.forEach((animation) => {
-        assert.typeOf(animation, 'string');
-      });
-    });
-  });
-
   describe('#render()', () => {
     let applyStyleStub, calculateStub;
 
