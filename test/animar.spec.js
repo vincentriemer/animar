@@ -3,8 +3,6 @@
 // Compatibility Polyfills
 require('core-js/es6/map');
 
-global.__DEV__ = true;
-
 import Animation from '../src/animation';
 import Element from '../src/element';
 import Attribute from '../src/attribute';

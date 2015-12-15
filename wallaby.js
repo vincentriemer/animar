@@ -30,6 +30,7 @@ module.exports = function (wallaby) {
         var mocha = wallaby.testFramework;
 
         global.BROWSER = false;
+        global.__DEV__ = true;
         global.sinon = require('sinon');
         global.chai = require('chai');
         global.jsdom = require('jsdom');
