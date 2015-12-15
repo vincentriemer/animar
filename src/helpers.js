@@ -79,16 +79,16 @@ if (__DEV__) {
 
   var validateAddParameters = function (element:HTMLElement, attributes:AttributesOptions/*, options:AnimationOptions */) {
     if (element == null) {
-      throw 'Missing or null parameter: element';
+      throw new Error('Missing or null parameter: element');
     }
     if (!(element instanceof HTMLElement)) {
-      throw "Parameter 'element' should be of type HTMLElement";
+      throw new Error("Parameter 'element' should be of type HTMLElement");
     }
     if (attributes == null) {
-      throw 'Missing or null parameter: attributes';
+      throw new Error('Missing or null parameter: attributes');
     }
     if (Object.prototype.toString.call(attributes) !== '[object Object]') {
-      throw "Parameter 'attributes' should be of type Object";
+      throw new Error("Parameter 'attributes' should be of type Object");
     }
     // TODO: Validate attributes contents
     // TODO: Validate option types
@@ -101,12 +101,12 @@ if (__DEV__) {
   module.exports.validateAddParameters = validateAddParameters;
 }
 
-var setTransform = function(element:HTMLElement, transformString:string):HTMLElement {
+var setTransform = function (element:HTMLElement, transformString:string):HTMLElement {
   element.style.transform = transformString;
   return element;
 };
 
-var applyStyle = function(element:HTMLElement, attributeName:string, attributeValue:string) {
+var applyStyle = function (element:HTMLElement, attributeName:string, attributeValue:string) {
   switch (attributeName) {
     case ('transform'):
       setTransform(element, attributeValue);
@@ -122,7 +122,7 @@ var applyStyle = function(element:HTMLElement, attributeName:string, attributeVa
   }
 };
 
-var calculateAnimationValue = function(animations:Array<?Animation>):number {
+var calculateAnimationValue = function (animations:Array<?Animation>):number {
   var result = 0;
 
   animations.forEach(animation => {

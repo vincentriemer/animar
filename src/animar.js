@@ -23,16 +23,18 @@ export type ChainOptions = {
   currentDuration: number,
   totalDuration: number
 }
+
+type AddFunction = (element:HTMLElement, attributes:AttributesOptions, options:AnimationOptions) => FullChainObject;
+type StartFunction = () => void;
+type ThenFunction = (wait:number) => { add: AddFunction };
+type LoopFunction = () => { start: StartFunction };
+
 type FullChainObject = {
   start: StartFunction,
   loop: LoopFunction,
   add: AddFunction,
   then: ThenFunction
 };
-type AddFunction = (element:HTMLElement, attributes:AttributesOptions, options:AnimationOptions) => FullChainObject;
-type StartFunction = () => void;
-type ThenFunction = (wait:number) => { add: AddFunction };
-type LoopFunction = () => { start: StartFunction };
 
 const EMPTY_ANIMATION_OPTIONS = {
   delay: null,
@@ -47,7 +49,7 @@ class Animar {
   defaults:{ delay: number, easingFunction: Function, duration: number, loop: boolean };
   timescale:number;
 
-  constructor() {
+  constructor () {
     this.ticking = false;
     this.elementMap = new Map();
     this.defaults = {
@@ -61,7 +63,7 @@ class Animar {
     this.timescale = 1;
   }
 
-  add(element:HTMLElement, attributes:AttributesOptions, options:AnimationOptions):FullChainObject {
+  add (element:HTMLElement, attributes:AttributesOptions, options:AnimationOptions):FullChainObject {
     let resolvedOptions = options == null ? EMPTY_ANIMATION_OPTIONS : options;
 
     /* istanbul ignore else */
@@ -83,7 +85,7 @@ class Animar {
     );
   }
 
-  mergeElementMaps(src:ElementMap, target:ElementMap):ElementMap {
+  mergeElementMaps (src:ElementMap, target:ElementMap):ElementMap {
     let result = new Map(src);
 
     target.forEach((element, elementRef) => {
@@ -101,37 +103,37 @@ class Animar {
     return result;
   }
 
-  resolveStartValue(start:?number, element:HTMLElement, attribute:string, currentChain:ElementMap):?number {
+  resolveStartValue (start:?number, element:HTMLElement, attribute:string, currentChain:ElementMap):?number {
     // just return the start value if it was supplied
     if (start != null) {
       return start;
     }
 
+    let result = null;
+
     // TODO: Replace existence logic with hasAttribute once FlowType has fixed its bug
     let currentChainElement = currentChain.get(element);
     let animarMapElement = this.elementMap.get(element);
 
-    // check to see if start value can be inferred from current chain element map
     if (currentChainElement != null && currentChainElement.hasAttribute(attribute)) {
-      start = currentChainElement.getModelFromAttribute(attribute);
-    }
-    // check to see if start value can be inferred from existing element map in Animar instance
-    else if (animarMapElement != null && animarMapElement.hasAttribute(attribute)) {
-      start = animarMapElement.getModelFromAttribute(attribute);
-    }
-    // if in development mode calculate the start value by querying the DOM
-    else {
+      // check to see if start value can be inferred from current chain element map
+      result = currentChainElement.getModelFromAttribute(attribute);
+    } else if (animarMapElement != null && animarMapElement.hasAttribute(attribute)) {
+      // check to see if start value can be inferred from existing element map in Animar instance
+      result = animarMapElement.getModelFromAttribute(attribute);
+    } else {
+      // if in development mode calculate the start value by querying the DOM
       /* istanbul ignore else */
       if (__DEV__) {
         // TODO: Add development warning
         var getStartValue = require('./helpers').getStartValue;
-        start = getStartValue(element, attribute);
+        result = getStartValue(element, attribute);
       }
     }
-    return start;
+    return result;
   }
 
-  resolveAnimationOptions(options:AnimationOptions):ResolvedAnimationOptions {
+  resolveAnimationOptions (options:AnimationOptions):ResolvedAnimationOptions {
     return {
       delay: options.delay == null ?
         this.defaults.delay : options.delay,
@@ -144,7 +146,7 @@ class Animar {
     };
   }
 
-  _add(element:HTMLElement,
+  _add (element:HTMLElement,
        attributes:{ [key: string]: number | Array<number> },
        options:AnimationOptions,
        chainOptions:ChainOptions,
@@ -164,7 +166,7 @@ class Animar {
       start = this.resolveStartValue(start, element, attribute, currentChain);
 
       if (start == null) {
-        throw 'Animation start value is not provided and cannot be inferred';
+        throw new Error('Animation start value is not provided and cannot be inferred');
       } else {
         currentChain = this.addAnimationToChain(start, destination, resolvedOptions, chainOptions, attribute,
           element, currentChain);
@@ -175,7 +177,7 @@ class Animar {
     return this.fullChainObjectFactory(chainOptions, currentChain);
   }
 
-  addAnimationToChain(start:number,
+  addAnimationToChain (start:number,
                       destination:number,
                       resolvedOptions:ResolvedAnimationOptions,
                       chainOptions:ChainOptions,
@@ -206,7 +208,7 @@ class Animar {
     return this.mergeElementMaps(currentChain, tempEMap);
   }
 
-  fullChainObjectFactory(chainOptions:ChainOptions, chain:ElementMap):FullChainObject {
+  fullChainObjectFactory (chainOptions:ChainOptions, chain:ElementMap):FullChainObject {
     return {
       start: this.startChainFunctionFactory(chain),
       loop: this.loopChainFunctionFactory(chainOptions, chain),
@@ -215,7 +217,7 @@ class Animar {
     };
   }
 
-  thenChainFunctionFactory(chainOptions:ChainOptions, chain:ElementMap):ThenFunction {
+  thenChainFunctionFactory (chainOptions:ChainOptions, chain:ElementMap):ThenFunction {
     return (wait = 0) => {
       let newChainOptions = Object.create(chainOptions);
       newChainOptions.totalDuration += (chainOptions.currentDuration + wait);
@@ -227,7 +229,7 @@ class Animar {
     };
   }
 
-  addChainFunctionFactory(chainOptions:ChainOptions, chain:ElementMap):AddFunction {
+  addChainFunctionFactory (chainOptions:ChainOptions, chain:ElementMap):AddFunction {
     return (element, attributes, options) => {
       let resolvedOptions = options == null ? EMPTY_ANIMATION_OPTIONS : options;
 
@@ -242,7 +244,7 @@ class Animar {
   }
 
 
-  loopChainFunctionFactory(chainOptions:ChainOptions, chain:ElementMap):LoopFunction {
+  loopChainFunctionFactory (chainOptions:ChainOptions, chain:ElementMap):LoopFunction {
     return () => {
       chainOptions.totalDuration += chainOptions.currentDuration;
 
@@ -259,21 +261,21 @@ class Animar {
     };
   }
 
-  startChainFunctionFactory(chain:ElementMap):StartFunction {
+  startChainFunctionFactory (chain:ElementMap):StartFunction {
     return () => {
       this.elementMap = this.mergeElementMaps(this.elementMap, chain);
       this.requestTick();
     };
   }
 
-  requestTick() {
+  requestTick () {
     if (!this.ticking) {
       window.requestAnimationFrame(this.update.bind(this));
       this.ticking = true;
     }
   }
 
-  update() {
+  update () {
     this.ticking = false;
     var hasChanged = this.step();
 
@@ -283,13 +285,13 @@ class Animar {
     }
   }
 
-  render() {
+  render () {
     this.elementMap.forEach((element, domElement) => {
       element.render(domElement);
     });
   }
 
-  step():boolean {
+  step ():boolean {
     let somethingChanged = false;
     this.elementMap.forEach(element => {
       if (element.step(this.timescale)) {

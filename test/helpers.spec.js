@@ -14,7 +14,7 @@ function propagateToGlobal (window) {
     if (!window.hasOwnProperty(key)) continue;
     if (key in global) continue;
 
-    global[key] = window[key]
+    global[key] = window[key];
   }
 }
 
@@ -53,7 +53,7 @@ describe('Helpers', () => {
   afterEach(() => {
     if (BROWSER) {
       let wrapper = document.getElementById('wrapper');
-      while(wrapper.hasChildNodes()) {
+      while (wrapper.hasChildNodes()) {
         wrapper.removeChild(wrapper.lastChild);
       }
     }

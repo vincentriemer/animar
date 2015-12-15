@@ -11,7 +11,7 @@ class Animation {
   delay:number;
   wait:number;
 
-  constructor(currentIteration:number,
+  constructor (currentIteration:number,
               startValue:number,
               changeInValue:number,
               totalIterations:number,
@@ -29,7 +29,7 @@ class Animation {
     this.wait = wait;
   }
 
-  step(timescale:number):boolean {
+  step (timescale:number):boolean {
     if (this.currentIteration < (this.totalIterations + this.wait)) {
       this.currentIteration += timescale;
     } else if (this.looping) {
@@ -40,7 +40,7 @@ class Animation {
     return true;
   }
 
-  loop(chainOptions:ChainOptions) {
+  loop (chainOptions:ChainOptions) {
     this.looping = true;
     this.wait = chainOptions.totalDuration - this.delay - this.totalIterations;
   }

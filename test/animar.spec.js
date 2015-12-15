@@ -19,12 +19,12 @@ const EMPTY_ANIMATION_OPTIONS = {
   loop: null
 };
 
-function propagateToGlobal(window) {
+function propagateToGlobal (window) {
   for (let key in window) {
     if (!window.hasOwnProperty(key)) continue;
     if (key in global) continue;
 
-    global[key] = window[key]
+    global[key] = window[key];
   }
 }
 
@@ -208,7 +208,6 @@ describe('Animar', () => {
     });
 
     it('should call the helper getStartValue if the start value cannot be inferred', () => {
-      let Helpers = require('../src/helpers');
       let getStartValueStub = sinon.stub(Helpers, 'getStartValue').returns(13);
       let attributeString = 'translateX';
       let result = animar.resolveStartValue(null, testElement, attributeString, new Map());

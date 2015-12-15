@@ -7,12 +7,12 @@ class Element {
   attributes:Map<string, Attribute>;
   domElement:HTMLElement;
 
-  constructor(element:HTMLElement) {
+  constructor (element:HTMLElement) {
     this.attributes = new Map();
     this.domElement = element;
   }
 
-  render() {
+  render () {
     let transformValue = '';
 
     this.attributes.forEach(attribute => {
@@ -25,7 +25,7 @@ class Element {
     }
   }
 
-  merge(target:Element):Element {
+  merge (target:Element):Element {
     let mergedElement = new Element(this.domElement);
     mergedElement.attributes = new Map(this.attributes);
     target.attributes.forEach((attr, attrName) => {
@@ -45,15 +45,15 @@ class Element {
     return mergedElement;
   }
 
-  addAttribute(attrName:string, attribute:Attribute) {
+  addAttribute (attrName:string, attribute:Attribute) {
     this.attributes.set(attrName, attribute);
   }
 
-  hasAttribute(attributeName:string):boolean {
+  hasAttribute (attributeName:string):boolean {
     return this.attributes.has(attributeName);
   }
 
-  getModelFromAttribute(attributeName:string):number {
+  getModelFromAttribute (attributeName:string):number {
     let result = null;
 
     // TODO: Replace existence logic with hasAttribute once FlowType has fixed its bug
@@ -61,13 +61,13 @@ class Element {
     if (attribute != null) {
       result = attribute.model;
     } else {
-      throw `No such attribute ${attributeName}`;
+      throw new Error(`No such attribute ${attributeName}`);
     }
 
     return result;
   }
 
-  step(timescale:number):boolean {
+  step (timescale:number):boolean {
     let somethingChanged = false;
     this.attributes.forEach(attribute => {
       if (attribute.step(timescale)) {
@@ -77,7 +77,7 @@ class Element {
     return somethingChanged;
   }
 
-  loop(chainOptions:ChainOptions) {
+  loop (chainOptions:ChainOptions) {
     this.attributes.forEach(attribute => {
       attribute.loop(chainOptions);
     });
