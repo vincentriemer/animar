@@ -1,6 +1,5 @@
 /* @flow */
 import type Attribute from './attribute';
-import type Animation from './animation';
 import type { ChainOptions } from './animar';
 import { applyStyle } from './helpers';
 
