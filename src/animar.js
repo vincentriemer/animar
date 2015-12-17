@@ -4,6 +4,8 @@ import Animation from './animation';
 import Attribute from './attribute';
 import Element from './element';
 
+var Tapable = require('tapable');
+
 type ElementMap = Map<HTMLElement, Element>;
 type AnimationOptions = {
   delay: ?any,
@@ -43,13 +45,14 @@ const EMPTY_ANIMATION_OPTIONS = {
   loop: null
 };
 
-class Animar {
+class Animar extends Tapable {
   ticking:boolean;
   elementMap:ElementMap;
   defaults:{ delay: number, easingFunction: Function, duration: number, loop: boolean };
   timescale:number;
 
   constructor () {
+    super();
     this.ticking = false;
     this.elementMap = new Map();
     this.defaults = {
@@ -109,28 +112,20 @@ class Animar {
       return start;
     }
 
-    let result = null;
-
     // TODO: Replace existence logic with hasAttribute once FlowType has fixed its bug
     let currentChainElement = currentChain.get(element);
     let animarMapElement = this.elementMap.get(element);
 
     if (currentChainElement != null && currentChainElement.hasAttribute(attribute)) {
       // check to see if start value can be inferred from current chain element map
-      result = currentChainElement.getModelFromAttribute(attribute);
+      return currentChainElement.getModelFromAttribute(attribute);
     } else if (animarMapElement != null && animarMapElement.hasAttribute(attribute)) {
       // check to see if start value can be inferred from existing element map in Animar instance
-      result = animarMapElement.getModelFromAttribute(attribute);
+      return animarMapElement.getModelFromAttribute(attribute);
     } else {
-      // if in development mode calculate the start value by querying the DOM
-      /* istanbul ignore else */
-      if (__DEV__) {
-        // TODO: Add development warning
-        var getStartValue = require('./helpers').getStartValue;
-        result = getStartValue(element, attribute);
-      }
+      // TODO: add development warning
+      return null;
     }
-    return result;
   }
 
   resolveAnimationOptions (options:AnimationOptions):ResolvedAnimationOptions {

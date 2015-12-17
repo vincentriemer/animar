@@ -1,6 +1,7 @@
 [ignore]
-.*/lib/.*
-.*/node_modules/.*
+.*node_modules/babylon.*
+.*node_modules/babel.*
+.*/libs/.*
 [include]
 src
 [libs]

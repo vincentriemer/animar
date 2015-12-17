@@ -25,16 +25,16 @@
   "scripts": {
     "clean": "rimraf dist",
     "clean-coverage": "rimraf coverage",
-    "clean-lib": "rimraf lib",
+    "clean-lib": "rimraf libs",
     "build": "./scripts/build.sh",
     "prebuild": "npm run clean",
     "lint": "eslint src/** test/**",
     "typecheck": "./node_modules/.bin/flow check",
-    "test": "NODE_ENV=test ./node_modules/.bin/babel-node ./node_modules/.bin/isparta cover test-scripts/node-test.js",
+    "test": "NODE_ENV=test babel-node ./node_modules/.bin/isparta cover test-scripts/node-test.js",
     "pretest": "npm run clean-coverage && npm run lint && npm run typecheck",
     "dev-test": "NODE_ENV=test ./node_modules/.bin/testem",
     "ci-test": "NODE_ENV=test ./node_modules/.bin/testem ci",
-    "prepublish": "npm run clean-lib && ./node_modules/.bin/babel ./src --out-dir ./lib"
+    "prepublish": "npm run clean-lib && ./node_modules/.bin/babel ./src --out-dir ./libs"
   },
   "main": "lib/animar.js",
   "devDependencies": {
@@ -52,7 +52,7 @@
     "core-js": "^1.2.6",
     "eslint": "^1.10.1",
     "eslint-plugin-flow-vars": "^0.1.0",
-    "flow-bin": "^0.19.1",
+    "flow-bin": "^0.20.0",
     "isparta": "^4.0.0",
     "jsdom": "^7.0.2",
     "lodash": "^3.3.1",
@@ -65,5 +65,8 @@
     "travis-weigh-in": "^1.0.2",
     "tsd": "^0.6.3",
     "webpack": "^1.12.8"
+  },
+  "dependencies": {
+    "tapable": "^0.2.1"
   }
 }
