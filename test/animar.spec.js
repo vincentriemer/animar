@@ -276,11 +276,6 @@ describe('Animar', () => {
       sinon.assert.calledWith(resolveOptionsStub, {foo: 'bar'});
     });
 
-    it('should properly handle only the destination value being provided', () => {
-      animar._add(testElement, {translateX: 40}, null, chainOptions, new Map());
-      sinon.assert.calledWith(resolveStartStub, undefined, testElement, 'translateX', new Map());
-    });
-
     it('should properly handle the start and destination value being provided', () => {
       animar._add(testElement, {translateX: [0, 40]}, null, chainOptions, new Map());
       sinon.assert.calledWith(resolveStartStub, 0, testElement, 'translateX', new Map());
@@ -292,7 +287,7 @@ describe('Animar', () => {
     });
 
     it('should properly call addAnimationToChain', () => {
-      animar._add(testElement, {translateX: 40}, null, chainOptions, new Map());
+      animar._add(testElement, {translateX: [0, 40]}, null, chainOptions, new Map());
       sinon.assert.calledWith(addAnimationStub, 10, 40, resolvedOptions, chainOptions, 'translateX',
         testElement, new Map());
     });
@@ -300,7 +295,7 @@ describe('Animar', () => {
     // TODO: write better description
     it('should set the chainOptions currentDuration properly', () => {
       // case: when animation's duration is longer than the chainOptions' duration
-      animar._add(testElement, {translateX: 40}, null, chainOptions, new Map());
+      animar._add(testElement, {translateX: [0, 40]}, null, chainOptions, new Map());
       sinon.assert.calledWith(fullChainStub, {
         delay: chainOptions.delay,
         currentDuration: 60,
@@ -314,7 +309,7 @@ describe('Animar', () => {
         currentDuration: 120,
         totalDuration: 0
       };
-      animar._add(testElement, {translateX: 40}, null, longerChainOptions, new Map());
+      animar._add(testElement, {translateX: [0, 40]}, null, longerChainOptions, new Map());
       sinon.assert.calledWith(fullChainStub, longerChainOptions, new Map([['foo', 'bar']]));
     });
 

@@ -17,7 +17,7 @@ type ResolvedAnimationOptions = {
   duration: number,
   loop: boolean
 };
-export type AttributesOptions = { [key: string]: number | Array<number> };
+export type AttributesOptions = { [key: string]: Array<number> };
 export type ChainOptions = {
   delay: number,
   currentDuration: number,
@@ -138,21 +138,16 @@ class Animar {
   }
 
   _add (element:HTMLElement,
-       attributes:{ [key: string]: number | Array<number> },
+       attributes:AttributesOptions,
        options:AnimationOptions,
        chainOptions:ChainOptions,
        currentChain:ElementMap):FullChainObject {
     let resolvedOptions = this.resolveAnimationOptions(options);
     Object.keys(attributes).forEach((attribute) => {
       const attributeValue = attributes[attribute];
-      let start, destination;
 
-      if (typeof attributeValue === 'number') {
-        destination = attributeValue;
-      } else {
-        start = attributeValue[0];
+      let start = attributeValue[0],
         destination = attributeValue[1];
-      }
 
       start = this.resolveStartValue(start, element, attribute, currentChain);
 
