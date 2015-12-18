@@ -103,27 +103,6 @@ class Animar {
     return result;
   }
 
-  resolveStartValue (start:?number, element:HTMLElement, attribute:string, currentChain:ElementMap):?number {
-    // just return the start value if it was supplied
-    if (start != null) {
-      return start;
-    }
-
-    // TODO: Replace existence logic with hasAttribute once FlowType has fixed its bug
-    let currentChainElement = currentChain.get(element);
-    let animarMapElement = this.elementMap.get(element);
-
-    if (currentChainElement != null && currentChainElement.hasAttribute(attribute)) {
-      // check to see if start value can be inferred from current chain element map
-      return currentChainElement.getModelFromAttribute(attribute);
-    } else if (animarMapElement != null && animarMapElement.hasAttribute(attribute)) {
-      // check to see if start value can be inferred from existing element map in Animar instance
-      return animarMapElement.getModelFromAttribute(attribute);
-    } else {
-      throw new Error('Start value not specified and model does not exist');
-    }
-  }
-
   resolveAnimationOptions (options:AnimationOptions):ResolvedAnimationOptions {
     return {
       delay: options.delay == null ?
@@ -149,14 +128,8 @@ class Animar {
       let start = attributeValue[0],
         destination = attributeValue[1];
 
-      start = this.resolveStartValue(start, element, attribute, currentChain);
-
-      if (start == null) {
-        throw new Error('Animation start value is not provided and cannot be inferred');
-      } else {
-        currentChain = this.addAnimationToChain(start, destination, resolvedOptions, chainOptions, attribute,
-          element, currentChain);
-      }
+      currentChain = this.addAnimationToChain(start, destination, resolvedOptions, chainOptions, attribute,
+        element, currentChain);
     });
     chainOptions.currentDuration = Math.max(chainOptions.currentDuration,
       resolvedOptions.delay + resolvedOptions.duration);

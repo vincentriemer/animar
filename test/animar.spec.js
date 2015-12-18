@@ -177,42 +177,6 @@ describe('Animar', () => {
       });
   });
 
-  describe('#resolveStartValue', () => {
-    let testElement;
-    beforeEach(() => {
-      testElement = document.getElementById('target1');
-    });
-
-    it('should return the provided start value if it is provided', () => {
-      let result = animar.resolveStartValue(13, testElement, 'translateX', new Map());
-      assert.equal(result, 13);
-    });
-
-    it('should return an inferred start value from the current chain', () => {
-      let exampleElement = new Element(testElement);
-      let exampleAttribute = new Attribute('translateX', 13);
-      exampleElement.addAttribute('translateX', exampleAttribute);
-      let testChain = new Map().set(testElement, exampleElement);
-
-      let result = animar.resolveStartValue(null, testElement, 'translateX', testChain);
-      assert.equal(result, 13);
-    });
-
-    it('should return an inferred start value from animar\'s element map', () => {
-      let exampleElement = new Element(testElement);
-      let exampleAttribute = new Attribute('translateX', 13);
-      exampleElement.addAttribute('translateX', exampleAttribute);
-      animar.elementMap = new Map().set(testElement, exampleElement);
-
-      let result = animar.resolveStartValue(null, testElement, 'translateX', new Map());
-      assert.equal(result, 13);
-    });
-
-    it('should throw an error if the start value is not specified or stored', () => {
-      assert.throw(() => animar.resolveStartValue(null, testElement, 'translateX', new Map()));
-    });
-  });
-
   describe('#resolveAnimationOptions', () => {
     it('should return the same object provided to it if all properties are provided', () => {
       let testOptions = {
@@ -241,7 +205,7 @@ describe('Animar', () => {
   });
 
   describe('#_add', () => {
-    let chainOptions, testElement, resolveOptionsStub, resolveStartStub, addAnimationStub, fullChainStub,
+    let chainOptions, testElement, resolveOptionsStub, addAnimationStub, fullChainStub,
       resolvedOptions;
 
     beforeEach(() => {
@@ -254,7 +218,6 @@ describe('Animar', () => {
       };
       testElement = document.getElementById('target1');
       resolveOptionsStub = sinon.stub(animar, 'resolveAnimationOptions').returns(resolvedOptions);
-      resolveStartStub = sinon.stub(animar, 'resolveStartValue').returns(10);
       addAnimationStub = sinon.stub(animar, 'addAnimationToChain').returns(new Map([['foo', 'bar']]));
       fullChainStub = sinon.stub(animar, 'fullChainObjectFactory');
       chainOptions = {
@@ -266,7 +229,6 @@ describe('Animar', () => {
 
     afterEach(() => {
       resolveOptionsStub.restore();
-      resolveStartStub.restore();
       addAnimationStub.restore();
       fullChainStub.restore();
     });
@@ -276,19 +238,9 @@ describe('Animar', () => {
       sinon.assert.calledWith(resolveOptionsStub, {foo: 'bar'});
     });
 
-    it('should properly handle the start and destination value being provided', () => {
-      animar._add(testElement, {translateX: [0, 40]}, null, chainOptions, new Map());
-      sinon.assert.calledWith(resolveStartStub, 0, testElement, 'translateX', new Map());
-    });
-
-    it('should throw an error if the start value cannot be resolved', () => {
-      resolveStartStub.returns(null);
-      assert.throw(() => animar._add(testElement, {translateX: 40}, null, chainOptions, new Map()));
-    });
-
     it('should properly call addAnimationToChain', () => {
       animar._add(testElement, {translateX: [0, 40]}, null, chainOptions, new Map());
-      sinon.assert.calledWith(addAnimationStub, 10, 40, resolvedOptions, chainOptions, 'translateX',
+      sinon.assert.calledWith(addAnimationStub, 0, 40, resolvedOptions, chainOptions, 'translateX',
         testElement, new Map());
     });
 
@@ -315,7 +267,6 @@ describe('Animar', () => {
 
     it('should handle multiple attributes inside the attributes object', () => {
       animar._add(testElement, {translateX: 40, translateY: 80}, chainOptions, new Map());
-      assert.isTrue(resolveStartStub.calledTwice);
       assert.isTrue(addAnimationStub.calledTwice);
     });
   });
