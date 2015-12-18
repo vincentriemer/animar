@@ -30,10 +30,9 @@
     "prebuild": "npm run clean",
     "lint": "eslint src/** test/**",
     "typecheck": "./node_modules/.bin/flow check",
-    "test": "NODE_ENV=test ./node_modules/.bin/babel-node ./node_modules/.bin/isparta cover test-scripts/node-test.js",
+    "test": "NODE_ENV=test ./node_modules/.bin/babel-node ./node_modules/.bin/isparta cover --report lcovonly test-scripts/node-test.js",
     "pretest": "npm run clean-coverage && npm run lint && npm run typecheck",
-    "dev-test": "NODE_ENV=test ./node_modules/.bin/testem",
-    "ci-test": "NODE_ENV=test ./node_modules/.bin/testem ci",
+    "browser-test": "testem ci",
     "prepublish": "npm run clean-lib && ./node_modules/.bin/babel ./src --out-dir ./lib"
   },
   "main": "lib/animar.js",

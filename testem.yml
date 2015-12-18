@@ -15,12 +15,6 @@ serve_files:
   - browser-test/browser-test.js
   - browser-test/*.js
 launchers:
-  Node:
-    command: >
-      ./node_modules/.bin/babel-node
-      ./node_modules/.bin/isparta cover
-      test-scripts/node-test.js
-    protocol: tap
   SL_Chrome_Current:
     exe: ./node_modules/.bin/saucie
     args:
@@ -159,8 +153,6 @@ launchers:
       - --at
       - -u
     protocol: browser
-launch_in_dev:
-  - Node
 launch_in_ci:
   - SL_Chrome_Current
   - SL_Firefox_Current

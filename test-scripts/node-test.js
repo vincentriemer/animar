@@ -10,7 +10,8 @@ global.jsdom = require('jsdom');
 
 const testDir = 'test';
 
-let mocha = new Mocha({ reporter: 'tap' });
+let mocha = new Mocha({ reporter: 'spec' });
+
 fs.readdirSync(testDir).filter(file => {
   return file.substr(-3) === '.js';
 }).forEach(file => {
