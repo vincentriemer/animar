@@ -2,7 +2,7 @@
 
 [![bitHound Dependencies](https://www.bithound.io/github/vincentriemer/animar/badges/dependencies.svg)](https://www.bithound.io/github/vincentriemer/animar/master/dependencies/npm) [![bitHound Dev Dependencies](https://www.bithound.io/github/vincentriemer/animar/badges/devDependencies.svg)](https://www.bithound.io/github/vincentriemer/animar/master/dependencies/npm)
 
-[![bitHound Overall Score](https://www.bithound.io/github/vincentriemer/animar/badges/score.svg)](https://www.bithound.io/github/vincentriemer/animar) [![Test Coverage](https://img.shields.io/codeclimate/coverage/github/vincentriemer/animar.svg?style=flat)](https://codeclimate.com/github/vincentriemer/animar) [![Issue Count](https://codeclimate.com/github/vincentriemer/animar/badges/issue_count.svg)](https://codeclimate.com/github/vincentriemer/animar)
+[![bitHound Overall Score](https://www.bithound.io/github/vincentriemer/animar/badges/score.svg)](https://www.bithound.io/github/vincentriemer/animar) [![codecov.io](https://codecov.io/github/vincentriemer/animar/coverage.svg?branch=master)](https://codecov.io/github/vincentriemer/animar?branch=master)
 
 [![Sauce Test Status](https://saucelabs.com/browser-matrix/vincentriemer.svg)](https://saucelabs.com/u/vincentriemer)
 
