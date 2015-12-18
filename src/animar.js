@@ -109,28 +109,19 @@ class Animar {
       return start;
     }
 
-    let result = null;
-
     // TODO: Replace existence logic with hasAttribute once FlowType has fixed its bug
     let currentChainElement = currentChain.get(element);
     let animarMapElement = this.elementMap.get(element);
 
     if (currentChainElement != null && currentChainElement.hasAttribute(attribute)) {
       // check to see if start value can be inferred from current chain element map
-      result = currentChainElement.getModelFromAttribute(attribute);
+      return currentChainElement.getModelFromAttribute(attribute);
     } else if (animarMapElement != null && animarMapElement.hasAttribute(attribute)) {
       // check to see if start value can be inferred from existing element map in Animar instance
-      result = animarMapElement.getModelFromAttribute(attribute);
+      return animarMapElement.getModelFromAttribute(attribute);
     } else {
-      // if in development mode calculate the start value by querying the DOM
-      /* istanbul ignore else */
-      if (__DEV__) {
-        // TODO: Add development warning
-        var getStartValue = require('./helpers').getStartValue;
-        result = getStartValue(element, attribute);
-      }
+      throw new Error('Start value not specified and model does not exist');
     }
-    return result;
   }
 
   resolveAnimationOptions (options:AnimationOptions):ResolvedAnimationOptions {

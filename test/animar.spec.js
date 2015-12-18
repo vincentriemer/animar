@@ -208,16 +208,8 @@ describe('Animar', () => {
       assert.equal(result, 13);
     });
 
-    it('should call the helper getStartValue if the start value cannot be inferred', () => {
-      let getStartValueStub = sinon.stub(Helpers, 'getStartValue').returns(13);
-      let attributeString = 'translateX';
-      let result = animar.resolveStartValue(null, testElement, attributeString, new Map());
-
-      assert.equal(result, 13);
-      assert.isTrue(getStartValueStub.called);
-      assert.isTrue(getStartValueStub.calledWith(testElement, attributeString));
-
-      getStartValueStub.restore();
+    it('should throw an error if the start value is not specified or stored', () => {
+      assert.throw(() => animar.resolveStartValue(null, testElement, 'translateX', new Map()));
     });
   });
 
