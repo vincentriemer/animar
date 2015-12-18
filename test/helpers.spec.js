@@ -1,9 +1,6 @@
 /* global global */
 /// <reference path="../typings/tsd.d.ts"/>
 
-// Compatibility Polyfills
-require('core-js/es6/map');
-
 import Animation from '../src/animation.js';
 import * as Helpers from '../src/helpers.js';
 

@@ -1,8 +1,5 @@
 /// <reference path="../typings/tsd.d.ts"/>
 
-// Compatibility Polyfills
-require('core-js/es6/map');
-
 import Element from '../src/element.js';
 import Attribute from '../src/attribute.js';
 import * as Helpers from '../src/helpers.js';

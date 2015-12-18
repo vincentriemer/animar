@@ -12,11 +12,13 @@ fs.readdirSync(testDir).filter(function(file) {
   entrypoints[file.substr(0, file.length - 3)] = './' + path.join(testDir, file);
 });
 
+entrypoints['browser-test'] = './test-scripts/browser-test.js';
+
 module.exports = {
   entry: entrypoints,
   output: {
     path: path.join(__dirname, 'browser-test'),
-    filename: '[name].js',
+    filename: '[name].js'
   },
   module: {
     loaders: [

@@ -1,8 +1,5 @@
 /// <reference path="../typings/tsd.d.ts"/>
 
-// Compatibility Polyfills
-require('core-js/es6/map');
-
 import Animation from '../src/animation.js';
 let assert = chai.assert;
 
