@@ -70,10 +70,11 @@ describe('Animar', () => {
   });
 
   describe('#constructor()', () => {
-    it('should initialize all of the class variables', () => {
+    it('should initialize all of the class variables to expected defaults', () => {
       assert.equal(animar.ticking, false);
       assert.instanceOf(animar.elementMap, Map);
       assert.equal(animar.timescale, 1);
+      assert.equal(animar.hardwareAcceleration, true);
 
       // check defaults object
       assert.equal(animar.defaults.delay, 0);
@@ -93,6 +94,13 @@ describe('Animar', () => {
         }
       });
       assert.equal(animar.defaults.duration, 120);
+    });
+
+    it('should set the hardwareAcceleration option if provided in options argument', () => {
+      animar = new Animar({
+        hardwareAcceleration: false
+      });
+      assert.equal(animar.hardwareAcceleration, false);
     });
   });
 
@@ -605,7 +613,8 @@ describe('Animar', () => {
   });
 
   describe('#render', () => {
-    it('should call the render function on every element in elementMap', () => {
+    it('should call the render function on every element in elementMap with the hardware acceleration flag', () => {
+      animar.hardwareAcceleration = false;
       let renderSpy1 = sinon.spy();
       let renderSpy2 = sinon.spy();
       let testElement1 = document.getElementById('target1');
@@ -615,8 +624,8 @@ describe('Animar', () => {
 
       animar.render();
 
-      sinon.assert.calledWith(renderSpy1, testElement1);
-      sinon.assert.calledWith(renderSpy2, testElement2);
+      sinon.assert.calledWith(renderSpy1, false);
+      sinon.assert.calledWith(renderSpy2, false);
     });
   });
 

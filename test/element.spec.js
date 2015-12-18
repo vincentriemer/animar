@@ -33,18 +33,36 @@ describe('Element', () => {
       assert.isTrue(attributeRenderFunction.calledTwice);
     });
 
-    it('should append transformation strings and apply the transfrom', () => {
+    it('should append transformation strings and apply the transform, adding translateZ when hardware acceleration' +
+      'is on', () => {
       let applyStyleStub = sinon.stub(Helpers, 'applyStyle');
       let translateRenderFunction = sinon.stub().returns('translateX(10px) ');
       let scaleRenderFunction = sinon.stub().returns('scale(2) ');
       testElement.attributes.set('translateX', { render: translateRenderFunction });
       testElement.attributes.set('scale', { render: scaleRenderFunction });
 
-      testElement.render();
+      testElement.render(true);
 
       assert.isTrue(translateRenderFunction.called);
       assert.isTrue(scaleRenderFunction.called);
       assert.isTrue(applyStyleStub.calledWith(testDomElement, 'transform', 'translateX(10px) scale(2) translateZ(0)'));
+
+      applyStyleStub.restore();
+    });
+
+    it('should append transformation strings and apply the transform, not adding translateZ when hardware ' +
+      'acceleration is off', () => {
+      let applyStyleStub = sinon.stub(Helpers, 'applyStyle');
+      let translateRenderFunction = sinon.stub().returns('translateX(10px) ');
+      let scaleRenderFunction = sinon.stub().returns('scale(2) ');
+      testElement.attributes.set('translateX', { render: translateRenderFunction });
+      testElement.attributes.set('scale', { render: scaleRenderFunction });
+
+      testElement.render(false);
+
+      assert.isTrue(translateRenderFunction.called);
+      assert.isTrue(scaleRenderFunction.called);
+      assert.isTrue(applyStyleStub.calledWith(testDomElement, 'transform', 'translateX(10px) scale(2) '));
 
       applyStyleStub.restore();
     });

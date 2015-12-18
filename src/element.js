@@ -12,7 +12,7 @@ class Element {
     this.domElement = element;
   }
 
-  render () {
+  render (hardwareAcceleration:boolean) {
     let transformValue = '';
 
     this.attributes.forEach(attribute => {
@@ -20,7 +20,10 @@ class Element {
     });
 
     if (transformValue !== '') {
-      transformValue += 'translateZ(0)';
+      if (hardwareAcceleration) {
+        transformValue += 'translateZ(0)';
+      }
+
       applyStyle(this.domElement, 'transform', transformValue);
     }
   }

@@ -36,7 +36,8 @@ type FullChainObject = {
 };
 type Defaults = { delay: number, easingFunction: Function, duration: number, loop: boolean };
 type ConstructorOptions = {
-  defaults: Defaults
+  defaults:Defaults,
+  hardwareAcceleration:boolean
 };
 
 const EMPTY_ANIMATION_OPTIONS = {
@@ -49,12 +50,14 @@ const EMPTY_ANIMATION_OPTIONS = {
 class Animar {
   ticking:boolean;
   elementMap:ElementMap;
-  defaults: Defaults;
+  defaults:Defaults;
   timescale:number;
+  hardwareAcceleration:boolean;
 
-  constructor (constructorOptions: ?ConstructorOptions) {
+  constructor (constructorOptions:?ConstructorOptions) {
     let resolvedOptions = constructorOptions || {};
     let resolvedDefaults = resolvedOptions.defaults || {};
+    let hardwareAcceleration = resolvedOptions.hardwareAcceleration;
 
     this.ticking = false;
     this.elementMap = new Map();
@@ -67,6 +70,7 @@ class Animar {
       loop: false
     }, resolvedDefaults);
     this.timescale = 1;
+    this.hardwareAcceleration = hardwareAcceleration == null ? true : hardwareAcceleration;
   }
 
   add (element:HTMLElement, attributes:AttributesOptions, options:AnimationOptions):FullChainObject {
@@ -251,8 +255,8 @@ class Animar {
   }
 
   render () {
-    this.elementMap.forEach((element, domElement) => {
-      element.render(domElement);
+    this.elementMap.forEach(element => {
+      element.render(this.hardwareAcceleration);
     });
   }
 
