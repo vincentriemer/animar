@@ -4,18 +4,29 @@ import Animation from './animation';
 import Attribute from './attribute';
 import Element from './element';
 
+/**
+ * Map used by Animar to store all animation data.
+ * @typdef {Map<HTMLElement, Element} ElementMap
+ */
 type ElementMap = Map<HTMLElement, Element>;
+
+/**
+ * Options used to create animations.
+ * @typedef {Object} AnimationOptions
+ * @property {?number} delay - The amount of ticks to wait before beginning animation.
+ * @property {?function} easingFunction = The easing function used by the animation to change how the animation
+ * moves over time.
+ * @property {?number} duration - The amount of time the animation will take.
+ */
 type AnimationOptions = {
   delay: ?any,
   easingFunction: ?any,
-  duration: ?any,
-  loop: ?any
+  duration: ?any
 };
 type ResolvedAnimationOptions = {
   delay: number,
   easingFunction: Function,
-  duration: number,
-  loop: boolean
+  duration: number
 };
 export type AttributesOptions = { [key: string]: Array<number> };
 export type ChainOptions = {
@@ -34,7 +45,7 @@ type FullChainObject = {
   add: AddFunction,
   then: ThenFunction
 };
-type Defaults = { delay: number, easingFunction: Function, duration: number, loop: boolean };
+type Defaults = { delay: number, easingFunction: Function, duration: number };
 type ConstructorOptions = {
   defaults:Defaults,
   hardwareAcceleration:boolean
@@ -66,8 +77,7 @@ class Animar {
       easingFunction: (t, b, c, d) => {
         return c * t / d + b;
       }, // linear easing function
-      duration: 60,
-      loop: false
+      duration: 60
     }, resolvedDefaults);
     this.timescale = 1;
     this.hardwareAcceleration = hardwareAcceleration == null ? true : hardwareAcceleration;
@@ -120,9 +130,7 @@ class Animar {
       easingFunction: options.easingFunction == null ?
         this.defaults.easingFunction : options.easingFunction,
       duration: options.duration == null ?
-        this.defaults.duration : options.duration,
-      loop: options.loop == null ?
-        this.defaults.loop : options.loop
+        this.defaults.duration : options.duration
     };
   }
 
@@ -160,7 +168,7 @@ class Animar {
       0 - start,
       resolvedOptions.duration,
       resolvedOptions.easingFunction,
-      resolvedOptions.loop,
+      false,
       resolvedOptions.delay + chainOptions.delay,
       0
     );

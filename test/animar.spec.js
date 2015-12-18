@@ -80,7 +80,6 @@ describe('Animar', () => {
       assert.equal(animar.defaults.delay, 0);
       assert.typeOf(animar.defaults.easingFunction, 'function');
       assert.equal(animar.defaults.duration, 60);
-      assert.equal(animar.defaults.loop, false);
 
       // check default easing function
       let result = animar.defaults.easingFunction(0, 0, 10, 60);
@@ -113,7 +112,7 @@ describe('Animar', () => {
       testAttributes = {test: [0, 100]};
       testOptions = {
         delay: 0, easingFunction: () => {
-        }, duration: 60, loop: false
+        }, duration: 60
       };
     });
 
@@ -197,8 +196,7 @@ describe('Animar', () => {
         delay: 0,
         easingFunction: () => {
         },
-        duration: 60,
-        loop: false
+        duration: 60
       };
 
       let result = animar.resolveAnimationOptions(testOptions);
@@ -209,8 +207,7 @@ describe('Animar', () => {
       let defaultOptions = {
         delay: animar.defaults.delay,
         easingFunction: animar.defaults.easingFunction,
-        duration: animar.defaults.duration,
-        loop: animar.defaults.loop
+        duration: animar.defaults.duration
       };
 
       let result = animar.resolveAnimationOptions({});
@@ -227,8 +224,7 @@ describe('Animar', () => {
         delay: 0,
         easingFunction: ()=> {
         },
-        duration: 60,
-        loop: false
+        duration: 60
       };
       testElement = document.getElementById('target1');
       resolveOptionsStub = sinon.stub(animar, 'resolveAnimationOptions').returns(resolvedOptions);
@@ -294,8 +290,7 @@ describe('Animar', () => {
         delay: 0,
         easingFunction: ()=> {
         },
-        duration: 60,
-        loop: false
+        duration: 60
       };
       chainOptions = {
         delay: 0,
@@ -467,8 +462,7 @@ describe('Animar', () => {
         delay: 0,
         easingFunction: () => {
         },
-        duration: 60,
-        loop: false
+        duration: 60
       };
       chainOptions = {
         delay: 0,
