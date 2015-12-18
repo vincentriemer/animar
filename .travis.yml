@@ -4,7 +4,7 @@ before_script:
 - npm install --save codecov.io
 script:
 - npm test
-- ./node_modules/codecov.io/bin/codecov.io.js < ./coverage/lcov.json
+- ./node_modules/codecov.io/bin/codecov.io.js < ./coverage/coverage.json
 - npm run browser-test
 after_script:
 - npm run build && python node_modules/travis-weigh-in/weigh_in.py dist/animar.min.js
