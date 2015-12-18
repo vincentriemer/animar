@@ -88,6 +88,15 @@ describe('Animar', () => {
       let result = animar.defaults.easingFunction(0, 0, 10, 60);
       assert.equal(result, 0);
     });
+
+    it('should partially set default parameters if specified in argument', () => {
+      animar = new Animar({
+        defaults: {
+          duration: 120
+        }
+      });
+      assert.equal(animar.defaults.duration, 120);
+    });
   });
 
   describe('#add()', () => {

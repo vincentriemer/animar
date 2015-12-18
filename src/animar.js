@@ -28,12 +28,15 @@ type AddFunction = (element:HTMLElement, attributes:AttributesOptions, options:A
 type StartFunction = () => void;
 type ThenFunction = (wait:number) => { add: AddFunction };
 type LoopFunction = () => { start: StartFunction };
-
 type FullChainObject = {
   start: StartFunction,
   loop: LoopFunction,
   add: AddFunction,
   then: ThenFunction
+};
+type Defaults = { delay: number, easingFunction: Function, duration: number, loop: boolean };
+type ConstructorOptions = {
+  defaults: Defaults
 };
 
 const EMPTY_ANIMATION_OPTIONS = {
@@ -46,25 +49,28 @@ const EMPTY_ANIMATION_OPTIONS = {
 class Animar {
   ticking:boolean;
   elementMap:ElementMap;
-  defaults:{ delay: number, easingFunction: Function, duration: number, loop: boolean };
+  defaults: Defaults;
   timescale:number;
 
-  constructor () {
+  constructor (constructorOptions: ?ConstructorOptions) {
+    let resolvedOptions = constructorOptions || {};
+    let resolvedDefaults = resolvedOptions.defaults || {};
+
     this.ticking = false;
     this.elementMap = new Map();
-    this.defaults = {
+    this.defaults = Object.assign({
       delay: 0,
       easingFunction: (t, b, c, d) => {
         return c * t / d + b;
       }, // linear easing function
       duration: 60,
       loop: false
-    };
+    }, resolvedDefaults);
     this.timescale = 1;
   }
 
   add (element:HTMLElement, attributes:AttributesOptions, options:AnimationOptions):FullChainObject {
-    let resolvedOptions = options == null ? EMPTY_ANIMATION_OPTIONS : options;
+    let resolvedOptions = options || EMPTY_ANIMATION_OPTIONS;
 
     /* istanbul ignore else */
     if (__DEV__) {
