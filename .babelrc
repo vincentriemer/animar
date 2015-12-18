@@ -1,7 +1,12 @@
 {
   "env": {
     "test": {
-      "plugins": ["rewire"]
+      "presets": ["es2015-loose"],
+      "plugins": [
+         "flow-comments",
+         "rewire",
+         "transform-class-properties"
+       ]
     }
   },
   "presets": [

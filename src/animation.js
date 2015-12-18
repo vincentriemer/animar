@@ -46,4 +46,4 @@ class Animation {
   }
 }
 
-export default Animation;
+module.exports = Animation;
