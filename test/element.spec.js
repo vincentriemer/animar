@@ -1,7 +1,6 @@
 /// <reference path="../typings/tsd.d.ts"/>
 
 import Element from '../src/element.js';
-import Attribute from '../src/attribute.js';
 import * as Helpers from '../src/helpers.js';
 
 var assert = chai.assert;
@@ -99,29 +98,6 @@ describe('Element', () => {
       let testAttribute = { foo: 'bar' };
       testElement.addAttribute('test', testAttribute);
       assert.equal(testElement.attributes.get('test'), testAttribute);
-    });
-  });
-
-  describe('#hasAttribute()', () => {
-    it('should return a boolean representing the existance of an attribute', () => {
-      testElement.addAttribute('test', {});
-      assert.isTrue(testElement.hasAttribute('test'));
-      assert.isFalse(testElement.hasAttribute('foo'));
-    });
-  });
-
-  describe('#getModelFromAttribute', () => {
-    it('should return the model from the given attribute name', () => {
-      let testAttribute = new Attribute('test', 23);
-      testElement.addAttribute('test', testAttribute);
-
-      assert.equal(testElement.getModelFromAttribute('test'), 23);
-    });
-
-    it('should throw an error if attribute doesn\'t exist', () => {
-      assert.throw(() => {
-        testElement.getModelFromAttribute('test');
-      });
     });
   });
 

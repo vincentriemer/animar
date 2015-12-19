@@ -3,15 +3,27 @@ import type Attribute from './attribute'; //eslint-disable-line no-unused-vars
 import type { ChainOptions } from './animar'; //eslint-disable-line no-unused-vars
 import { applyStyle } from './helpers';
 
+/**
+ * Class that holds all the animation information for an HTML DOM Element.
+ * @protected
+ */
 export default class Element {
   attributes:Map<string, Attribute>;
   domElement:HTMLElement;
 
+  /**
+   * Create a new Element instance
+   * @param element
+   */
   constructor (element:HTMLElement) {
     this.attributes = new Map();
     this.domElement = element;
   }
 
+  /**
+   * Render the Element's current animation state to the DOM.
+   * @param hardwareAcceleration
+   */
   render (hardwareAcceleration:boolean) {
     let transformValue = '';
 
@@ -28,13 +40,17 @@ export default class Element {
     }
   }
 
+  /**
+   * Merge elements' properties.
+   * @param target
+   * @returns {Element}
+   */
   merge (target:Element):Element {
     let mergedElement = new Element(this.domElement);
     mergedElement.attributes = new Map(this.attributes);
     target.attributes.forEach((attr, attrName) => {
       let mergedAttribute;
 
-      // TODO: Replace existence logic with hasAttribute once FlowType has fixed its bug
       let existingAttribute = mergedElement.attributes.get(attrName);
       if (existingAttribute != null) {
         mergedAttribute = existingAttribute.merge(attr);
@@ -48,28 +64,20 @@ export default class Element {
     return mergedElement;
   }
 
+  /**
+   * Add an {@link Attribute} to the Element instance.
+   * @param attrName
+   * @param attribute
+   */
   addAttribute (attrName:string, attribute:Attribute) {
     this.attributes.set(attrName, attribute);
   }
 
-  hasAttribute (attributeName:string):boolean {
-    return this.attributes.has(attributeName);
-  }
-
-  getModelFromAttribute (attributeName:string):number {
-    let result = null;
-
-    // TODO: Replace existence logic with hasAttribute once FlowType has fixed its bug
-    let attribute = this.attributes.get(attributeName);
-    if (attribute != null) {
-      result = attribute.model;
-    } else {
-      throw new Error(`No such attribute ${attributeName}`);
-    }
-
-    return result;
-  }
-
+  /**
+   * Step the Element's animation state forward.
+   * @param timescale
+   * @returns {boolean}
+   */
   step (timescale:number):boolean {
     let somethingChanged = false;
     this.attributes.forEach(attribute => {
@@ -80,6 +88,10 @@ export default class Element {
     return somethingChanged;
   }
 
+  /**
+   * Update the Element's animation state to loop.
+   * @param chainOptions
+   */
   loop (chainOptions:ChainOptions) {
     this.attributes.forEach(attribute => {
       attribute.loop(chainOptions);

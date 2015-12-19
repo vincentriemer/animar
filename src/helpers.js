@@ -3,6 +3,11 @@
 import type Animation from './animation'; //eslint-disable-line no-unused-vars
 import type {AttributesOptions} from './animar';//eslint-disable-line no-unused-vars
 
+/**
+ * List of all the transform attributes that are possible to animate.
+ * @type {Array<string>}
+ * @protected
+ */
 export const TRANSFORM_ATTRIBUTES = [
   'translateX',
   'translateY',
@@ -16,11 +21,25 @@ export const TRANSFORM_ATTRIBUTES = [
   'rotateZ'
 ];
 
+/**
+ * Set the DOM Element's transform property.
+ * @param {HTMLElement} element
+ * @param {string} transformString
+ * @returns {HTMLElement}
+ * @protected
+ */
 export function setTransform (element:HTMLElement, transformString:string):HTMLElement {
   element.style.transform = transformString;
   return element;
 }
 
+/**
+ * Apply a style to the given element's attribute.
+ * @param {HTMLElement} element
+ * @param {string} attributeName
+ * @param {string} attributeValue
+ * @protected
+ */
 export function applyStyle (element:HTMLElement, attributeName:string, attributeValue:string) {
   switch (attributeName) {
     case ('transform'):
@@ -37,6 +56,12 @@ export function applyStyle (element:HTMLElement, attributeName:string, attribute
   }
 }
 
+/**
+ * Add multiple animations together to get an attribute's display value.
+ * @param {Array<?Animation>} animations
+ * @returns {number}
+ * @protected
+ */
 export function calculateAnimationValue (animations:Array<?Animation>):number {
   var result = 0;
 

@@ -1,7 +1,16 @@
 {
   "source": "./src",
   "destination": "./doc",
+  "access": ["public"],
   "plugins": [
-    {"name": "esdoc-es7-plugin"}
+    {"name": "esdoc-es7-plugin"},
+    {
+      "name": "esdoc-importpath-plugin",
+      "option": {
+        "replaces": [
+          {"from": "^src", "to": "lib"}
+        ]
+      }
+    }
   ]
 }

@@ -8,23 +8,32 @@ import Element from './element';
 /**
  * Map used by Animar to store all animation data.
  * @typedef {Map<HTMLElement, Element>} ElementMap
- * @access protected
+ * @private
  */
 /*:: type ElementMap = Map<HTMLElement, Element>; */
 
 /**
- * Options used to create animations.
+ * Options passed into {@link Animar#add} to dictate animation behavior.
  * @typedef {Object} AnimationOptions
  * @property {?number} delay - The amount of ticks to wait before beginning animation.
  * @property {?function} easingFunction = The easing function used by the animation to change how the animation moves over time.
  * @property {?number} duration - The amount of time the animation will take.
- * @access protected
+ * @public
  */
 /*:: type AnimationOptions = {
   delay: ?any,
   easingFunction: ?any,
   duration: ?any
 }; */
+
+/**
+ * Resolved options (no null properties) to pass into {@link Animar#_add}.
+ * @typedef {Object} ResolvedAnimationOptions
+ * @property {number} delay - The amount of ticks to wait before beginning animation.
+ * @property {function} easingFunction = The easing function used by the animation to change how the animation moves over time.
+ * @property {number} duration - The amount of time the animation will take.
+ * @public
+ */
 /*:: type ResolvedAnimationOptions = {
   delay: number,
   easingFunction: Function,
@@ -34,7 +43,7 @@ import Element from './element';
 /**
  * Options that specify which attribute will be animated as well as the start and end value of the animation.
  * @typedef {Object<string, Array<number>>} AttributesOptions
- * @access protected
+ * @public
  */
 /*:: export type AttributesOptions = { [key: string]: Array<number> }; */
 
@@ -44,7 +53,7 @@ import Element from './element';
  * @property {number} delay - The amount of ticks to wait for the animations in the current chain step.
  * @property {number} currentDuration - The current duration of the current animation chain step.
  * @property {number} totalDuration - The current duration of the entire animation chain.
- * @access protected
+ * @private
  */
 /*:: export type ChainOptions = {
   delay: number,
@@ -55,14 +64,14 @@ import Element from './element';
 /**
  * Add a new animation to the current chain.
  * @typedef {function(element: HTMLElement, attributes :AttributesOptions, options: AnimationOptions): FullChainObject} AddFunction
- * @access protected
+ * @public
  */
 /*:: type AddFunction = (element:HTMLElement, attributes:AttributesOptions, options:AnimationOptions) => FullChainObject; */
 
 /**
  * Start the animation chain.
  * @typedef {function(): void} StartFunction
- * @access protected
+ * @public
  */
 /*:: type StartFunction = () => void; */
 
@@ -70,26 +79,26 @@ import Element from './element';
  * Object returned by {@link ThenFunction}
  * @typedef {Object} ThenPayload
  * @property {ThenFunction} then
- * @access protected
+ * @public
  */
 
 /**
  * Add a new step to the animation chain.
  * @typedef {function(wait: number): ThenPayload} ThenFunction
- * @access protected
+ * @public
  */
 /*:: type ThenFunction = (wait:number) => { add: AddFunction }; */
 
 /** Object returned by {@link LoopFunction}
  * @typedef {Object} LoopPayload
  * @property {StartFunction} start
- * @access protected
+ * @public
  */
 
 /**
  * Loop the entire animation chain.
  * @typedef {function(): LoopPayload} LoopFunction
- * @access protected
+ * @public
  */
 /*:: type LoopFunction = () => { start: StartFunction }; */
 
@@ -100,7 +109,7 @@ import Element from './element';
  * @property {LoopFunction} loop - loop the entire animation chain.
  * @property {AddFunction} add - add an animation to the current chain step.
  * @property {ThenFunction} then - start a new chain step.
- * @access protected
+ * @public
  */
 /*:: type FullChainObject = {
   start: StartFunction,
@@ -115,7 +124,7 @@ import Element from './element';
  * @property {number} delay - The default amount of ticks to wait before animating.
  * @property {function} easingFunction - The default easing function to change rate at which the animated value changes.
  * @property {number} duration - The default number of ticks that an animation should run for.
- * @access protected
+ * @public
  */
 /*:: type Defaults = { delay: number, easingFunction: Function, duration: number }; */
 
@@ -124,7 +133,7 @@ import Element from './element';
  * @typedef {Object} ConstructorOptions
  * @property {Defaults} defaults - The values to default to when not provided to {@link Animar#add}
  * @property {boolean} hardwareAcceleration - Determines whether or not to force animating using the GPU.
- * @access protected
+ * @public
  */
 /*:: type ConstructorOptions = {
   defaults:Defaults,
@@ -139,7 +148,8 @@ const EMPTY_ANIMATION_OPTIONS = {
 };
 
 /**
- * The main Animar class which the user interacts with
+ * The main Animar class which the user interacts with.
+ * @public
  */
 export default class Animar {
   ticking:boolean;
@@ -148,13 +158,32 @@ export default class Animar {
   timescale:number;
   hardwareAcceleration:boolean;
 
+  /**
+   * Create a new Animar instance.
+   * @param {ConstructorOptions} constructorOptions
+   * @returns {Animar}
+   * @public
+   */
   constructor (constructorOptions:?ConstructorOptions) {
     let resolvedOptions = constructorOptions || {};
     let resolvedDefaults = resolvedOptions.defaults || {};
     let hardwareAcceleration = resolvedOptions.hardwareAcceleration;
 
+    /**
+     * Whether or not the animar instance is currently animating.
+     * @type {boolean}
+     * @private
+     */
     this.ticking = false;
+    /**
+     * @type {ElementMap}
+     * @private
+     */
     this.elementMap = new Map();
+    /**
+     * @type {Defaults}
+     * @public
+     */
     this.defaults = Object.assign({
       delay: 0,
       easingFunction: (t, b, c, d) => {
@@ -162,10 +191,28 @@ export default class Animar {
       }, // linear easing function
       duration: 60
     }, resolvedDefaults);
+    /**
+     * How fast the animations should run (`1` is real-time).
+     * @type {number}
+     * @public
+     */
     this.timescale = 1;
+    /**
+     * Whether or not to force animating using the GPU
+     * @type {boolean}
+     * @public
+     */
     this.hardwareAcceleration = hardwareAcceleration == null ? true : hardwareAcceleration;
   }
 
+  /**
+   * Begin animation new animation chain and add an animation to the first chain step.
+   * @param {HTMLElement} element - HTML DOM element to animate.
+   * @param {AttributesOptions} attributes
+   * @param {AnimationOptions} options
+   * @returns {FullChainObject}
+   * @public
+   */
   add (element:HTMLElement, attributes:AttributesOptions, options:AnimationOptions):FullChainObject {
     let resolvedOptions = options || EMPTY_ANIMATION_OPTIONS;
 
@@ -182,6 +229,13 @@ export default class Animar {
     );
   }
 
+  /**
+   * Merge element maps, with the target map's properties taking priority.
+   * @param {ElementMap} src - The original source map.
+   * @param {ElementMap} target - The target map to merge.
+   * @returns {ElementMap} The merged {@link ElementMap}
+   * @private
+   */
   mergeElementMaps (src:ElementMap, target:ElementMap):ElementMap {
     let result = new Map(src);
 
@@ -200,6 +254,12 @@ export default class Animar {
     return result;
   }
 
+  /**
+   * Resolve the {@link AnimationOptions} object by replacing all unprovided properties with their defaults.
+   * @param {AnimationOptions} options
+   * @returns {ResolvedAnimationOptions}
+   * @private
+   */
   resolveAnimationOptions (options:AnimationOptions):ResolvedAnimationOptions {
     return {
       delay: options.delay == null ?
@@ -211,6 +271,16 @@ export default class Animar {
     };
   }
 
+  /**
+   * Internal add function that adds an animation to the current chain step.
+   * @param {HTMLElement} element - HTML DOM element to animate.
+   * @param {AttributesOptions} attributes
+   * @param {AnimationOptions} options
+   * @param {ChainOptions} chainOptions
+   * @param {ElementMap} currentChain - The element map of the current chain (has not yet been merged with the instance element map).
+   * @returns {FullChainObject}
+   * @private
+   */
   _add (element:HTMLElement,
        attributes:AttributesOptions,
        options:AnimationOptions,
@@ -231,6 +301,18 @@ export default class Animar {
     return this.fullChainObjectFactory(chainOptions, currentChain);
   }
 
+  /**
+   * Add an animation to the current chain.
+   * @param {number} start
+   * @param {number} destination
+   * @param {ResolvedAnimationOptions} resolvedOptions
+   * @param {ChainOptions} chainOptions
+   * @param {string} attribute
+   * @param {HTMLElement} element
+   * @param {ElementMap} currentChain
+   * @returns {ElementMap}
+   * @private
+   */
   addAnimationToChain (start:number,
                       destination:number,
                       resolvedOptions:ResolvedAnimationOptions,
@@ -262,6 +344,13 @@ export default class Animar {
     return this.mergeElementMaps(currentChain, tempEMap);
   }
 
+  /**
+   * Create a new chain object that contains all of the chain functions.
+   * @param chainOptions
+   * @param chain
+   * @returns {FullChainObject}
+   * @private
+   */
   fullChainObjectFactory (chainOptions:ChainOptions, chain:ElementMap):FullChainObject {
     return {
       start: this.startChainFunctionFactory(chain),
@@ -271,6 +360,13 @@ export default class Animar {
     };
   }
 
+  /**
+   * Create a new function that starts a new chain step.
+   * @param {ChainOptions} chainOptions
+   * @param {ElementMap} chain
+   * @returns {ThenFunction}
+   * @private
+   */
   thenChainFunctionFactory (chainOptions:ChainOptions, chain:ElementMap):ThenFunction {
     return (wait = 0) => {
       let newChainOptions = Object.create(chainOptions);
@@ -283,6 +379,13 @@ export default class Animar {
     };
   }
 
+  /**
+   * Create a new function which adds a new animation to the current chain step.
+   * @param {ChainOptions} chainOptions
+   * @param {ElementMap} chain
+   * @returns {AddFunction}
+   * @private
+   */
   addChainFunctionFactory (chainOptions:ChainOptions, chain:ElementMap):AddFunction {
     return (element, attributes, options) => {
       let resolvedOptions = options || EMPTY_ANIMATION_OPTIONS;
@@ -290,7 +393,13 @@ export default class Animar {
     };
   }
 
-
+  /**
+   * Create a new function which will loop the entire animation chain.
+   * @param {ChainOptions} chainOptions
+   * @param {ElementMap} chain
+   * @returns {LoopFunction}
+   * @private
+   */
   loopChainFunctionFactory (chainOptions:ChainOptions, chain:ElementMap):LoopFunction {
     return () => {
       chainOptions.totalDuration += chainOptions.currentDuration;
@@ -308,6 +417,12 @@ export default class Animar {
     };
   }
 
+  /**
+   * Create a new function which will start animating the chain.
+   * @param {ElementMap} chain
+   * @returns {StartFunction}
+   * @private
+   */
   startChainFunctionFactory (chain:ElementMap):StartFunction {
     return () => {
       this.elementMap = this.mergeElementMaps(this.elementMap, chain);
@@ -315,6 +430,10 @@ export default class Animar {
     };
   }
 
+  /**
+   * Request to start the requestAnimationFrame loop.
+   * @private
+   */
   requestTick () {
     if (!this.ticking) {
       window.requestAnimationFrame(this.update.bind(this));
@@ -322,6 +441,10 @@ export default class Animar {
     }
   }
 
+  /**
+   * Move the instance's elementMap one step forward and render the changes to the DOM if anything changed in the step.
+   * @private
+   */
   update () {
     this.ticking = false;
     var hasChanged = this.step();
@@ -332,12 +455,21 @@ export default class Animar {
     }
   }
 
+  /**
+   * Render the instance's element map to the DOM.
+   * @private
+   */
   render () {
     this.elementMap.forEach(element => {
       element.render(this.hardwareAcceleration);
     });
   }
 
+  /**
+   * Step the instance's element map forward.`
+   * @returns {boolean} - Anything has changed from stepping forward.
+   * @private
+   */
   step ():boolean {
     let somethingChanged = false;
     this.elementMap.forEach(element => {
