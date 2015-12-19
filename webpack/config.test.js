@@ -17,7 +17,7 @@ entrypoints['browser-test'] = './test-scripts/browser-test.js';
 module.exports = {
   entry: entrypoints,
   output: {
-    path: path.join(__dirname, 'browser-test'),
+    path: './browser-test',
     filename: '[name].js'
   },
   module: {

@@ -1,6 +1,6 @@
 framework: mocha
 ignore_missing_launchers: true
-before_tests: webpack --config webpack.config.test.js
+before_tests: webpack --config webpack/config.test.js
 after_tests: ./node_modules/.bin/rimraf browser-test
 src_files:
   - test/*.js

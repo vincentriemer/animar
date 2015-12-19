@@ -2,7 +2,7 @@ var webpack = require('webpack'),
   CompressionPlugin = require('compression-webpack-plugin'),
   _ = require('lodash');
 
-module.exports = _.merge(require('./webpack.config.js'), {
+module.exports = _.merge(require('./config.js'), {
   output: {
     filename: 'animar.min.js'
   },
