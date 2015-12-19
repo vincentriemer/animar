@@ -4,52 +4,132 @@ import Animation from './animation';
 import Attribute from './attribute';
 import Element from './element';
 
+// NOTE: All flow type definitions are currently in comment form due to esdoc's inability to parse the syntax
+
 /**
  * Map used by Animar to store all animation data.
- * @typdef {Map<HTMLElement, Element} ElementMap
+ * @typedef {Map<HTMLElement, Element>} ElementMap
+ * @access protected
  */
-type ElementMap = Map<HTMLElement, Element>;
+/*:: type ElementMap = Map<HTMLElement, Element>; */
 
 /**
  * Options used to create animations.
  * @typedef {Object} AnimationOptions
  * @property {?number} delay - The amount of ticks to wait before beginning animation.
- * @property {?function} easingFunction = The easing function used by the animation to change how the animation
- * moves over time.
+ * @property {?function} easingFunction = The easing function used by the animation to change how the animation moves over time.
  * @property {?number} duration - The amount of time the animation will take.
+ * @access protected
  */
-type AnimationOptions = {
+/*:: type AnimationOptions = {
   delay: ?any,
   easingFunction: ?any,
   duration: ?any
-};
-type ResolvedAnimationOptions = {
+}; */
+/*:: type ResolvedAnimationOptions = {
   delay: number,
   easingFunction: Function,
   duration: number
-};
-export type AttributesOptions = { [key: string]: Array<number> };
-export type ChainOptions = {
+}; */
+
+/**
+ * Options that specify which attribute will be animated as well as the start and end value of the animation.
+ * @typedef {Object<string, Array<number>>} AttributesOptions
+ * @access protected
+ */
+/*:: export type AttributesOptions = { [key: string]: Array<number> }; */
+
+/**
+ * Options used to keep track of the animation's chain.
+ * @typedef {Object} ChainOptions
+ * @property {number} delay - The amount of ticks to wait for the animations in the current chain step.
+ * @property {number} currentDuration - The current duration of the current animation chain step.
+ * @property {number} totalDuration - The current duration of the entire animation chain.
+ * @access protected
+ */
+/*:: export type ChainOptions = {
   delay: number,
   currentDuration: number,
   totalDuration: number
-}
+} */
 
-type AddFunction = (element:HTMLElement, attributes:AttributesOptions, options:AnimationOptions) => FullChainObject;
-type StartFunction = () => void;
-type ThenFunction = (wait:number) => { add: AddFunction };
-type LoopFunction = () => { start: StartFunction };
-type FullChainObject = {
+/**
+ * Add a new animation to the current chain.
+ * @typedef {function(element: HTMLElement, attributes :AttributesOptions, options: AnimationOptions): FullChainObject} AddFunction
+ * @access protected
+ */
+/*:: type AddFunction = (element:HTMLElement, attributes:AttributesOptions, options:AnimationOptions) => FullChainObject; */
+
+/**
+ * Start the animation chain.
+ * @typedef {function(): void} StartFunction
+ * @access protected
+ */
+/*:: type StartFunction = () => void; */
+
+/**
+ * Object returned by {@link ThenFunction}
+ * @typedef {Object} ThenPayload
+ * @property {ThenFunction} then
+ * @access protected
+ */
+
+/**
+ * Add a new step to the animation chain.
+ * @typedef {function(wait: number): ThenPayload} ThenFunction
+ * @access protected
+ */
+/*:: type ThenFunction = (wait:number) => { add: AddFunction }; */
+
+/** Object returned by {@link LoopFunction}
+ * @typedef {Object} LoopPayload
+ * @property {StartFunction} start
+ * @access protected
+ */
+
+/**
+ * Loop the entire animation chain.
+ * @typedef {function(): LoopPayload} LoopFunction
+ * @access protected
+ */
+/*:: type LoopFunction = () => { start: StartFunction }; */
+
+/**
+ * An object which contains every chain function.
+ * @typedef {Object} FullChainObject
+ * @property {StartFunction} start - start animating the animation chain.
+ * @property {LoopFunction} loop - loop the entire animation chain.
+ * @property {AddFunction} add - add an animation to the current chain step.
+ * @property {ThenFunction} then - start a new chain step.
+ * @access protected
+ */
+/*:: type FullChainObject = {
   start: StartFunction,
   loop: LoopFunction,
   add: AddFunction,
   then: ThenFunction
-};
-type Defaults = { delay: number, easingFunction: Function, duration: number };
-type ConstructorOptions = {
+}; */
+
+/**
+ * Object that has holds Animar's default values
+ * @typedef {Object} Defaults
+ * @property {number} delay - The default amount of ticks to wait before animating.
+ * @property {function} easingFunction - The default easing function to change rate at which the animated value changes.
+ * @property {number} duration - The default number of ticks that an animation should run for.
+ * @access protected
+ */
+/*:: type Defaults = { delay: number, easingFunction: Function, duration: number }; */
+
+/**
+ * The options object passed into Animar's constructor
+ * @typedef {Object} ConstructorOptions
+ * @property {Defaults} defaults - The values to default to when not provided to {@link Animar#add}
+ * @property {boolean} hardwareAcceleration - Determines whether or not to force animating using the GPU.
+ */
+/*:: type ConstructorOptions = {
   defaults:Defaults,
   hardwareAcceleration:boolean
-};
+}; */
 
 const EMPTY_ANIMATION_OPTIONS = {
   delay: null,

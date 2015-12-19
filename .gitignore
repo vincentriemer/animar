@@ -8,3 +8,4 @@ lib
 browser-test
 sauce.sh
 sc_client.pid
+doc
