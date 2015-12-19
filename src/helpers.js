@@ -1,8 +1,8 @@
 /* @flow */
 /* global __DEV__ */
 /// <reference path="../typings/tsd.d.ts"/>
-import type Animation from './animation';
-import type {AttributesOptions} from './animar';
+import type Animation from './animation'; //eslint-disable-line no-unused-vars
+import type {AttributesOptions} from './animar';//eslint-disable-line no-unused-vars
 
 const TRANSFORM_ATTRIBUTES = [
   'translateX',

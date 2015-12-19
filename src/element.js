@@ -1,6 +1,6 @@
 /* @flow */
-import type Attribute from './attribute';
-import type { ChainOptions } from './animar';
+import type Attribute from './attribute'; //eslint-disable-line no-unused-vars
+import type { ChainOptions } from './animar'; //eslint-disable-line no-unused-vars
 import { applyStyle } from './helpers';
 
 class Element {

@@ -8,7 +8,7 @@
   },
 
   "plugins": [
-    "flow-vars"
+    "flowtype"
   ],
 
   "ecmaFeatures": {
@@ -168,7 +168,7 @@
     "semi-spacing": [2, {"before": false, "after": true}],
     "sort-vars": [0],
     "space-after-keywords": [2, "always"],
-    "space-before-function-paren": [2, {"anonymous": "always", "named": "always"}],
+    //"space-before-function-paren": [2, {"anonymous": "always", "named": "always"}],
     "space-before-blocks": [0, "always"],
     "space-in-brackets": [
       0, "never", {

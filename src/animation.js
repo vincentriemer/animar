@@ -1,5 +1,5 @@
 /* @flow */
-import type { ChainOptions } from './animar';
+import type { ChainOptions } from './animar'; //eslint-disable-line no-unused-vars
 
 class Animation {
   currentIteration:number;
