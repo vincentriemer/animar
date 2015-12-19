@@ -3,9 +3,8 @@
 import Animation from '../src/animation';
 import Element from '../src/element';
 import Attribute from '../src/attribute';
-import * as Helpers from '../src/helpers';
 
-var Animar = require('../src/animar');
+var Animar = require('../src/animar').default;
 
 var assert = chai.assert;
 
@@ -140,23 +139,6 @@ describe('Animar', () => {
         },
         new Map())
       );
-    });
-
-    // TODO: move validation tests to validateAddParameters
-    it('should throw an error if an element is not provided', () => {
-      assert.throw(() => animar.add(null, testAttributes, testOptions));
-    });
-
-    it('should throw an error if the element provided is not an instance of HTMLElement', () => {
-      assert.throw(() => animar.add({}, testAttributes, testOptions));
-    });
-
-    it('should throw an error if the attributes parameter is not provided', () => {
-      assert.throw(() => animar.add(testElement, null, testOptions));
-    });
-
-    it('should throw an error if the attributes parameter is of the wrong type', () => {
-      assert.throw(() => animar.add(testElement, [], testOptions));
     });
   });
 
@@ -449,10 +431,9 @@ describe('Animar', () => {
   });
 
   describe('#addChainFunctionFactory', () => {
-    let validateStub, _addStub, testElement, attributeOptions, animationOptions, chainOptions, chain;
+    let _addStub, testElement, attributeOptions, animationOptions, chainOptions, chain;
 
     beforeEach(() => {
-      validateStub = sinon.stub(Helpers, 'validateAddParameters');
       _addStub = sinon.stub(animar, '_add').returns('fullChainObjectFactory');
       testElement = document.getElementById('target1');
       attributeOptions = {
@@ -473,26 +454,19 @@ describe('Animar', () => {
     });
 
     afterEach(() => {
-      validateStub.restore();
       _addStub.restore();
-    });
-
-    it('should return a function that validates all its provided arguments', () => {
-      let result = animar.addChainFunctionFactory(chainOptions, chain);
-      result(testElement, attributeOptions, animationOptions);
-      sinon.assert.calledWith(validateStub, testElement, attributeOptions, animationOptions);
-    });
-
-    it('should return a function that properly initializes the options argument if it is not provided', () => {
-      let result = animar.addChainFunctionFactory(chainOptions, chain);
-      result(testElement, attributeOptions);
-      sinon.assert.calledWith(validateStub, testElement, attributeOptions, EMPTY_ANIMATION_OPTIONS);
     });
 
     it('should return a function that properly passes its arguments to the _add function', () => {
       let result = animar.addChainFunctionFactory(chainOptions, chain);
       result(testElement, attributeOptions, animationOptions);
       sinon.assert.calledWith(_addStub, testElement, attributeOptions, animationOptions, chainOptions, chain);
+    });
+
+    it('should use EMPTY_ANIMATION_OPTIONS if the animationOptions argument is not provided', () => {
+      let result = animar.addChainFunctionFactory(chainOptions, chain);
+      result(testElement, attributeOptions);
+      sinon.assert.calledWith(_addStub, testElement, attributeOptions, EMPTY_ANIMATION_OPTIONS, chainOptions, chain);
     });
   });
 

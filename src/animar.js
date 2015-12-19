@@ -1,5 +1,4 @@
 /* @flow */
-/* global __DEV__ */
 import Animation from './animation';
 import Attribute from './attribute';
 import Element from './element';
@@ -125,6 +124,7 @@ import Element from './element';
  * @typedef {Object} ConstructorOptions
  * @property {Defaults} defaults - The values to default to when not provided to {@link Animar#add}
  * @property {boolean} hardwareAcceleration - Determines whether or not to force animating using the GPU.
+ * @access protected
  */
 /*:: type ConstructorOptions = {
   defaults:Defaults,
@@ -138,7 +138,10 @@ const EMPTY_ANIMATION_OPTIONS = {
   loop: null
 };
 
-class Animar {
+/**
+ * The main Animar class which the user interacts with
+ */
+export default class Animar {
   ticking:boolean;
   elementMap:ElementMap;
   defaults:Defaults;
@@ -165,12 +168,6 @@ class Animar {
 
   add (element:HTMLElement, attributes:AttributesOptions, options:AnimationOptions):FullChainObject {
     let resolvedOptions = options || EMPTY_ANIMATION_OPTIONS;
-
-    /* istanbul ignore else */
-    if (__DEV__) {
-      var validateAddParameters = require('./helpers').validateAddParameters;
-      validateAddParameters(element, attributes, resolvedOptions);
-    }
 
     return this._add(
       element,
@@ -288,14 +285,7 @@ class Animar {
 
   addChainFunctionFactory (chainOptions:ChainOptions, chain:ElementMap):AddFunction {
     return (element, attributes, options) => {
-      let resolvedOptions = options == null ? EMPTY_ANIMATION_OPTIONS : options;
-
-      /* istanbul ignore else */
-      if (__DEV__) {
-        var validateAddParameters = require('./helpers').validateAddParameters;
-        validateAddParameters(element, attributes, resolvedOptions);
-      }
-
+      let resolvedOptions = options || EMPTY_ANIMATION_OPTIONS;
       return this._add(element, attributes, resolvedOptions, chainOptions, chain);
     };
   }
@@ -358,5 +348,3 @@ class Animar {
     return somethingChanged;
   }
 }
-
-module.exports = Animar;

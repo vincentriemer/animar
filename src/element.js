@@ -3,7 +3,7 @@ import type Attribute from './attribute'; //eslint-disable-line no-unused-vars
 import type { ChainOptions } from './animar'; //eslint-disable-line no-unused-vars
 import { applyStyle } from './helpers';
 
-class Element {
+export default class Element {
   attributes:Map<string, Attribute>;
   domElement:HTMLElement;
 
@@ -86,5 +86,3 @@ class Element {
     });
   }
 }
-
-module.exports = Element;

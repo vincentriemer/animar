@@ -3,7 +3,7 @@ import type Animation from './animation'; //eslint-disable-line no-unused-vars
 import type { ChainOptions } from './animar'; //eslint-disable-line no-unused-vars
 import { calculateAnimationValue, applyStyle, TRANSFORM_ATTRIBUTES} from './helpers';
 
-class Attribute {
+export default class Attribute {
   model:number;
   animations:Array<?Animation>;
   name:string;
@@ -68,5 +68,3 @@ class Attribute {
     });
   }
 }
-
-module.exports = Attribute;

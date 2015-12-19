@@ -3,7 +3,7 @@ var path = require('path');
 var webpack = require('webpack');
 
 module.exports = {
-  entry: './src/animar.js',
+  entry: './index.js',
   output: {
     path: path.join(__dirname, 'dist'),
     filename: 'animar.js',

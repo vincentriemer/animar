@@ -1,7 +1,7 @@
 /* @flow */
 import type { ChainOptions } from './animar'; //eslint-disable-line no-unused-vars
 
-class Animation {
+export default class Animation {
   currentIteration:number;
   startValue:number;
   changeInValue:number;
@@ -45,5 +45,3 @@ class Animation {
     this.wait = chainOptions.totalDuration - this.delay - this.totalIterations;
   }
 }
-
-module.exports = Animation;
