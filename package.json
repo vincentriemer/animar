@@ -36,7 +36,7 @@
     "prepublish": "npm run clean-lib && ./node_modules/.bin/babel ./src --out-dir ./lib",
     "doc": "esdoc -c esdoc.json"
   },
-  "main": "lib/animar.js",
+  "main": "index.js",
   "devDependencies": {
     "babel-cli": "^6.2.0",
     "babel-core": "^6.2.1",
