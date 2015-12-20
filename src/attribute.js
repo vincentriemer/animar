@@ -4,6 +4,20 @@ import type { ChainOptions } from './animar'; //eslint-disable-line no-unused-va
 import { calculateAnimationValue, applyStyle, TRANSFORM_ATTRIBUTES} from './helpers';
 
 /**
+ * Regex expression to detect transform attributes that require the px unit.
+ * @type {RegExp}
+ * @protected
+ */
+const pxRegex = /(perspective)|(translate[XYZ])/;
+
+/**
+ * Regex expression to detect transform attributes that require the deg unit.
+ * @type {RegExp}
+ * @protected
+ */
+const degRegex = /rotate[XYZ]?/;
+
+/**
  * Class that holds all of the animation information for an {@link Element}'s Attribute.
  * @protected
  */
@@ -63,14 +77,11 @@ export default class Attribute {
   /**
    * Render the Attribute's value to the DOM.
    * @param domElement
-   * @returns {string}
+   * @returns {Object}
    */
-  render (domElement:HTMLElement):string {
-    let transformValue = '';
+  render (domElement:HTMLElement):[string, string] {
+    let transformValue = [];
     let targetValue = String(this.model + calculateAnimationValue(this.animations));
-
-    const pxRegex = /(perspective)|(translate[XYZ])/,
-      degRegex = /rotate[XYZ]?/;
 
     targetValue += (
       pxRegex.test(this.name) ? 'px' : (
@@ -79,7 +90,8 @@ export default class Attribute {
     );
 
     if (TRANSFORM_ATTRIBUTES.indexOf(this.name) !== -1) {
-      transformValue += `${this.name}(${targetValue}) `;
+      transformValue.push(this.name);
+      transformValue.push(targetValue);
     } else {
       applyStyle(domElement, this.name, targetValue);
     }

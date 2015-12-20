@@ -1,7 +1,7 @@
 /* @flow */
 import type Attribute from './attribute'; //eslint-disable-line no-unused-vars
 import type { ChainOptions } from './animar'; //eslint-disable-line no-unused-vars
-import { applyStyle } from './helpers';
+import { applyStyle, TRANSFORM_ATTRIBUTES } from './helpers';
 
 /**
  * Class that holds all the animation information for an HTML DOM Element.
@@ -25,18 +25,30 @@ export default class Element {
    * @param hardwareAcceleration
    */
   render (hardwareAcceleration:boolean) {
-    let transformValue = '';
+    let transformValues:Array<?[string, string]> = [];
 
     this.attributes.forEach(attribute => {
-      transformValue += attribute.render(this.domElement);
+      let currentTransform = attribute.render(this.domElement);
+      let index = TRANSFORM_ATTRIBUTES.indexOf(currentTransform[0]);
+      transformValues[index] = currentTransform;
     });
 
-    if (transformValue !== '') {
-      if (hardwareAcceleration) {
-        transformValue += 'translateZ(0)';
+    if (transformValues.length !== 0) {
+      if (hardwareAcceleration && transformValues[2] == null) {
+        transformValues[2] = ['translateZ', '0'];
       }
 
-      applyStyle(this.domElement, 'transform', transformValue);
+      // Array.filter function currently doesn't work properly with FlowType
+      let filteredTransformValues:Array<[string, string]> = [];
+      for (var i = 0; i < transformValues.length; i++) {
+        if (transformValues[i] != null) {
+          filteredTransformValues.push(transformValues[i]);
+        }
+      }
+
+      let transformStringArray = filteredTransformValues.map(v => `${v[0]}(${v[1]})`);
+
+      applyStyle(this.domElement, 'transform', transformStringArray.join(' '));
     }
   }
 

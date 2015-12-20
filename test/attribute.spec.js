@@ -66,20 +66,20 @@ describe('Attribute', () => {
 
     it('should correctly apply an attribute that isn\'t a transform attribute', () => {
       let testAttribute = new Attribute('opacity', 20);
-      let transformString = testAttribute.render({}, '');
+      let transform = testAttribute.render({}, '');
 
       assert.isTrue(calculateStub.calledOnce);
       assert.isTrue(applyStyleStub.calledWith({}, 'opacity', '30'));
-      assert.equal(transformString, '');
+      assert.deepEqual(transform, []);
     });
 
-    it('should return a transform string', () => {
+    it('should return a transform object', () => {
       let testAttribute = new Attribute('scaleX', 20);
-      let transformString = testAttribute.render({});
+      let transform = testAttribute.render({});
 
       assert.isTrue(calculateStub.calledOnce);
       assert.isFalse(applyStyleStub.called);
-      assert.equal(transformString, 'scaleX(30) ');
+      assert.deepEqual(transform, ['scaleX', '30']);
     });
 
     it('should correctly apply the deg unit for rotation attributes', () => {
@@ -96,18 +96,18 @@ describe('Attribute', () => {
       assert.isFalse(applyStyleStub.called);
       assert.equal(calculateStub.callCount, 4);
 
-      assert.equal(transString, 'rotate(30deg) ');
-      assert.equal(transStringX, 'rotateX(30deg) ');
-      assert.equal(transStringY, 'rotateY(30deg) ');
-      assert.equal(transStringZ, 'rotateZ(30deg) ');
+      assert.deepEqual(transString, ['rotate', '30deg']);
+      assert.deepEqual(transStringX, ['rotateX', '30deg']);
+      assert.deepEqual(transStringY, ['rotateY', '30deg']);
+      assert.deepEqual(transStringZ, ['rotateZ', '30deg']);
     });
 
     it('should correctly apply the px unit for perspective', () => {
       let testAttribute = new Attribute('perspective', 20);
-      let transformString = testAttribute.render({}, '');
+      let transform = testAttribute.render({}, '');
 
       assert.isTrue(calculateStub.calledOnce);
-      assert.equal(transformString, '');
+      assert.deepEqual(transform, []);
 
       assert.isTrue(applyStyleStub.calledWith({}, 'perspective', '30px'));
     });
@@ -117,16 +117,16 @@ describe('Attribute', () => {
       let testAttributeY = new Attribute('translateY', 20);
       let testAttributeZ = new Attribute('translateZ', 20);
 
-      let transStringX = testAttributeX.render({}, '');
-      let transStringY = testAttributeY.render({}, '');
-      let transStringZ = testAttributeZ.render({}, '');
+      let transX = testAttributeX.render({}, '');
+      let transY = testAttributeY.render({}, '');
+      let transZ = testAttributeZ.render({}, '');
 
       assert.isFalse(applyStyleStub.called);
       assert.equal(calculateStub.callCount, 3);
 
-      assert.equal(transStringX, 'translateX(30px) ');
-      assert.equal(transStringY, 'translateY(30px) ');
-      assert.equal(transStringZ, 'translateZ(30px) ');
+      assert.deepEqual(transX, ['translateX', '30px']);
+      assert.deepEqual(transY, ['translateY', '30px']);
+      assert.deepEqual(transZ, ['translateZ', '30px']);
     });
   });
   describe('#step()', () => {

@@ -5,6 +5,10 @@ import type {AttributesOptions} from './animar';//eslint-disable-line no-unused-
 
 /**
  * List of all the transform attributes that are possible to animate.
+ *
+ * **NOTE**: The order of this array dictates the order that the transforms will by applied to an element (order taken
+ * from GSAP's CSSPlugin documentation).
+ *
  * @type {Array<string>}
  * @protected
  */
@@ -15,10 +19,11 @@ export const TRANSFORM_ATTRIBUTES = [
   'scale',
   'scaleX',
   'scaleY',
-  'rotate',
+  'scaleZ',
   'rotateX',
   'rotateY',
-  'rotateZ'
+  'rotateZ',
+  'rotate'
 ];
 
 /**

@@ -32,19 +32,19 @@ describe('Element', () => {
       assert.isTrue(attributeRenderFunction.calledTwice);
     });
 
-    it('should append transformation strings and apply the transform, adding translateZ when hardware acceleration' +
-      'is on', () => {
+    it('should append transformation strings and apply the transform, adding translateZ if hardware acceleration ' +
+      'is true', () => {
       let applyStyleStub = sinon.stub(Helpers, 'applyStyle');
-      let translateRenderFunction = sinon.stub().returns('translateX(10px) ');
-      let scaleRenderFunction = sinon.stub().returns('scale(2) ');
+      let translateRenderFunction = sinon.stub().returns(['translateX', '10px']);
+      let scaleRenderFunction = sinon.stub().returns(['scaleY', '20deg']);
       testElement.attributes.set('translateX', { render: translateRenderFunction });
-      testElement.attributes.set('scale', { render: scaleRenderFunction });
+      testElement.attributes.set('translateY', { render: scaleRenderFunction });
 
       testElement.render(true);
 
       assert.isTrue(translateRenderFunction.called);
       assert.isTrue(scaleRenderFunction.called);
-      assert.isTrue(applyStyleStub.calledWith(testDomElement, 'transform', 'translateX(10px) scale(2) translateZ(0)'));
+      assert.isTrue(applyStyleStub.calledWith(testDomElement, 'transform', 'translateX(10px) translateZ(0) scaleY(20deg)'));
 
       applyStyleStub.restore();
     });
@@ -52,16 +52,65 @@ describe('Element', () => {
     it('should append transformation strings and apply the transform, not adding translateZ when hardware ' +
       'acceleration is off', () => {
       let applyStyleStub = sinon.stub(Helpers, 'applyStyle');
-      let translateRenderFunction = sinon.stub().returns('translateX(10px) ');
-      let scaleRenderFunction = sinon.stub().returns('scale(2) ');
+      let translateRenderFunction = sinon.stub().returns(['translateX', '10px']);
+      let scaleRenderFunction = sinon.stub().returns(['translateY', '2px']);
       testElement.attributes.set('translateX', { render: translateRenderFunction });
-      testElement.attributes.set('scale', { render: scaleRenderFunction });
+      testElement.attributes.set('translateY', { render: scaleRenderFunction });
 
       testElement.render(false);
 
       assert.isTrue(translateRenderFunction.called);
       assert.isTrue(scaleRenderFunction.called);
-      assert.isTrue(applyStyleStub.calledWith(testDomElement, 'transform', 'translateX(10px) scale(2) '));
+      assert.isTrue(applyStyleStub.calledWith(testDomElement, 'transform', 'translateX(10px) translateY(2px)'));
+
+      applyStyleStub.restore();
+    });
+
+    it('should properly order the css transform attributes', () => {
+      let applyStyleStub = sinon.stub(Helpers, 'applyStyle');
+
+      let translateX = sinon.stub().returns(['translateX', '10px']);
+      let translateY = sinon.stub().returns(['translateY', '10px']);
+      let translateZ = sinon.stub().returns(['translateZ', '10px']);
+      let scale = sinon.stub().returns(['scale', '10']);
+      let scaleX = sinon.stub().returns(['scaleX', '10']);
+      let scaleY = sinon.stub().returns(['scaleY', '10']);
+      let scaleZ = sinon.stub().returns(['scaleZ', '10']);
+      let rotateX = sinon.stub().returns(['rotateX', '10deg']);
+      let rotateY = sinon.stub().returns(['rotateY', '10deg']);
+      let rotateZ = sinon.stub().returns(['rotateZ', '10deg']);
+      let rotate = sinon.stub().returns(['rotate', '10deg']);
+
+      // deliberately out of order
+      testElement.attributes.set('rotateX', { render: rotateX });
+      testElement.attributes.set('rotateY', { render: rotateY });
+      testElement.attributes.set('rotateZ', { render: rotateZ });
+      testElement.attributes.set('scale', { render: scale });
+      testElement.attributes.set('scaleX', { render: scaleX });
+      testElement.attributes.set('scaleY', { render: scaleY });
+      testElement.attributes.set('rotate', { render: rotate });
+      testElement.attributes.set('translateX', { render: translateX });
+      testElement.attributes.set('translateY', { render: translateY });
+      testElement.attributes.set('translateZ', { render: translateZ });
+      testElement.attributes.set('scaleZ', { render: scaleZ });
+
+      testElement.render(false);
+
+      sinon.assert.calledWith(applyStyleStub, testDomElement, 'transform',
+        'translateX(10px) translateY(10px) translateZ(10px) scale(10) scaleX(10) scaleY(10) scaleZ(10) rotateX(10deg)' +
+        ' rotateY(10deg) rotateZ(10deg) rotate(10deg)');
+
+      applyStyleStub.restore();
+    });
+
+    it('should not add translateZ for hardware acceleration if there is already a translateZ defined', () => {
+      let applyStyleStub = sinon.stub(Helpers, 'applyStyle');
+
+      let translateZ = sinon.stub().returns(['translateZ', '10px']);
+      testElement.attributes.set('translateZ', { render: translateZ });
+
+      testElement.render(true);
+      sinon.assert.calledWith(applyStyleStub, testDomElement, 'transform', 'translateZ(10px)');
 
       applyStyleStub.restore();
     });
