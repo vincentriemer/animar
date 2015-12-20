@@ -34,6 +34,10 @@ export const TRANSFORM_ATTRIBUTES = [
  * @protected
  */
 export function setTransform (element:HTMLElement, transformString:string):HTMLElement {
+  element.style.webkitTransform = transformString;
+  element.style.mozTransform = transformString;
+  element.style.msTransform = transformString;
+  element.style.oTransform = transformString;
   element.style.transform = transformString;
   return element;
 }
