@@ -1,10 +1,9 @@
 language: node_js
 sudo: false
 before_script:
-- npm install --save codecov.io
+- npm install -g codecov
 script:
-- npm test
-- ./node_modules/codecov.io/bin/codecov.io.js < ./coverage/coverage.json
+- npm test && codecov
 - npm run browser-test
 after_script:
 - npm run build && python node_modules/travis-weigh-in/weigh_in.py dist/animar.min.js
