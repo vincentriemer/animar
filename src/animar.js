@@ -3,7 +3,7 @@ import Animation from './animation';
 import Attribute from './attribute';
 import Element from './element';
 
-// NOTE: All flow type definitions are currently in comment form due to esdoc's inability to parse the syntax
+// NOTE: All flow type definitions are currently in comment form due to them causing issues with esdoc.
 
 /**
  * Map used by Animar to store all animation data.
@@ -13,12 +13,19 @@ import Element from './element';
 /*:: type ElementMap = Map<HTMLElement, Element>; */
 
 /**
- * Options passed into {@link Animar#add} to dictate animation behavior.
+ * Options to dictate animation-wide behavior.
  * @typedef {Object} AnimationOptions
  * @property {?number} delay - The amount of ticks to wait before beginning animation.
  * @property {?function} easingFunction = The easing function used by the animation to change how the animation moves over time.
  * @property {?number} duration - The amount of time the animation will take.
  * @public
+ *
+ * @example
+ * let animationOptions = {
+ *   delay: 0,
+ *   easingFunction: (t, b, c, d) => c * t / d + b,
+ *   duration: 60
+ * }
  */
 /*:: type AnimationOptions = {
   delay: ?any,
@@ -32,7 +39,7 @@ import Element from './element';
  * @property {number} delay - The amount of ticks to wait before beginning animation.
  * @property {function} easingFunction = The easing function used by the animation to change how the animation moves over time.
  * @property {number} duration - The amount of time the animation will take.
- * @public
+ * @private
  */
 /*:: type ResolvedAnimationOptions = {
   delay: number,
@@ -44,6 +51,12 @@ import Element from './element';
  * Options that specify which attribute will be animated as well as the start and end value of the animation.
  * @typedef {Object<string, Array<number>>} AttributesOptions
  * @public
+ *
+ * @example
+ * let attributesOptions = {
+ *   translateX: [0, 100],
+ *   translateY: [0, 200]
+ * };
  */
 /*:: export type AttributesOptions = { [key: string]: Array<number> }; */
 
@@ -78,7 +91,7 @@ import Element from './element';
 /**
  * Object returned by {@link ThenFunction}
  * @typedef {Object} ThenPayload
- * @property {ThenFunction} then
+ * @property {AddFunction} add
  * @public
  */
 
@@ -161,7 +174,6 @@ export default class Animar {
   /**
    * Create a new Animar instance.
    * @param {ConstructorOptions} constructorOptions
-   * @returns {Animar}
    * @public
    */
   constructor (constructorOptions:?ConstructorOptions) {
@@ -181,6 +193,7 @@ export default class Animar {
      */
     this.elementMap = new Map();
     /**
+     * Animar instance's default animation option values
      * @type {Defaults}
      * @public
      */
