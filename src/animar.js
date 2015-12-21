@@ -2,6 +2,7 @@
 import Animation from './animation';
 import Attribute from './attribute';
 import Element from './element';
+import Hook from './hook';
 
 // NOTE: All flow type definitions are currently in comment form due to them causing issues with esdoc.
 
@@ -92,6 +93,7 @@ import Element from './element';
  * Object returned by {@link ThenFunction}
  * @typedef {Object} ThenPayload
  * @property {AddFunction} add
+ * @property {HookFunction} hook
  * @public
  */
 
@@ -118,17 +120,19 @@ import Element from './element';
 /**
  * An object which contains every chain function.
  * @typedef {Object} FullChainObject
- * @property {StartFunction} start - start animating the animation chain.
- * @property {LoopFunction} loop - loop the entire animation chain.
- * @property {AddFunction} add - add an animation to the current chain step.
- * @property {ThenFunction} then - start a new chain step.
+ * @property {StartFunction} start - Start animating the animation chain.
+ * @property {LoopFunction} loop - Loop the entire animation chain.
+ * @property {AddFunction} add - Add an animation to the current chain step.
+ * @property {ThenFunction} then - Start a new chain step.
+ * @property {HookFunction} hook - Add an arbitrary function to the animation chain.
  * @public
  */
 /*:: type FullChainObject = {
   start: StartFunction,
   loop: LoopFunction,
   add: AddFunction,
-  then: ThenFunction
+  then: ThenFunction,
+  hook: HookFunction
 }; */
 
 /**
@@ -153,6 +157,13 @@ import Element from './element';
   hardwareAcceleration:boolean
 }; */
 
+/**
+ * Add an arbitrary function to the animation chain.
+ * @typedef {function(hook: function): FullChainObject} HookFunction
+ * @public
+ */
+/*:: type HookFunction = (hook:Function) => FullChainObject */
+
 const EMPTY_ANIMATION_OPTIONS = {
   delay: null,
   easingFunction: null,
@@ -170,6 +181,7 @@ export default class Animar {
   defaults:Defaults;
   timescale:number;
   hardwareAcceleration:boolean;
+  hooks:Array<Hook>;
 
   /**
    * Create a new Animar instance.
@@ -216,6 +228,13 @@ export default class Animar {
      * @public
      */
     this.hardwareAcceleration = hardwareAcceleration == null ? true : hardwareAcceleration;
+
+    /**
+     * List of all the pending function hooks in this animar instance.
+     * @type {Array}
+     * @private
+     */
+    this.hooks = [];
   }
 
   /**
@@ -238,7 +257,8 @@ export default class Animar {
         currentDuration: 0,
         totalDuration: 0
       },
-      new Map()
+      new Map(),
+      []
     );
   }
 
@@ -291,6 +311,7 @@ export default class Animar {
    * @param {AnimationOptions} options
    * @param {ChainOptions} chainOptions
    * @param {ElementMap} currentChain - The element map of the current chain (has not yet been merged with the instance element map).
+   * @param {Array<Hook>} hooks
    * @returns {FullChainObject}
    * @private
    */
@@ -298,7 +319,8 @@ export default class Animar {
        attributes:AttributesOptions,
        options:AnimationOptions,
        chainOptions:ChainOptions,
-       currentChain:ElementMap):FullChainObject {
+       currentChain:ElementMap,
+       hooks:Array<Hook>):FullChainObject {
     let resolvedOptions = this.resolveAnimationOptions(options);
     Object.keys(attributes).forEach((attribute) => {
       const attributeValue = attributes[attribute];
@@ -311,7 +333,7 @@ export default class Animar {
     });
     chainOptions.currentDuration = Math.max(chainOptions.currentDuration,
       resolvedOptions.delay + resolvedOptions.duration);
-    return this.fullChainObjectFactory(chainOptions, currentChain);
+    return this.fullChainObjectFactory(chainOptions, currentChain, hooks);
   }
 
   /**
@@ -358,18 +380,34 @@ export default class Animar {
   }
 
   /**
+   * Add an arbitrary function hook to the animation chain.
+   * @param hook
+   * @param chainOptions
+   * @param chain
+   * @param hooks
+   * @private
+   */
+  addHook (hook:Function, chainOptions:ChainOptions, chain:ElementMap, hooks:Array<Hook>):FullChainObject {
+    let newHook = new Hook(hook, 0 - chainOptions.delay, false, chainOptions.delay, 0);
+    hooks.push(newHook);
+    return this.fullChainObjectFactory(chainOptions, chain, hooks);
+  }
+
+  /**
    * Create a new chain object that contains all of the chain functions.
    * @param chainOptions
    * @param chain
+   * @param hooks
    * @returns {FullChainObject}
    * @private
    */
-  fullChainObjectFactory (chainOptions:ChainOptions, chain:ElementMap):FullChainObject {
+  fullChainObjectFactory (chainOptions:ChainOptions, chain:ElementMap, hooks:Array<Hook>):FullChainObject {
     return {
-      start: this.startChainFunctionFactory(chain),
-      loop: this.loopChainFunctionFactory(chainOptions, chain),
-      add: this.addChainFunctionFactory(chainOptions, chain),
-      then: this.thenChainFunctionFactory(chainOptions, chain)
+      start: this.startChainFunctionFactory(chain, hooks),
+      loop: this.loopChainFunctionFactory(chainOptions, chain, hooks),
+      add: this.addChainFunctionFactory(chainOptions, chain, hooks),
+      then: this.thenChainFunctionFactory(chainOptions, chain, hooks),
+      hook: this.hookChainFunctionFactory(chainOptions, chain, hooks)
     };
   }
 
@@ -377,17 +415,19 @@ export default class Animar {
    * Create a new function that starts a new chain step.
    * @param {ChainOptions} chainOptions
    * @param {ElementMap} chain
+   * @param hooks
    * @returns {ThenFunction}
    * @private
    */
-  thenChainFunctionFactory (chainOptions:ChainOptions, chain:ElementMap):ThenFunction {
+  thenChainFunctionFactory (chainOptions:ChainOptions, chain:ElementMap, hooks:Array<Hook>):ThenFunction {
     return (wait = 0) => {
       let newChainOptions = Object.create(chainOptions);
       newChainOptions.totalDuration += (chainOptions.currentDuration + wait);
       newChainOptions.currentDuration = 0;
       newChainOptions.delay = newChainOptions.totalDuration;
       return {
-        add: this.addChainFunctionFactory(newChainOptions, chain)
+        add: this.addChainFunctionFactory(newChainOptions, chain, hooks),
+        hook: this.hookChainFunctionFactory(newChainOptions, chain, hooks)
       };
     };
   }
@@ -396,13 +436,14 @@ export default class Animar {
    * Create a new function which adds a new animation to the current chain step.
    * @param {ChainOptions} chainOptions
    * @param {ElementMap} chain
+   * @param hooks
    * @returns {AddFunction}
    * @private
    */
-  addChainFunctionFactory (chainOptions:ChainOptions, chain:ElementMap):AddFunction {
+  addChainFunctionFactory (chainOptions:ChainOptions, chain:ElementMap, hooks:Array<Hook>):AddFunction {
     return (element, attributes, options) => {
       let resolvedOptions = options || EMPTY_ANIMATION_OPTIONS;
-      return this._add(element, attributes, resolvedOptions, chainOptions, chain);
+      return this._add(element, attributes, resolvedOptions, chainOptions, chain, hooks);
     };
   }
 
@@ -410,10 +451,11 @@ export default class Animar {
    * Create a new function which will loop the entire animation chain.
    * @param {ChainOptions} chainOptions
    * @param {ElementMap} chain
+   * @param hooks
    * @returns {LoopFunction}
    * @private
    */
-  loopChainFunctionFactory (chainOptions:ChainOptions, chain:ElementMap):LoopFunction {
+  loopChainFunctionFactory (chainOptions:ChainOptions, chain:ElementMap, hooks:Array<Hook>):LoopFunction {
     return () => {
       chainOptions.totalDuration += chainOptions.currentDuration;
 
@@ -424,8 +466,12 @@ export default class Animar {
       });
       chain = newElementMap;
 
+      hooks.forEach(hook => {
+        hook.loop(chainOptions);
+      });
+
       return {
-        start: this.startChainFunctionFactory(chain)
+        start: this.startChainFunctionFactory(chain, hooks)
       };
     };
   }
@@ -433,13 +479,29 @@ export default class Animar {
   /**
    * Create a new function which will start animating the chain.
    * @param {ElementMap} chain
+   * @param hooks
    * @returns {StartFunction}
    * @private
    */
-  startChainFunctionFactory (chain:ElementMap):StartFunction {
+  startChainFunctionFactory (chain:ElementMap, hooks:Array<Hook>):StartFunction {
     return () => {
       this.elementMap = this.mergeElementMaps(this.elementMap, chain);
+      this.hooks = this.hooks.concat(hooks);
       this.requestTick();
+    };
+  }
+
+  /**
+   * Create a new function which will hook an arbitrary function to the animation chain.
+   * @param chainOptions
+   * @param chain
+   * @param hooks
+   * @returns {Function}
+   * @private
+   */
+  hookChainFunctionFactory (chainOptions:ChainOptions, chain:ElementMap, hooks:Array<Hook>):HookFunction {
+    return (hook) => {
+      return this.addHook(hook, chainOptions, chain, hooks);
     };
   }
 
@@ -485,11 +547,24 @@ export default class Animar {
    */
   step ():boolean {
     let somethingChanged = false;
+
     this.elementMap.forEach(element => {
       if (element.step(this.timescale)) {
         somethingChanged = true;
       }
     });
+
+    let newHooks = this.hooks.map(hook => {
+      if (hook.step(this.timescale)) {
+        return hook;
+      }
+    });
+
+    this.hooks = [];
+    newHooks.forEach(hook => {
+      if (hook != null) { this.hooks.push(hook); }
+    });
+
     return somethingChanged;
   }
 }

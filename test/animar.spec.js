@@ -74,6 +74,7 @@ describe('Animar', () => {
       assert.instanceOf(animar.elementMap, Map);
       assert.equal(animar.timescale, 1);
       assert.equal(animar.hardwareAcceleration, true);
+      assert.deepEqual(animar.hooks, []);
 
       // check defaults object
       assert.equal(animar.defaults.delay, 0);
@@ -124,7 +125,7 @@ describe('Animar', () => {
         delay: 0,
         currentDuration: 0,
         totalDuration: 0
-      }, new Map()));
+      }, new Map(), []));
     });
 
     it('should use an empty options object if it is not provided', () => {
@@ -137,7 +138,7 @@ describe('Animar', () => {
           currentDuration: 0,
           totalDuration: 0
         },
-        new Map())
+        new Map(), [])
       );
     });
   });
@@ -226,12 +227,12 @@ describe('Animar', () => {
     });
 
     it('should resolve it\'s provided options', () => {
-      animar._add(testElement, {}, {foo: 'bar'}, chainOptions, new Map());
+      animar._add(testElement, {}, {foo: 'bar'}, chainOptions, new Map(), []);
       sinon.assert.calledWith(resolveOptionsStub, {foo: 'bar'});
     });
 
     it('should properly call addAnimationToChain', () => {
-      animar._add(testElement, {translateX: [0, 40]}, null, chainOptions, new Map());
+      animar._add(testElement, {translateX: [0, 40]}, null, chainOptions, new Map(), []);
       sinon.assert.calledWith(addAnimationStub, 0, 40, resolvedOptions, chainOptions, 'translateX',
         testElement, new Map());
     });
@@ -239,7 +240,7 @@ describe('Animar', () => {
     // TODO: write better description
     it('should set the chainOptions currentDuration properly', () => {
       // case: when animation's duration is longer than the chainOptions' duration
-      animar._add(testElement, {translateX: [0, 40]}, null, chainOptions, new Map());
+      animar._add(testElement, {translateX: [0, 40]}, null, chainOptions, new Map(), []);
       sinon.assert.calledWith(fullChainStub, {
         delay: chainOptions.delay,
         currentDuration: 60,
@@ -253,13 +254,18 @@ describe('Animar', () => {
         currentDuration: 120,
         totalDuration: 0
       };
-      animar._add(testElement, {translateX: [0, 40]}, null, longerChainOptions, new Map());
+      animar._add(testElement, {translateX: [0, 40]}, null, longerChainOptions, new Map(), []);
       sinon.assert.calledWith(fullChainStub, longerChainOptions, new Map([['foo', 'bar']]));
     });
 
     it('should handle multiple attributes inside the attributes object', () => {
-      animar._add(testElement, {translateX: 40, translateY: 80}, chainOptions, new Map());
+      animar._add(testElement, {translateX: 40, translateY: 80}, null, chainOptions, new Map(), []);
       assert.isTrue(addAnimationStub.calledTwice);
+    });
+
+    it('should pass through the hooks array', () => {
+      animar._add(testElement, {translateX: 40}, null, chainOptions, new Map(), ['test']);
+      sinon.assert.calledWith(fullChainStub, chainOptions, new Map(), ['test']);
     });
   });
 
@@ -326,13 +332,14 @@ describe('Animar', () => {
   });
 
   describe('#fullChainObjectFactory', () => {
-    let startStub, loopStub, addStub, thenStub;
+    let startStub, loopStub, addStub, thenStub, hookStub;
 
     beforeEach(() => {
       startStub = sinon.stub(animar, 'startChainFunctionFactory').returns(0);
       loopStub = sinon.stub(animar, 'loopChainFunctionFactory').returns(1);
       addStub = sinon.stub(animar, 'addChainFunctionFactory').returns(2);
       thenStub = sinon.stub(animar, 'thenChainFunctionFactory').returns(3);
+      hookStub = sinon.stub(animar, 'hookChainFunctionFactory').returns(4);
     });
 
     afterEach(() => {
@@ -340,6 +347,7 @@ describe('Animar', () => {
       loopStub.restore();
       addStub.restore();
       thenStub.restore();
+      hookStub.restore();
     });
 
     it('should return an object with all the chain functions initialized from their factories', () => {
@@ -356,7 +364,8 @@ describe('Animar', () => {
         start: 0,
         loop: 1,
         add: 2,
-        then: 3
+        then: 3,
+        hook: 4
       });
       sinon.assert.calledWith(startStub, chain);
       sinon.assert.calledWith(loopStub, chainOptions, chain);
@@ -366,10 +375,11 @@ describe('Animar', () => {
   });
 
   describe('#thenChainFunctionFactory', () => {
-    let addChainStub, chainOptions, chain;
+    let addChainStub, hookChainStub, chainOptions, chain;
 
     beforeEach(() => {
       addChainStub = sinon.stub(animar, 'addChainFunctionFactory').returns('addChainFunctionFactory');
+      hookChainStub = sinon.stub(animar, 'hookChainFunctionFactory').returns('hookChainFunctionFactory');
       chainOptions = {
         delay: 0,
         currentDuration: 0,
@@ -380,11 +390,12 @@ describe('Animar', () => {
 
     afterEach(() => {
       addChainStub.restore();
+      hookChainStub.restore();
     });
 
     it('should return a function which returns an object with an add chain function', () => {
       let result = animar.thenChainFunctionFactory(chainOptions, chain);
-      assert.deepEqual(result(), {add: 'addChainFunctionFactory'});
+      assert.deepEqual(result(), {add: 'addChainFunctionFactory', hook: 'hookChainFunctionFactory'});
     });
 
     it('should increment the chainOptions totalDuration by the currentDuration + provided wait', () => {
@@ -634,6 +645,30 @@ describe('Animar', () => {
 
       assert.isTrue(result);
     });
+
+    it('should call the step function on every hook', () => {
+      let hookStub1 = sinon.stub().returns(true);
+      let hookStub2 = sinon.stub().returns(true);
+      let testHooks = [{step: hookStub1}, {step: hookStub2}];
+
+      animar.hooks = testHooks;
+      animar.step();
+
+      sinon.assert.called(hookStub1);
+      sinon.assert.called(hookStub2);
+
+      assert.deepEqual(animar.hooks, testHooks);
+    });
+
+    it('should remove any hooks that return false', () => {
+      let hookStub1 = sinon.stub().returns(true);
+      let hookStub2 = sinon.stub().returns(false);
+
+      animar.hooks = [{step: hookStub1}, {step: hookStub2}];
+      animar.step();
+
+      assert.deepEqual(animar.hooks, [{step: hookStub1}]);
+    });
   });
 
   describe('#loopChainFunctionFactory', () => {
@@ -654,7 +689,7 @@ describe('Animar', () => {
     });
 
     it('should return a function which increments the totalDuration by the currentDuration of the chainOptions', () => {
-      let loopFunction = animar.loopChainFunctionFactory(chainOptions, chain);
+      let loopFunction = animar.loopChainFunctionFactory(chainOptions, chain, []);
       loopFunction();
       assert.equal(chainOptions.totalDuration, 70);
     });
@@ -662,18 +697,72 @@ describe('Animar', () => {
     it('should return a function which calls the loop function on every element in the passed in chain', () => {
       let loopSpy = sinon.spy();
       chain.set('test', { loop: loopSpy });
-      let loopFunction = animar.loopChainFunctionFactory(chainOptions, chain);
+      let loopFunction = animar.loopChainFunctionFactory(chainOptions, chain, []);
       loopFunction();
 
       sinon.assert.calledWith(loopSpy, { delay: 0, currentDuration: 30, totalDuration: 70});
     });
 
     it('should return a function which returns an object that contains the start function', () => {
-      let loopFunction = animar.loopChainFunctionFactory(chainOptions, chain);
+      let loopFunction = animar.loopChainFunctionFactory(chainOptions, chain, []);
       let result = loopFunction();
 
       assert.deepEqual(result, { start: 'startFunction' });
       sinon.assert.calledWith(startChainStub, chain);
+    });
+
+    it('should return a function that calls the loop function on every hook', () => {
+      let hookSpy1 = sinon.spy();
+      let hookSpy2 = sinon.spy();
+      let loopFunction = animar.loopChainFunctionFactory(chainOptions, chain, [{loop: hookSpy1}, {loop: hookSpy2}]);
+      loopFunction();
+
+      sinon.assert.called(hookSpy1);
+      sinon.assert.called(hookSpy2);
+    });
+  });
+
+  describe('#addHook', () => {
+    it('should add a hook to the current element chain with a current iteration value that is 0 - the chainOptions ' +
+      'delay value', () => {
+      let expectedResult = 'test';
+      let hookFunction = () => 1;
+      let fullChainStub = sinon.stub(animar, 'fullChainObjectFactory').returns(expectedResult);
+      let chain = new Map();
+      let chainOptions = {
+        delay: 30,
+        currentDuration: 0,
+        totalDuration: 50
+      };
+      let result = animar.addHook(hookFunction, chainOptions, chain, []);
+
+      assert.equal(result, expectedResult);
+      let resultingHook = fullChainStub.firstCall.args[2][0];
+      assert.equal(resultingHook.hook, hookFunction);
+      assert.equal(resultingHook.currentIteration, 0 - chainOptions.delay);
+      assert.isFalse(resultingHook.looping);
+      assert.equal(resultingHook.delay, chainOptions.delay);
+      assert.equal(resultingHook.wait, 0);
+    });
+  });
+
+  describe('#hookChainFunctionFactory', () => {
+    it('should return a function which calls the addHook function with a given hook function', () => {
+      let expectedResult = 'result';
+      let addHookStub = sinon.stub(animar, 'addHook').returns(expectedResult);
+      let chainOptions = {
+        delay: 0,
+        currentDuration: 0,
+        totalDuration: 0
+      };
+      let chain = new Map();
+      let hooks = [];
+      let addHookFunction = animar.hookChainFunctionFactory(chainOptions, chain, hooks);
+      let hookFunction = () => 1;
+      let result = addHookFunction(hookFunction);
+
+      sinon.assert.calledWith(addHookStub, hookFunction, chainOptions, chain, hooks);
+      assert.equal(result, expectedResult);
     });
   });
 });
