@@ -9,7 +9,8 @@
     "test-scripts/**",
     "wallaby.js",
     "webpack/**",
-    "index.js"
+    "index.js",
+    "lib/**"
   ],
   "test": [
     "test/*.js"

@@ -4,7 +4,6 @@ dist
 coverage
 npm-debug.log
 typings
-lib
 browser-test
 sauce.sh
 sc_client.pid
