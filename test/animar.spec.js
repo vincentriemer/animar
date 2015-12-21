@@ -263,9 +263,13 @@ describe('Animar', () => {
       assert.isTrue(addAnimationStub.calledTwice);
     });
 
-    it('should pass through the hooks array', () => {
-      animar._add(testElement, {translateX: 40}, null, chainOptions, new Map(), ['test']);
-      sinon.assert.calledWith(fullChainStub, chainOptions, new Map(), ['test']);
+    it('should pass through the hooks argument', () => {
+      let testHooks = 'this is an arbitrary string to show that the hooks object should not be touched';
+      animar._add(testElement, {translateX: 40}, null, chainOptions, new Map(), testHooks);
+      let callArgs = fullChainStub.firstCall.args;
+      assert.deepEqual(callArgs[0], chainOptions);
+      assert.instanceOf(callArgs[1], Map);
+      assert.equal(callArgs[2], testHooks);
     });
   });
 
