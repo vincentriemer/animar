@@ -10,16 +10,32 @@
 
 **NOTE**: This is still very much a work in progress (espcially in the documentation department). If you attempt to use this in its current state, you are doing so at your own risk.
 
-## Initialization
+## Example
 
 ```javascript
-var animar = new Animar();
-```
+var Animar = require('animar');
 
-## Animating an Element
+// Custom easing function (Animar only defaults to a linear ease)
+function quadInOut(t, b, c, d) {
+  t /= d / 2;
+  if (t < 1) { return c / 2 * t * t + b; }
+  t--;
+  return -c / 2 * (t * (t - 2) - 1) + b;
+}
 
-The Animar library only provides one function for animating an element. The syntax is as follows:
+// Initialize the library (set the default easing function to the one created above)
+var animar = new Animar({ 
+  defaults: { 
+    easingFunction: quadInOut 
+  } 
+});
 
-```
-animar.add([DOMElement element], [Object attributeMap], [Object options]);
+// Get the target from the DOM
+var target = document.getElementById('target');
+
+// Construct an animation chain and start it immediately.
+animar.add(target, { translateX: [0, 300], translateY: [0, 300] })
+      .then() // Any animation added after this point will start after the previous ones have finished
+      .add(target, { translateX: [300, 0], translateY: [300, 0], { delay: -30 }) // set a negative delay to make it begin sooner than the time the previous step ends.
+      .start();
 ```
