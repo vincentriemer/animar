@@ -171,6 +171,8 @@ const EMPTY_ANIMATION_OPTIONS = {
   loop: null
 };
 
+const TARGET_FRAME_DELAY = 16.67;
+
 /**
  * The main Animar class which the user interacts with.
  * @public
@@ -179,9 +181,10 @@ export default class Animar {
   ticking:boolean;
   elementMap:ElementMap;
   defaults:Defaults;
-  timescale:number;
   hardwareAcceleration:boolean;
   hooks:Array<Hook>;
+  firstFrame:boolean;
+  previousTime:number;
 
   /**
    * Create a new Animar instance.
@@ -199,11 +202,13 @@ export default class Animar {
      * @private
      */
     this.ticking = false;
+
     /**
      * @type {ElementMap}
      * @private
      */
     this.elementMap = new Map();
+
     /**
      * Animar instance's default animation option values
      * @type {Defaults}
@@ -216,12 +221,7 @@ export default class Animar {
       }, // linear easing function
       duration: 60
     }, resolvedDefaults);
-    /**
-     * How fast the animations should run (`1` is real-time).
-     * @type {number}
-     * @public
-     */
-    this.timescale = 1;
+
     /**
      * Whether or not to force animating using the GPU
      * @type {boolean}
@@ -235,6 +235,20 @@ export default class Animar {
      * @private
      */
     this.hooks = [];
+
+    /**
+     * Flag to determine if the current frame is the first frame in a requestTick call
+     * @type {boolean}
+     * @private
+     */
+    this.firstFrame = true;
+
+    /**
+     * The timestamp of the previous frame rendering.
+     * @type {number}
+     * @private
+     */
+    this.previousTime = 0;
   }
 
   /**
@@ -520,13 +534,23 @@ export default class Animar {
    * Move the instance's elementMap one step forward and render the changes to the DOM if anything changed in the step.
    * @private
    */
-  update () {
+  update (timestamp:number) {
+    let changeInTime = timestamp - this.previousTime;
+    if (this.firstFrame) {
+      changeInTime = TARGET_FRAME_DELAY;
+      this.firstFrame = false;
+    }
+    let timescale = changeInTime / TARGET_FRAME_DELAY;
+    this.previousTime = timestamp;
+
     this.ticking = false;
-    var hasChanged = this.step();
+    var hasChanged = this.step(timescale);
 
     if (hasChanged) {
       this.render();
       this.requestTick();
+    } else {
+      this.firstFrame = true;
     }
   }
 
@@ -542,20 +566,21 @@ export default class Animar {
 
   /**
    * Step the instance's element map forward.`
+   * @param {number} timescale
    * @returns {boolean} - Anything has changed from stepping forward.
    * @private
    */
-  step ():boolean {
+  step (timescale:number):boolean {
     let somethingChanged = false;
 
     this.elementMap.forEach(element => {
-      if (element.step(this.timescale)) {
+      if (element.step(timescale)) {
         somethingChanged = true;
       }
     });
 
     let newHooks = this.hooks.map(hook => {
-      if (hook.step(this.timescale)) {
+      if (hook.step(timescale)) {
         return hook;
       }
     });

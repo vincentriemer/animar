@@ -72,9 +72,10 @@ describe('Animar', () => {
     it('should initialize all of the class variables to expected defaults', () => {
       assert.equal(animar.ticking, false);
       assert.instanceOf(animar.elementMap, Map);
-      assert.equal(animar.timescale, 1);
       assert.equal(animar.hardwareAcceleration, true);
       assert.deepEqual(animar.hooks, []);
+      assert.equal(animar.firstFrame, true);
+      assert.equal(animar.previousTime, 0);
 
       // check defaults object
       assert.equal(animar.defaults.delay, 0);
@@ -593,6 +594,28 @@ describe('Animar', () => {
       sinon.assert.called(renderStub);
       sinon.assert.called(requestTickStub);
     });
+
+    it('should calculate the timescale based off of the previous frame\'s timestamp and the current timestamp', () => {
+      // test 60Hz
+      animar.firstFrame = false;
+      let sixtyFPS = 16.67;
+      let currentTime = 3000;
+      animar.previousTime = currentTime - sixtyFPS;
+      animar.update(currentTime);
+
+      let resultingTimescale = stepStub.firstCall.args[0];
+      assert.closeTo(resultingTimescale, 1, 0.01);
+    });
+
+    it('should override the changeInTime value if it\'s the first frame after pausing', () => {
+      animar.firstFrame = true;
+      let currentTime = 3000;
+      animar.previousTime = currentTime - 500;
+      animar.update(currentTime);
+
+      let resultingTimescale = stepStub.firstCall.args[0];
+      assert.closeTo(resultingTimescale, 1, 0.01);
+    });
   });
 
   describe('#render', () => {
@@ -622,14 +645,16 @@ describe('Animar', () => {
       stepStub2 = sinon.stub();
     });
 
-    it('should call the step function (with timestamp argument) on every element in elementMap', () => {
+    it('should call the step function (with given timescale argument) on every element in elementMap', () => {
+      let timescale = 0.9;
+
       animar.elementMap.set(testElement1, { step: stepStub1 });
       animar.elementMap.set(testElement2, { step: stepStub2 });
 
-      animar.step();
+      animar.step(timescale);
 
-      sinon.assert.calledWith(stepStub1, animar.timescale);
-      sinon.assert.calledWith(stepStub2, animar.timescale);
+      sinon.assert.calledWith(stepStub1, timescale);
+      sinon.assert.calledWith(stepStub2, timescale);
     });
 
     it('should return false if every step function returns false', () => {
