@@ -22,6 +22,7 @@
     "email": "vincentriemer+animar@gmail.com"
   },
   "license": "MIT",
+  "main": "index.js",
   "scripts": {
     "clean": "rimraf dist",
     "clean-coverage": "rimraf coverage",
@@ -36,7 +37,10 @@
     "prepublish": "npm run clean-lib && ./node_modules/.bin/babel ./src --out-dir ./lib",
     "doc": "esdoc -c esdoc.json"
   },
-  "main": "index.js",
+  "pre-commit": [
+    "test",
+    "build"
+  ],
   "devDependencies": {
     "babel-cli": "^6.2.0",
     "babel-core": "^6.2.1",
@@ -62,6 +66,7 @@
     "jsdom": "^7.0.2",
     "lodash": "^3.3.1",
     "mocha": "^2.3.4",
+    "pre-commit": "^1.1.2",
     "rewire": "^2.5.1",
     "rimraf": "^2.3.1",
     "saucie": "^1.3.1",
