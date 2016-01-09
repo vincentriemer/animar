@@ -73,7 +73,7 @@ describe('Helpers', () => {
     }
   });
 
-  describe('#applyStyle()', () => {
+  describe('#applyStyle', () => {
     it('should set a transform string', () => {
       const transformString = 'translateX(20px) scale(1) rotate(30deg)';
       Helpers.applyStyle(mockElement, 'transform', transformString);
