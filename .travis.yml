@@ -1,32 +1,26 @@
-language: node_js
 sudo: false
+language: node_js
+cache:
+  directories:
+    - node_modules
+notifications:
+  email: false
+node_js:
+  - '4'
+before_install:
+  - npm i -g npm@^2.0.0
 before_script:
-- npm install -g codecov
+  - npm prune
+  - npm i -g codecov
 script:
-- npm test && codecov
+  - npm test
+  - npm run build
+after_success:
+  - codecov
+  - python node_modules/travis-weigh-in/weigh_in.py dist/animar.min.js
+  - npm run semantic-release
 after_script:
-- npm run test:browser
-- npm run build && python node_modules/travis-weigh-in/weigh_in.py dist/animar.min.js
-env:
-  global:
-    secure: Mu2ZIBaKlcsXYvCwzieNEGkzD/CuCG4mWR5oZghV4V/vdRQgUoDQLcyr9LCTUe/Amb6DvASXYXidsuVfQpSzZldFqpNMsBbZ7WXMHge2tkz+anGa1e6yKYt079QFPzXXUi1To+Ho7eA9HYuhHZ2HsbxGf12u9s9S3IjK8hlWxNY=
-before_deploy:
-- npm run build
-deploy:
-  - provider: releases
-    api_key:
-      secure: Xc4bV75pnI6JcNW5HG/9gD92ObTVaeZYpEhsPKOw6ApvejgchKPbeAeHaAUZHCCXdgRSWsomTSENbfa23klii1F4Z4XlxLd2h1DddNRf2jbujjRftDY3/i2rC/PcAAmg7Vjx5NH0z1f9Vsxtvtjp6iLQOUWnxt7Uoul9bN9WYqQ=
-    file:
-      - dist/animar.js
-      - dist/animar.min.js
-    on:
-      tags: true
-      repo: vincentriemer/animar
-  - provider: npm
-    email: vincentriemer@gmail.com
-    api_key:
-      secure: NwcWvTdxNsSjECle6ZVHqmaUYY0i3bWn0VL/erQp0e5WLmSOf5ZyuKD6fBAm4GU3Eiul5Z2gcHmPzkP19jO0kj7E8Q1zxqJb8bFC8WMu7DRxsFPRwMwhceeWqTgQ12/+5ukxF889s9Yra7QwxzE9PvdqFJJo6j2lPYRCwlAigCc=
-    on:
-      tags: true
-      repo: vincentriemer/animar
-
+  - npm run test:browser
+branches:
+  only:
+    - master

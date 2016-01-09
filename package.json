@@ -1,6 +1,5 @@
 {
   "name": "animar",
-  "version": "0.8.0",
   "description": "a modern, focused, flexible javascript animation library.",
   "keywords": [
     "web",
@@ -39,7 +38,8 @@
     "prepublish": "npm run clean:lib && ./node_modules/.bin/babel ./src --out-dir ./lib",
     "docs": "esdoc -c esdoc.json",
     "predoc": "npm run clean:docs",
-    "commit": "git-cz"
+    "commit": "git-cz",
+    "semantic-release": "semantic-release pre && npm publish && semantic-release post"
   },
   "pre-commit": [
     "test",
@@ -73,7 +73,8 @@
     "sinon": "^2.0.0-pre",
     "testem": "^0.9.11",
     "travis-weigh-in": "^1.0.2",
-    "webpack": "^1.12.8"
+    "webpack": "^1.12.8",
+    "semantic-release": "^4.3.5"
   },
   "czConfig": {
     "path": "node_modules/cz-conventional-changelog"
