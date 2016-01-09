@@ -27,7 +27,6 @@
     "clean": "npm run clean:dist && npm run clean:coverage && npm run clean:lib && npm run clean:docs",
     "clean:dist": "rimraf dist",
     "clean:coverage": "rimraf coverage",
-    "clean:docs": "rimraf docs",
     "build": "npm run build:umd && npm run build:es6 && npm run build:production",
     "build:umd": "rollup -c rollup.umd.config.js",
     "build:es6": "rollup -c rollup.es6.config.js",
@@ -40,8 +39,6 @@
     "test:browser": "testem ci",
     "pretest": "npm run clean:coverage && npm run lint",
     "prepublish": "npm run clean:dist && npm run build",
-    "docs": "esdoc -c esdoc.json",
-    "predoc": "npm run clean:docs",
     "commit": "git-cz",
     "commit:artifacts": "git add dist",
     "semantic-release": "semantic-release pre && npm publish && semantic-release post"
