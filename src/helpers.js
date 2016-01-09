@@ -1,8 +1,3 @@
-/* @flow */
-/// <reference path="../typings/tsd.d.ts"/>
-import type Animation from './animation'; //eslint-disable-line no-unused-vars
-import type {AttributesOptions} from './animar';//eslint-disable-line no-unused-vars
-
 /**
  * List of all the transform attributes that are possible to animate.
  *
@@ -10,7 +5,7 @@ import type {AttributesOptions} from './animar';//eslint-disable-line no-unused-
  * from GSAP's CSSPlugin documentation).
  *
  * @type {Array<string>}
- * @protected
+ * @private
  */
 export const TRANSFORM_ATTRIBUTES = [
   'translateX',
@@ -31,9 +26,9 @@ export const TRANSFORM_ATTRIBUTES = [
  * @param {HTMLElement} element
  * @param {string} transformString
  * @returns {HTMLElement}
- * @protected
+ * @public
  */
-export function setTransform (element:HTMLElement, transformString:string):HTMLElement {
+export function setTransform (element, transformString) {
   element.style.webkitTransform = transformString;
   element.style.mozTransform = transformString;
   element.style.msTransform = transformString;
@@ -47,9 +42,9 @@ export function setTransform (element:HTMLElement, transformString:string):HTMLE
  * @param {HTMLElement} element
  * @param {string} attributeName
  * @param {string} attributeValue
- * @protected
+ * @public
  */
-export function applyStyle (element:HTMLElement, attributeName:string, attributeValue:string) {
+export function applyStyle (element, attributeName, attributeValue) {
   switch (attributeName) {
     case ('transform'):
       setTransform(element, attributeValue);
@@ -67,26 +62,19 @@ export function applyStyle (element:HTMLElement, attributeName:string, attribute
 
 /**
  * Add multiple animations together to get an attribute's display value.
- * @param {Array<?Animation>} animations
+ * @param {Array<Animation>} animations
  * @returns {number}
- * @protected
+ * @public
  */
-export function calculateAnimationValue (animations:Array<?Animation>):number {
-  var result = 0;
-
-  animations.forEach(animation => {
-    /* istanbul ignore else */
-    if (animation != null) {
-      var currentIteration = animation.currentIteration;
-      if (currentIteration < 0) {
-        currentIteration = 0;
-      }
-      if (currentIteration >= animation.totalIterations) {
-        currentIteration = animation.totalIterations;
-      }
-      result += animation.easingFunction(currentIteration, animation.startValue, animation.changeInValue, animation.totalIterations);
+export function calculateAnimationValue (animations) {
+  return animations.reduce((result, {
+    currentIteration, totalIterations, startValue, changeInValue, easingFunction
+  }) => {
+    if (currentIteration < 0) {
+      currentIteration = 0;
+    } else if (currentIteration > totalIterations) {
+      currentIteration = totalIterations;
     }
-  });
-
-  return result;
+    return result + easingFunction(currentIteration, startValue, changeInValue, totalIterations);
+  }, 0);
 }

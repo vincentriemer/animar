@@ -1,7 +1,4 @@
 /* global global */
-/// <reference path="../typings/tsd.d.ts"/>
-
-import Animation from '../src/animation.js';
 import * as Helpers from '../src/helpers.js';
 
 var assert = chai.assert;
@@ -14,6 +11,26 @@ function propagateToGlobal (window) {
     global[key] = window[key];
   }
 }
+
+let TempAnimationFactory = (currentIteration,
+                            startValue,
+                            changeInValue,
+                            totalIterations,
+                            easingFunction,
+                            loop,
+                            delay,
+                            wait) => {
+  return {
+    currentIteration,
+    startValue,
+    changeInValue,
+    totalIterations,
+    easingFunction,
+    looping: loop,
+    delay,
+    wait
+  };
+};
 
 describe('Helpers', () => {
   let mockElement;
@@ -87,8 +104,8 @@ describe('Helpers', () => {
       let testEasingFunction1 = sinon.stub().returns(10);
       let testEasingFunction2 = sinon.stub().returns(20);
 
-      let testAnimation1 = new Animation(0, -20, 20, 30, testEasingFunction1, false, 0, 0);
-      let testAnimation2 = new Animation(0, -20, 20, 30, testEasingFunction2, false, 0, 0);
+      let testAnimation1 = TempAnimationFactory(0, -20, 20, 30, testEasingFunction1, false, 0, 0);
+      let testAnimation2 = TempAnimationFactory(0, -20, 20, 30, testEasingFunction2, false, 0, 0);
       let testAnimations = [testAnimation1, testAnimation2];
 
       let result = Helpers.calculateAnimationValue(testAnimations);
@@ -100,18 +117,19 @@ describe('Helpers', () => {
 
     it('should consider the currentIteration to be 0 if it\'s less than 0', () => {
       let testEasingFunction1 = sinon.stub().returns(10);
-      let testAnimation1 = new Animation(-10, -20, 20, 30, testEasingFunction1, false, 0, 0);
+      let testAnimation1 = TempAnimationFactory(-10, -20, 20, 30, testEasingFunction1, false, 0, 0);
       let testAnimations = [testAnimation1];
 
       let result = Helpers.calculateAnimationValue(testAnimations);
 
-      assert.isTrue(testEasingFunction1.calledWith(0, testAnimation1.startValue, testAnimation1.changeInValue, testAnimation1.totalIterations));
+      sinon.assert.calledWith(testEasingFunction1, 0, testAnimation1.startValue, testAnimation1.changeInValue,
+        testAnimation1.totalIterations);
       assert.equal(result, 10);
     });
 
     it('should consider the currentIteration to be equal to totalIterations if it is greater than totalIterations', () => {
       let testEasingFunction1 = sinon.stub().returns(10);
-      let testAnimation1 = new Animation(35, -20, 20, 30, testEasingFunction1, false, 0, 0);
+      let testAnimation1 = TempAnimationFactory(35, -20, 20, 30, testEasingFunction1, false, 0, 0);
       let testAnimations = [testAnimation1];
 
       let result = Helpers.calculateAnimationValue(testAnimations);
