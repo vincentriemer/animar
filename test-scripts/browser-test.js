@@ -3,3 +3,4 @@ import * as es6Object from 'core-js/es6/object';
 
 window.__DEV__ = true;
 window.BROWSER = true;
+window.assert = chai.assert;

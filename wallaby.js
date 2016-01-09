@@ -32,7 +32,7 @@ module.exports = function (wallaby) {
         global.BROWSER = false;
         global.__DEV__ = true;
         global.sinon = require('sinon');
-        global.chai = require('chai');
+        global.assert = require('chai').assert;
         global.jsdom = require('jsdom');
 
         mocha.suite.beforeEach('sinon before', function() {

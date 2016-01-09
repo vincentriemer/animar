@@ -1,7 +1,5 @@
 import * as Helpers from '../src/helpers.js';
 
-var assert = chai.assert;
-
 function propagateToGlobal (window) {
   for (let key in window) {
     if (!window.hasOwnProperty(key)) continue;
