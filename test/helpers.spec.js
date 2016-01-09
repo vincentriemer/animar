@@ -1,4 +1,3 @@
-/* global global */
 import * as Helpers from '../src/helpers.js';
 
 var assert = chai.assert;
@@ -93,9 +92,7 @@ describe('Helpers', () => {
     });
 
     it('should throw an error if it\'s provided an unknown attribute', () => {
-      let exceptionSpy = sinon.spy(Helpers, 'applyStyle');
       assert.throw(() => Helpers.applyStyle(mockElement, 'blah', '20px'));
-      exceptionSpy.restore();
     });
   });
 

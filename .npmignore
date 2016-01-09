@@ -1,7 +1,5 @@
 **/*
 !LICENSE.md
 !README.md
-!lib/*.js
 !package.json
-!index.js
-!src/*.js
+!dist/*.js
