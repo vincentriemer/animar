@@ -35,15 +35,25 @@ module.exports = function (wallaby) {
         global.assert = require('chai').assert;
         global.jsdom = require('jsdom');
 
-        mocha.suite.beforeEach('sinon before', function() {
-          if (null == this.sinon) {
-            this.sinon = sinon.sandbox.create();
+        function propagateToGlobal (window) {
+          for (var key in window) {
+            if (!window.hasOwnProperty(key)) continue;
+            if (key in global) continue;
+
+            global[key] = window[key];
           }
-        });
-        mocha.suite.afterEach('sinon after', function() {
-          if (this.sinon && 'function' === typeof this.sinon.restore) {
-            this.sinon.restore();
-          }
+        }
+
+        mocha.suite.beforeEach('sinon before', function(done) {
+          global.jsdom.env(
+            '<div id="target"></div>',
+            function (err, window) {
+              global.window = window;
+              global.document = window.document;
+              propagateToGlobal(window);
+              done();
+            }
+          );
         });
       }
     };

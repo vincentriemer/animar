@@ -3,6 +3,19 @@ const ANIMATION_DEFAULTS = {
   wait: 0
 };
 
+export function calculateAnimationValue (animations) {
+  return animations.reduce((animationValue, {
+    currentIteration, totalIterations, startValue, changeInValue, easingFunction
+  }) => {
+    if (currentIteration < 0) {
+      currentIteration = 0;
+    } else if (currentIteration > totalIterations) {
+      currentIteration = totalIterations;
+    }
+    return animationValue + easingFunction(currentIteration, startValue, changeInValue, totalIterations);
+  }, 0);
+}
+
 export function stepAnimation(timescale) {
   return (anim) => {
     let currentIteration = anim.currentIteration;

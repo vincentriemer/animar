@@ -1,4 +1,4 @@
-import Animation, { stepAnimation, loopAnimation } from '../src/animation';
+import Animation, { stepAnimation, loopAnimation, calculateAnimationValue } from '../src/animation';
 
 describe('Animation', () => {
   describe('#Animation', () => {
@@ -85,6 +85,46 @@ describe('Animation', () => {
       let result = loopAnimation(chainOptions)(testAnimation);
 
       assert.equal(result.wait, 40);
+    });
+  });
+
+  describe('#calculateAnimationValue', () => {
+    it('should add the result of passing the animation\'s propertes to its easing function', () => {
+      let testEasingFunction1 = sinon.stub().returns(10);
+      let testEasingFunction2 = sinon.stub().returns(20);
+
+      let testAnimation1 = Animation(0, -20, 20, 30, testEasingFunction1, false, 0, 0);
+      let testAnimation2 = Animation(0, -20, 20, 30, testEasingFunction2, false, 0, 0);
+      let testAnimations = [testAnimation1, testAnimation2];
+
+      let result = calculateAnimationValue(testAnimations);
+
+      assert.isTrue(testEasingFunction1.called);
+      assert.isTrue(testEasingFunction2.called);
+      assert.equal(result, 30);
+    });
+
+    it('should consider the currentIteration to be 0 if it\'s less than 0', () => {
+      let testEasingFunction1 = sinon.stub().returns(10);
+      let testAnimation1 = Animation(-10, -20, 20, 30, testEasingFunction1, false, 0, 0);
+      let testAnimations = [testAnimation1];
+
+      let result = calculateAnimationValue(testAnimations);
+
+      sinon.assert.calledWith(testEasingFunction1, 0, testAnimation1.startValue, testAnimation1.changeInValue,
+        testAnimation1.totalIterations);
+      assert.equal(result, 10);
+    });
+
+    it('should consider the currentIteration to be equal to totalIterations if it is greater than totalIterations', () => {
+      let testEasingFunction1 = sinon.stub().returns(10);
+      let testAnimation1 = Animation(35, -20, 20, 30, testEasingFunction1, false, 0, 0);
+      let testAnimations = [testAnimation1];
+
+      let result = calculateAnimationValue(testAnimations);
+
+      assert.isTrue(testEasingFunction1.calledWith(testAnimation1.totalIterations, testAnimation1.startValue, testAnimation1.changeInValue, testAnimation1.totalIterations));
+      assert.equal(result, 10);
     });
   });
 });

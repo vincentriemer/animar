@@ -40,16 +40,3 @@ export function applyStyle (element, attributeName, attributeValue) {
       throw new Error(`invalid/unsupported attribute: ${attributeName}`);
   }
 }
-
-export function calculateAnimationValue (animations) {
-  return animations.reduce((result, {
-    currentIteration, totalIterations, startValue, changeInValue, easingFunction
-  }) => {
-    if (currentIteration < 0) {
-      currentIteration = 0;
-    } else if (currentIteration > totalIterations) {
-      currentIteration = totalIterations;
-    }
-    return result + easingFunction(currentIteration, startValue, changeInValue, totalIterations);
-  }, 0);
-}
