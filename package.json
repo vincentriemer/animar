@@ -35,18 +35,16 @@
     "prebuild": "npm run clean:dist",
     "postbuild": "npm run commit:artifacts",
     "lint": "eslint src/** test/**",
+    "check-coverage": "istanbul check-coverage --statements 100 --branches 100 --functions 100 --lines 100",
     "test": "./node_modules/.bin/babel-node ./node_modules/.bin/isparta cover test-scripts/node-test.js",
-    "test:browser": "testem ci",
+    "test:browser": "testem",
+    "test:browser:ci": "testem ci",
     "pretest": "npm run clean:coverage && npm run lint",
     "prepublish": "npm run clean:dist && npm run build",
     "commit": "git-cz",
     "commit:artifacts": "git add dist",
     "semantic-release": "semantic-release pre && npm publish && semantic-release post"
   },
-  "pre-commit": [
-    "test",
-    "build"
-  ],
   "devDependencies": {
     "babel-cli": "^6.2.0",
     "babel-core": "^6.2.1",
@@ -66,11 +64,11 @@
     "esdoc-es7-plugin": "^0.0.3",
     "eslint": "^1.10.1",
     "eslint-plugin-flowtype": "^1.0.0",
+    "ghooks": "^1.0.3",
     "isparta": "^4.0.0",
     "jsdom": "^7.0.2",
     "lodash": "^3.3.1",
     "mocha": "^2.3.4",
-    "pre-commit": "^1.1.2",
     "rimraf": "^2.3.1",
     "rollup": "^0.24.1",
     "rollup-plugin-babel": "^2.3.8",
@@ -83,11 +81,16 @@
     "sinon": "^2.0.0-pre",
     "testem": "^0.9.11",
     "travis-weigh-in": "^1.0.2",
+    "validate-commit-msg": "^1.0.0",
     "webpack": "^1.12.8"
   },
   "config": {
     "commitizen": {
       "path": "node_modules/cz-conventional-changelog"
+    },
+    "ghooks": {
+      "pre-commit": "npm run build && npm run test && npm run check-coverage",
+      "commit-msg": "validate-commit-msg"
     }
   },
   "dependencies": {

@@ -20,4 +20,4 @@ after_success:
   - python node_modules/travis-weigh-in/weigh_in.py dist/animar.min.js
   - npm run semantic-release
 after_script:
-  - npm run test:browser
+  - npm run test:browser:ci
