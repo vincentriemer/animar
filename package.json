@@ -89,6 +89,6 @@
     "path": "node_modules/cz-conventional-changelog"
   },
   "dependencies": {
-    "immutable": "vincentriemer/immutable-js"
+    "immutable": "^3.7.6"
   }
 }
