@@ -50,18 +50,18 @@ describe('Animation', () => {
 
     it('should return a function which continues iterating after totalIterations if the input animation has a wait' +
       'value', () => {
-      let testAnimation = (new Animation(60, -20, 20, 60, () => {}, 0)).set('wait', 10);
+      let testAnimation = (Animation(60, -20, 20, 60, () => {}, 0)).set('wait', 10);
 
       let result = stepAnimation(1)(testAnimation);
 
       assert.equal(result.get('currentIteration'), 61);
     });
 
-    it('should return a function which does returns it\'s input if the animation is over', () => {
-      let testAnimation = new Animation(60, -20, 20, 60, () => {}, 0);
+    it('should return a function which returns null if the animation is over', () => {
+      let testAnimation = Animation(60, -20, 20, 60, () => {}, 0);
 
       let result = stepAnimation(1)(testAnimation);
-      assert.strictEqual(result, testAnimation);
+      assert.strictEqual(result, null);
     });
   });
 
@@ -69,7 +69,7 @@ describe('Animation', () => {
     it('should return a function which returns a copy of the given animation but with the looping property set to' +
       'true', () => {
       let chainOptions = { totalDuration: 100 };
-      let testAnimation = new Animation(0, -20, 20, 60, () => {}, 0);
+      let testAnimation = Animation(0, -20, 20, 60, () => {}, 0);
 
       let result = loopAnimation(chainOptions)(testAnimation);
 

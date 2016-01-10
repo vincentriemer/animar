@@ -30,7 +30,7 @@ export function stepAnimation(timescale) {
     } else if (looping) {
       return anim.set('currentIteration', 0 - delay);
     } else {
-      return anim;
+      return null;
     }
   };
 }

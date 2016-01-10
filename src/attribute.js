@@ -19,7 +19,9 @@ export function mergeAttributes(target) {
 export function stepAttribute(timescale) {
   return (attribute) =>
     attribute.update('animations', animations =>
-      animations.map(stepAnimation(timescale)));
+      animations.map(stepAnimation(timescale))
+                .filter(anim => anim)
+    );
 }
 
 export function loopAttribute(chainOptions) {
@@ -28,9 +30,8 @@ export function loopAttribute(chainOptions) {
       animations.map(loopAnimation(chainOptions)));
 }
 
-export default function(name, model) {
+export default function(model) {
   return Immutable.Map({
-    name,
     model,
     animations: Immutable.List()
   });
