@@ -85,8 +85,10 @@
     "travis-weigh-in": "^1.0.2",
     "webpack": "^1.12.8"
   },
-  "czConfig": {
-    "path": "node_modules/cz-conventional-changelog"
+  "config": {
+    "commitizen": {
+      "path": "node_modules/cz-conventional-changelog"
+    }
   },
   "dependencies": {
     "immutable": "^3.7.6"
