@@ -10,7 +10,8 @@
     "wallaby.js",
     "webpack/**",
     "index.js",
-    "lib/**"
+    "lib/**",
+    "rollup.*"
   ],
   "test": [
     "test/*.js"
