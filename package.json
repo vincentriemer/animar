@@ -59,7 +59,7 @@
     "esdoc": "^0.4.3",
     "esdoc-es7-plugin": "^0.0.3",
     "esdoc-importpath-plugin": "0.0.1",
-    "eslint": "^1.10.1",
+    "eslint": "^2.2.0",
     "eslint-plugin-flowtype": "^1.0.0",
     "flow-bin": "^0.20.1",
     "isparta": "^4.0.0",
