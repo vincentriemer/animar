@@ -74,6 +74,6 @@
     "testem": "^1.0.0",
     "travis-weigh-in": "^1.0.2",
     "tsd": "^0.6.3",
-    "webpack": "^1.12.8"
+    "webpack": "^1.12.14"
   }
 }
