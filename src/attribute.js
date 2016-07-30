@@ -1,38 +1,39 @@
-import Immutable from 'immutable';
-import { stepAnimation, loopAnimation } from './animation';
+import { stepAnimation, loopAnimation, calculateAnimationValue } from './animation';
 
 export function addAnimationToAttribute(animation) {
-  return (attribute) =>
-    attribute.update('animations', animations =>
-      animations.push(animation));
+  return attribute => Object.assign({}, attribute, {
+    animations: attribute.animations.concat([animation])
+  });
 }
 
 export function mergeAttributes(target) {
-  return (source) => source
-    .set('model', target.get('model'))
-    .update('animations', animations =>
-      animations.concat(target.get('animations')));
+  return source => Object.assign({}, source, {
+    model: target.model,
+    animations: source.animations.concat(target.animations)
+  });
 }
 
-// export function render(attr, element) {}
-
 export function stepAttribute(timescale) {
-  return (attribute) =>
-    attribute.update('animations', animations =>
-      animations.map(stepAnimation(timescale))
-                .filter(anim => anim)
-    );
+  return attribute => Object.assign({}, attribute, {
+    animations: attribute.animations
+      .map(stepAnimation(timescale))
+      .filter(anim => anim)
+  });
 }
 
 export function loopAttribute(chainOptions) {
-  return (attribute) =>
-    attribute.update('animations', animations =>
-      animations.map(loopAnimation(chainOptions)));
+  return attribute => Object.assign({}, attribute, {
+    animations: attribute.animations.map(loopAnimation(chainOptions))
+  });
+}
+
+export function calculateAttributeDisplayValue(attribute) {
+  return String(attribute.model + calculateAnimationValue(attribute.animations));
 }
 
 export default function(model) {
-  return Immutable.Map({
+  return {
     model,
-    animations: Immutable.List()
-  });
+    animations: []
+  };
 }

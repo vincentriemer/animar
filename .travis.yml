@@ -6,7 +6,7 @@ cache:
 notifications:
   email: false
 node_js:
-  - '4'
+  - '5'
 before_install:
   - npm i -g npm@^2.0.0
 before_script:
@@ -17,7 +17,6 @@ script:
   - npm run build
 after_success:
   - codecov
-  - python node_modules/travis-weigh-in/weigh_in.py dist/animar.min.js
   - npm run semantic-release
 after_script:
   - npm run test:browser:ci

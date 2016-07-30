@@ -1,5 +1,3 @@
-import Immutable from 'immutable';
-
 const HOOK_DEFAULTS = {
   looping: false,
   wait: 0,
@@ -8,19 +6,19 @@ const HOOK_DEFAULTS = {
 
 export function stepHook(timescale) {
   return (hook) => {
-    let output = hook;
+    let output = Object.assign({}, hook);
 
-    if (output.get('currentIteration') <= output.get('wait')) {
-      output = output.update('currentIteration', currentIteration => currentIteration + timescale);
+    if (output.currentIteration <= output.wait) {
+      output.currentIteration = output.currentIteration + timescale;
     }
 
-    if (output.get('currentIteration') > 0 && !output.get('called')) {
-      output.get('hook')();
-      output = output.set('called', true);
-    } else if ( output === hook && output.get('looping')) {
-      output = output
-        .set('currentIteration', 0 - output.get('delay'))
-        .set('called', false);
+    if (output.currentIteration > 0 && !output.called) {
+      output.hook();
+      output.called = true;
+    } else if ( output.currentIteration === hook.currentIteration &&
+        output.looping) {
+      output.currentIteration = 0 - output.delay;
+      output.called = false;
     }
 
     return output;
@@ -28,15 +26,14 @@ export function stepHook(timescale) {
 }
 
 export function loopHook(chainOptions) {
-  return (hook) => hook
-    .set('looping', true)
-    .set('wait', chainOptions.totalDuration - hook.get('delay'));
+  return hook => Object.assign({}, hook, {
+    looping: true,
+    wait: chainOptions.totalDuration - hook.delay
+  });
 }
 
 export default function(hook, currentIteration, delay) {
-  return Immutable.Map(Object.assign({
-    hook,
-    currentIteration,
-    delay
-  }, HOOK_DEFAULTS));
+  return Object.assign({}, HOOK_DEFAULTS, {
+    hook, currentIteration, delay
+  });
 }

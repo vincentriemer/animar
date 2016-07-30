@@ -1,36 +1,42 @@
-import Immutable from 'immutable';
 import { mergeAttributes, stepAttribute, loopAttribute } from './attribute';
+import { reduce, map } from './objUtils';
 
-export function addAttribute(name, attribute) {
-  return element =>
-    element.update('attributes', attributes =>
-      attributes.set(name, attribute));
+export function addAttributeToElement(name, attribute) {
+  return element => Object.assign({}, element, {
+    attributes: Object.assign({}, element.attributes, {
+      [name]: attribute
+    })
+  });
 }
 
 export function mergeElements(target) {
-  return source =>
-    target.get('attributes').reduce((output, targetAttribute, attrName) => {
-      const existingAttribute = output.getIn(['attributes', attrName]);
-      if (existingAttribute != null) {
-        return addAttribute(attrName, mergeAttributes(targetAttribute)(existingAttribute))(output);
+  return source => Object.assign({}, source, {
+    attributes: reduce(target.attributes)((output, targetAttr, attrName) => {
+      const existingAttr = output[attrName];
+      if (existingAttr != null) {
+        output[attrName] = mergeAttributes(targetAttr)(existingAttr);
       } else {
-        return addAttribute(attrName, targetAttribute)(output);
+        output[attrName] = targetAttr;
       }
-    }, source);
+      return output;
+    }, source.attributes)
+  });
 }
 
 export function stepElement(timescale) {
-  return element =>
-    element.update('attributes', attributes =>
-      attributes.map(stepAttribute(timescale)));
+  return element => Object.assign({}, element, {
+    attributes: map(element.attributes)(stepAttribute(timescale))
+  });
 }
 
 export function loopElement(chainOptions) {
-  return element => element.update('attributes', attributes => attributes.map(loopAttribute(chainOptions)));
+  return element => Object.assign({}, element, {
+    attributes: map(element.attributes)(loopAttribute(chainOptions))
+  });
 }
 
 export default function() {
-  return Immutable.Map({
-    attributes: Immutable.Map()
-  });
+  return {
+    attributes: {}
+  };
 }

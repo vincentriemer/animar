@@ -1,4 +1,3 @@
-import Immutable from 'immutable';
 import Animation, { stepAnimation, loopAnimation, calculateAnimationValue } from '../src/animation';
 
 describe('Animation', () => {
@@ -15,7 +14,7 @@ describe('Animation', () => {
 
       const actual = Animation(currentIteration, startValue, changeInValue, totalIterations, easingFunction, delay);
 
-      assert.isTrue(actual.equals(Immutable.Map({
+      assert.deepEqual(actual, {
         currentIteration,
         startValue,
         changeInValue,
@@ -24,7 +23,7 @@ describe('Animation', () => {
         looping,
         delay,
         wait
-      })));
+      });
     });
   });
 
@@ -35,26 +34,27 @@ describe('Animation', () => {
       let timescale = 0.5;
 
       let result = stepAnimation(timescale)(testAnimation);
-      assert.equal(result.get('currentIteration'), timescale);
+      assert.equal(result.currentIteration, timescale);
     });
 
     it('should return a function which returns an animation that has reset the currentIteration value to the ' +
       'inverse of the animation\'s delay value if looping is enabled and the currentIteration is greater than or' +
       'equal to the totalIterations', () => {
       let testAnimation = Animation(60, -20, 20, 60, () => {}, 10);
-      testAnimation = testAnimation.set('looping', true);
+      testAnimation.looping = true;
 
       let result = stepAnimation(1)(testAnimation);
-      assert.equal(result.get('currentIteration'), -10);
+      assert.equal(result.currentIteration, -10);
     });
 
     it('should return a function which continues iterating after totalIterations if the input animation has a wait' +
       'value', () => {
-      let testAnimation = (Animation(60, -20, 20, 60, () => {}, 0)).set('wait', 10);
+      let testAnimation = Animation(60, -20, 20, 60, () => {}, 0);
+      testAnimation.wait = 10;
 
       let result = stepAnimation(1)(testAnimation);
 
-      assert.equal(result.get('currentIteration'), 61);
+      assert.equal(result.currentIteration, 61);
     });
 
     it('should return a function which returns null if the animation is over', () => {
@@ -73,7 +73,7 @@ describe('Animation', () => {
 
       let result = loopAnimation(chainOptions)(testAnimation);
 
-      assert.isTrue(result.get('looping'));
+      assert.isTrue(result.looping);
     });
 
     it('should return a function that returns a copy of the given animation but with its wait value set to the ' +
@@ -83,7 +83,7 @@ describe('Animation', () => {
 
       let result = loopAnimation(chainOptions)(testAnimation);
 
-      assert.equal(result.get('wait'), 40);
+      assert.equal(result.wait, 40);
     });
   });
 
@@ -94,7 +94,7 @@ describe('Animation', () => {
 
       let testAnimation1 = Animation(0, -20, 20, 30, testEasingFunction1, false, 0, 0);
       let testAnimation2 = Animation(0, -20, 20, 30, testEasingFunction2, false, 0, 0);
-      let testAnimations = Immutable.Set([testAnimation1, testAnimation2]);
+      let testAnimations = [testAnimation1, testAnimation2];
 
       let result = calculateAnimationValue(testAnimations);
 
@@ -111,9 +111,9 @@ describe('Animation', () => {
       let result = calculateAnimationValue(testAnimations);
 
       sinon.assert.calledWith(testEasingFunction1, 0,
-        testAnimation1.get('startValue'),
-        testAnimation1.get('changeInValue'),
-        testAnimation1.get('totalIterations'));
+        testAnimation1.startValue,
+        testAnimation1.changeInValue,
+        testAnimation1.totalIterations);
 
       assert.equal(result, 10);
     });
@@ -126,10 +126,10 @@ describe('Animation', () => {
       let result = calculateAnimationValue(testAnimations);
 
       sinon.assert.calledWith(testEasingFunction1,
-        testAnimation1.get('totalIterations'),
-        testAnimation1.get('startValue'),
-        testAnimation1.get('changeInValue'),
-        testAnimation1.get('totalIterations'));
+        testAnimation1.totalIterations,
+        testAnimation1.startValue,
+        testAnimation1.changeInValue,
+        testAnimation1.totalIterations);
       assert.equal(result, 10);
     });
   });

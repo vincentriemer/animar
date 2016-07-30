@@ -27,13 +27,13 @@ module.exports = function (wallaby) {
       },
 
       bootstrap: function (w) {
+        require('core-js/fn/object/entries');
         var mocha = w.testFramework;
 
         global.BROWSER = false;
         global.__DEV__ = true;
         global.sinon = require('sinon');
         global.assert = require('chai').assert;
-        global.jsdom = require('jsdom');
 
         function propagateToGlobal (window) {
           for (var key in window) {
@@ -43,18 +43,6 @@ module.exports = function (wallaby) {
             global[key] = window[key];
           }
         }
-
-        mocha.suite.beforeEach('sinon before', function(done) {
-          global.jsdom.env(
-            '<div id="target"></div>',
-            function (err, window) {
-              global.window = window;
-              global.document = window.document;
-              propagateToGlobal(window);
-              done();
-            }
-          );
-        });
       }
     };
   };

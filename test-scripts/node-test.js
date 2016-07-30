@@ -6,7 +6,6 @@ global.BROWSER = false;
 global.__DEV__ = true;
 global.sinon = require('sinon');
 global.assert = require('chai').assert;
-global.jsdom = require('jsdom');
 
 const testDir = 'test';
 
@@ -26,18 +25,6 @@ fs.readdirSync(testDir).filter(file => {
 }).forEach(file => {
   mocha.addFile(
     path.join(testDir, file)
-  );
-});
-
-mocha.suite.beforeEach('sinon before', function(done) {
-  global.jsdom.env(
-    '<div id="target"></div>',
-    function (err, window) {
-      global.window = window;
-      global.document = window.document;
-      propagateToGlobal(window);
-      done();
-    }
   );
 });
 

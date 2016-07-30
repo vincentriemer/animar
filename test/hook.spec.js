@@ -13,7 +13,7 @@ describe('Hook', () => {
         hook: actualHook,
         currentIteration: actualCurIteration,
         delay: actualDelay
-      } = testHook.toJS();
+      } = testHook;
 
       assert.equal(actualHook, expectedHook);
       assert.equal(actualCurIteration, expectedCurIteration);
@@ -31,7 +31,7 @@ describe('Hook', () => {
         looping: actualLooping,
         wait: actualWait,
         called: actualCalled
-      } = testHook.toJS();
+      } = testHook;
 
       assert.equal(actualLooping, expectedLooping);
       assert.equal(actualWait, expectedWait);
@@ -43,29 +43,30 @@ describe('Hook', () => {
     it('should step the currentIteration forward by the provided timescale amount', () => {
       const testHook = Hook(()=>{}, -1, 1);
       const result = stepHook(0.5)(testHook);
-      assert.equal(result.get('currentIteration'), -0.5);
+      assert.equal(result.currentIteration, -0.5);
     });
 
     it('should not step the currentIteration forward if it is greater than or equal to the wait value', () => {
       const testHook = Hook(()=>{}, 1, 0);
       const result = stepHook(0.5)(testHook);
-      assert.equal(result.get('currentIteration'), 1);
+      assert.equal(result.currentIteration, 1);
     });
 
     it('should run the hook function if currentIteration is greater than 0 and it hasn\'t been called before', () => {
       const hookSpy = sinon.spy();
       let testHook = Hook(hookSpy, 0, 0);
-      testHook = testHook.set('wait', 40);
+      testHook.wait = 40;
       const result = stepHook(0.5)(testHook);
 
       sinon.assert.calledOnce(hookSpy);
-      assert.equal(result.get('called'), true);
+      assert.equal(result.called, true);
     });
 
     it('should not run the hook function if it has been called before', () => {
       const hookSpy = sinon.spy();
       let testHook = Hook(hookSpy, 0, 0);
-      testHook.set('wait', 40).set('called', true);
+      testHook.wait = 40;
+      testHook.called = true;
 
       sinon.assert.notCalled(hookSpy);
     });
@@ -74,11 +75,14 @@ describe('Hook', () => {
       'looping is set to true', () => {
       const hookSpy = sinon.spy();
       let testHook = Hook(hookSpy, 41, 20);
-      testHook = testHook.set('wait', 40).set('called', true).set('looping', true);
+      testHook.wait = 40;
+      testHook.called = true;
+      testHook.looping = true;
+
       const {
         currentIteration,
         called
-      } = stepHook(0.5)(testHook).toJS();
+      } = stepHook(0.5)(testHook);
 
       assert.equal(currentIteration, -20);
       assert.equal(called, false);
@@ -91,8 +95,8 @@ describe('Hook', () => {
       const testChainOptions = { totalDuration: 50 };
       const result = loopHook(testChainOptions)(testHook);
 
-      assert.equal(result.get('looping'), true);
-      assert.equal(result.get('wait'), 30);
+      assert.equal(result.looping, true);
+      assert.equal(result.wait, 30);
     });
   });
 });
