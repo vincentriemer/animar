@@ -29,7 +29,7 @@
     "clean:coverage": "rimraf coverage",
     "build": "npm run build:umd && npm run build:es6 && npm run build:production",
     "build:umd": "rollup -c rollup.umd.config.js",
-    "build:es6": "rollup -c rollup.es6.config.js",
+    "build:es6": "rollup -c rollup.es.config.js",
     "build:production": "rollup -c rollup.production.config.js",
     "build:test": "rollup -c rollup.test.config.js",
     "prebuild": "npm run clean:dist",
@@ -39,10 +39,11 @@
     "test": "NODE_ENV=test babel-node ./node_modules/.bin/isparta cover test-scripts/node-test.js",
     "test:browser": "testem",
     "test:browser:ci": "testem ci",
-    "pretest": "npm run clean:coverage && npm run lint",
+    "pretest": "npm run clean:coverage && npm run lint && npm run typecheck",
     "prepublish": "npm run clean:dist && npm run build",
     "commit:artifacts": "git add dist",
-    "semantic-release": "semantic-release pre && npm publish && semantic-release post"
+    "semantic-release": "semantic-release pre && npm publish && semantic-release post",
+    "typecheck": "flow check"
   },
   "devDependencies": {
     "babel-cli": "^6.2.0",
@@ -63,6 +64,7 @@
     "core-js": "^2.0.3",
     "cz-conventional-changelog": "^1.1.6",
     "eslint": "2.2.0",
+    "flow-bin": "^0.30.0",
     "ghooks": "^1.0.3",
     "isparta": "^4.0.0",
     "mocha": "^2.3.4",
