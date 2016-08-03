@@ -1,5 +1,3 @@
-import 'core-js';
-
 window.__DEV__ = true;
 window.BROWSER = true;
 window.assert = chai.assert;

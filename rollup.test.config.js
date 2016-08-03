@@ -10,7 +10,7 @@ export default {
   external: ['describe', 'it', 'chai', 'sinon'],
   sourceMap: true,
   plugins: [
-    multiEntry(['test-scripts/browser-test.js', 'test/*.spec.js']),
+    multiEntry(['test/*.spec.js']),
     babel({
       babelrc: false,
       runtimeHelpers: true,

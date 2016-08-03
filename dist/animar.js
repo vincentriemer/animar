@@ -4,15 +4,13 @@
   (global.Animar = factory());
 }(this, function () { 'use strict';
 
-  var babelHelpers = {};
-
-  babelHelpers.classCallCheck = function (instance, Constructor) {
+  var classCallCheck = function (instance, Constructor) {
     if (!(instance instanceof Constructor)) {
       throw new TypeError("Cannot call a class as a function");
     }
   };
 
-  babelHelpers.createClass = function () {
+  var createClass = function () {
     function defineProperties(target, props) {
       for (var i = 0; i < props.length; i++) {
         var descriptor = props[i];
@@ -30,7 +28,7 @@
     };
   }();
 
-  babelHelpers.defineProperty = function (obj, key, value) {
+  var defineProperty = function (obj, key, value) {
     if (key in obj) {
       Object.defineProperty(obj, key, {
         value: value,
@@ -45,7 +43,7 @@
     return obj;
   };
 
-  babelHelpers.extends = Object.assign || function (target) {
+  var _extends = Object.assign || function (target) {
     for (var i = 1; i < arguments.length; i++) {
       var source = arguments[i];
 
@@ -59,7 +57,7 @@
     return target;
   };
 
-  babelHelpers.slicedToArray = function () {
+  var slicedToArray = function () {
     function sliceIterator(arr, i) {
       var _arr = [];
       var _n = true;
@@ -97,8 +95,6 @@
     };
   }();
 
-  babelHelpers;
-
   var ANIMATION_DEFAULTS = {
     looping: false,
     wait: 0
@@ -135,9 +131,9 @@
 
 
       if (currentIteration < totalIterations + wait) {
-        return babelHelpers.extends({}, animation, { currentIteration: currentIteration + timescale });
+        return _extends({}, animation, { currentIteration: currentIteration + timescale });
       } else if (looping) {
-        return babelHelpers.extends({}, animation, { currentIteration: 0 - delay });
+        return _extends({}, animation, { currentIteration: 0 - delay });
       } else {
         return null;
       }
@@ -146,7 +142,7 @@
 
   function loopAnimation(chainOptions) {
     return function (animation) {
-      return babelHelpers.extends({}, animation, {
+      return _extends({}, animation, {
         looping: true,
         wait: chainOptions.totalDuration - animation.delay - animation.totalIterations
       });
@@ -186,7 +182,7 @@
 
   function stepAttribute(timescale) {
     return function (attribute) {
-      return babelHelpers.extends({}, attribute, {
+      return _extends({}, attribute, {
         animations: attribute.animations.map(stepAnimation(timescale)).filter(function (anim) {
           return anim;
         })
@@ -196,7 +192,7 @@
 
   function loopAttribute(chainOptions) {
     return function (attribute) {
-      return babelHelpers.extends({}, attribute, {
+      return _extends({}, attribute, {
         animations: attribute.animations.map(loopAnimation(chainOptions))
       });
     };
@@ -246,7 +242,7 @@
   function reduce(obj) {
     return function (callback, initialValue) {
       return entries(obj).reduce(function (output, _ref) {
-        var _ref2 = babelHelpers.slicedToArray(_ref, 2);
+        var _ref2 = slicedToArray(_ref, 2);
 
         var key = _ref2[0];
         var value = _ref2[1];
@@ -267,7 +263,7 @@
   function addAttributeToElement(name, attribute) {
     return function (element) {
       return {
-        attributes: babelHelpers.extends({}, element.attributes, babelHelpers.defineProperty({}, name, attribute))
+        attributes: _extends({}, element.attributes, defineProperty({}, name, attribute))
       };
     };
   }
@@ -318,7 +314,7 @@
 
   function stepHook(timescale) {
     return function (hook) {
-      var output = babelHelpers.extends({}, hook);
+      var output = _extends({}, hook);
 
       if (output.currentIteration <= output.wait) {
         output.currentIteration = output.currentIteration + timescale;
@@ -338,7 +334,7 @@
 
   function loopHook(chainOptions) {
     return function (hook) {
-      return babelHelpers.extends({}, hook, {
+      return _extends({}, hook, {
         looping: true,
         wait: chainOptions.totalDuration - hook.delay
       });
@@ -346,21 +342,21 @@
   }
 
   function Hook (hook, currentIteration, delay) {
-    return babelHelpers.extends({}, HOOK_DEFAULTS, {
+    return _extends({}, HOOK_DEFAULTS, {
       hook: hook, currentIteration: currentIteration, delay: delay
     });
   }
 
   var PluginRegistry = function () {
     function PluginRegistry() {
-      babelHelpers.classCallCheck(this, PluginRegistry);
+      classCallCheck(this, PluginRegistry);
 
       this.renderRegistry = {};
       this.attributePluginMapping = {};
       this.timingPlugin = null;
     }
 
-    babelHelpers.createClass(PluginRegistry, [{
+    createClass(PluginRegistry, [{
       key: 'addRenderPlugin',
       value: function addRenderPlugin(_ref) {
         var _this = this;
@@ -394,7 +390,7 @@
         }, {});
 
         entries(renderValues).forEach(function (_ref2) {
-          var _ref3 = babelHelpers.slicedToArray(_ref2, 2);
+          var _ref3 = slicedToArray(_ref2, 2);
 
           var pluginName = _ref3[0];
           var attrValues = _ref3[1];
@@ -470,7 +466,7 @@
 
   var Animar = function () {
     function Animar(constructorOptions) {
-      babelHelpers.classCallCheck(this, Animar);
+      classCallCheck(this, Animar);
 
       var _resolveConstructorOp = resolveConstructorOptions(constructorOptions);
 
@@ -488,7 +484,7 @@
       this.registry = new PluginRegistry();
     }
 
-    babelHelpers.createClass(Animar, [{
+    createClass(Animar, [{
       key: 'addAnimationToChain',
       value: function addAnimationToChain(start, destination, options, chainOptions, attrName, element, currentChain) {
         start -= destination;
@@ -604,7 +600,7 @@
         return function () {
           var newChainOptions = Object.assign(chainOptions, { totalDuration: chainOptions.totalDuration + chainOptions.currentDuration });
           var loopedChain = Array.from(chain.entries()).reduce(function (output, _ref) {
-            var _ref2 = babelHelpers.slicedToArray(_ref, 2);
+            var _ref2 = slicedToArray(_ref, 2);
 
             var key = _ref2[0];
             var value = _ref2[1];
@@ -668,7 +664,7 @@
 
         var _step = this.step(timescale, this.elementMap, this.hooks);
 
-        var _step2 = babelHelpers.slicedToArray(_step, 2);
+        var _step2 = slicedToArray(_step, 2);
 
         var steppedElementMap = _step2[0];
         var steppedHooks = _step2[1];
@@ -698,7 +694,7 @@
         });
 
         var steppedElementMap = Array.from(elementMap.entries()).reduce(function (output, _ref3) {
-          var _ref4 = babelHelpers.slicedToArray(_ref3, 2);
+          var _ref4 = slicedToArray(_ref3, 2);
 
           var domRef = _ref4[0];
           var element = _ref4[1];
