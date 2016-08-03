@@ -1,16 +1,20 @@
+/* @flow */
+
+import { Element, Attribute, ChainOptions } from './types';
 import { mergeAttributes, stepAttribute, loopAttribute } from './attribute';
 import { reduce, map } from './objUtils';
 
-export function addAttributeToElement(name, attribute) {
-  return element => Object.assign({}, element, {
-    attributes: Object.assign({}, element.attributes, {
+export function addAttributeToElement(name: string, attribute: Attribute) {
+  return (element: Element): Element => ({
+    attributes: {
+      ...element.attributes,
       [name]: attribute
-    })
+    }
   });
 }
 
-export function mergeElements(target) {
-  return source => Object.assign({}, source, {
+export function mergeElements(target: Element) {
+  return (source: Element): Element => ({
     attributes: reduce(target.attributes)((output, targetAttr, attrName) => {
       const existingAttr = output[attrName];
       if (existingAttr != null) {
@@ -23,19 +27,19 @@ export function mergeElements(target) {
   });
 }
 
-export function stepElement(timescale) {
-  return element => Object.assign({}, element, {
+export function stepElement(timescale: number) {
+  return (element: Element) => ({
     attributes: map(element.attributes)(stepAttribute(timescale))
   });
 }
 
-export function loopElement(chainOptions) {
-  return element => Object.assign({}, element, {
+export function loopElement(chainOptions: ChainOptions) {
+  return (element: Element) => ({
     attributes: map(element.attributes)(loopAttribute(chainOptions))
   });
 }
 
-export default function() {
+export default function(): Element {
   return {
     attributes: {}
   };

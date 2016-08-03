@@ -1,121 +1,30 @@
-var ANIMATION_DEFAULTS = {
-  looping: false,
-  wait: 0
+var babelHelpers = {};
+
+babelHelpers.classCallCheck = function (instance, Constructor) {
+  if (!(instance instanceof Constructor)) {
+    throw new TypeError("Cannot call a class as a function");
+  }
 };
 
-function animationValueReducer(animationValue, animation) {
-  var currentIteration = animation.currentIteration;
-  var totalIterations = animation.totalIterations;
-  var easingFunction = animation.easingFunction;
-  var startValue = animation.startValue;
-  var changeInValue = animation.changeInValue;
-
-
-  if (currentIteration < 0) {
-    currentIteration = 0;
-  } else if (currentIteration > totalIterations) {
-    currentIteration = totalIterations;
+babelHelpers.createClass = function () {
+  function defineProperties(target, props) {
+    for (var i = 0; i < props.length; i++) {
+      var descriptor = props[i];
+      descriptor.enumerable = descriptor.enumerable || false;
+      descriptor.configurable = true;
+      if ("value" in descriptor) descriptor.writable = true;
+      Object.defineProperty(target, descriptor.key, descriptor);
+    }
   }
 
-  return animationValue + easingFunction(currentIteration, startValue, changeInValue, totalIterations);
-}
-
-function calculateAnimationValue(animations) {
-  return animations.reduce(animationValueReducer, 0);
-}
-
-function stepAnimation(timescale) {
-  return function (animation) {
-    var currentIteration = animation.currentIteration;
-    var totalIterations = animation.totalIterations;
-    var wait = animation.wait;
-    var delay = animation.delay;
-    var looping = animation.looping;
-
-
-    if (currentIteration < totalIterations + wait) {
-      return Object.assign({}, animation, {
-        currentIteration: currentIteration + timescale
-      });
-    } else if (looping) {
-      return Object.assign({}, animation, {
-        currentIteration: 0 - delay
-      });
-    } else {
-      return null;
-    }
+  return function (Constructor, protoProps, staticProps) {
+    if (protoProps) defineProperties(Constructor.prototype, protoProps);
+    if (staticProps) defineProperties(Constructor, staticProps);
+    return Constructor;
   };
-}
+}();
 
-function loopAnimation(chainOptions) {
-  return function (animation) {
-    return Object.assign({}, animation, {
-      looping: true,
-      wait: chainOptions.totalDuration - animation.delay - animation.totalIterations
-    });
-  };
-}
-
-function Animation (currentIteration, startValue, changeInValue, totalIterations, easingFunction, delay) {
-  return {
-    currentIteration: currentIteration,
-    startValue: startValue,
-    changeInValue: changeInValue,
-    totalIterations: totalIterations,
-    easingFunction: easingFunction,
-    delay: delay,
-    looping: ANIMATION_DEFAULTS.looping,
-    wait: ANIMATION_DEFAULTS.wait
-  };
-}
-
-function addAnimationToAttribute(animation) {
-  return function (attribute) {
-    return Object.assign({}, attribute, {
-      animations: attribute.animations.concat([animation])
-    });
-  };
-}
-
-function mergeAttributes(target) {
-  return function (source) {
-    return Object.assign({}, source, {
-      model: target.model,
-      animations: source.animations.concat(target.animations)
-    });
-  };
-}
-
-function stepAttribute(timescale) {
-  return function (attribute) {
-    return Object.assign({}, attribute, {
-      animations: attribute.animations.map(stepAnimation(timescale)).filter(function (anim) {
-        return anim;
-      })
-    });
-  };
-}
-
-function loopAttribute(chainOptions) {
-  return function (attribute) {
-    return Object.assign({}, attribute, {
-      animations: attribute.animations.map(loopAnimation(chainOptions))
-    });
-  };
-}
-
-function calculateAttributeDisplayValue(attribute) {
-  return String(attribute.model + calculateAnimationValue(attribute.animations));
-}
-
-function Attribute (model) {
-  return {
-    model: model,
-    animations: []
-  };
-}
-
-var defineProperty = function (obj, key, value) {
+babelHelpers.defineProperty = function (obj, key, value) {
   if (key in obj) {
     Object.defineProperty(obj, key, {
       value: value,
@@ -130,7 +39,21 @@ var defineProperty = function (obj, key, value) {
   return obj;
 };
 
-var slicedToArray = function () {
+babelHelpers.extends = Object.assign || function (target) {
+  for (var i = 1; i < arguments.length; i++) {
+    var source = arguments[i];
+
+    for (var key in source) {
+      if (Object.prototype.hasOwnProperty.call(source, key)) {
+        target[key] = source[key];
+      }
+    }
+  }
+
+  return target;
+};
+
+babelHelpers.slicedToArray = function () {
   function sliceIterator(arr, i) {
     var _arr = [];
     var _n = true;
@@ -168,15 +91,121 @@ var slicedToArray = function () {
   };
 }();
 
-var toConsumableArray = function (arr) {
-  if (Array.isArray(arr)) {
-    for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i];
+babelHelpers;
 
-    return arr2;
-  } else {
-    return Array.from(arr);
-  }
+var ANIMATION_DEFAULTS = {
+  looping: false,
+  wait: 0
 };
+
+function animationValueReducer(animationValue, animation) {
+  var currentIteration = animation.currentIteration;
+  var totalIterations = animation.totalIterations;
+  var easingFunction = animation.easingFunction;
+  var startValue = animation.startValue;
+  var changeInValue = animation.changeInValue;
+
+
+  if (currentIteration < 0) {
+    currentIteration = 0;
+  } else if (currentIteration > totalIterations) {
+    currentIteration = totalIterations;
+  }
+
+  return animationValue + easingFunction(currentIteration, startValue, changeInValue, totalIterations);
+}
+
+function calculateAnimationValue(animations) {
+  return animations.reduce(animationValueReducer, 0);
+}
+
+function stepAnimation(timescale) {
+  return function (animation) {
+    var currentIteration = animation.currentIteration;
+    var totalIterations = animation.totalIterations;
+    var wait = animation.wait;
+    var delay = animation.delay;
+    var looping = animation.looping;
+
+
+    if (currentIteration < totalIterations + wait) {
+      return babelHelpers.extends({}, animation, { currentIteration: currentIteration + timescale });
+    } else if (looping) {
+      return babelHelpers.extends({}, animation, { currentIteration: 0 - delay });
+    } else {
+      return null;
+    }
+  };
+}
+
+function loopAnimation(chainOptions) {
+  return function (animation) {
+    return babelHelpers.extends({}, animation, {
+      looping: true,
+      wait: chainOptions.totalDuration - animation.delay - animation.totalIterations
+    });
+  };
+}
+
+function Animation (currentIteration, startValue, changeInValue, totalIterations, easingFunction, delay) {
+  return {
+    currentIteration: currentIteration,
+    startValue: startValue,
+    changeInValue: changeInValue,
+    totalIterations: totalIterations,
+    easingFunction: easingFunction,
+    delay: delay,
+    looping: ANIMATION_DEFAULTS.looping,
+    wait: ANIMATION_DEFAULTS.wait
+  };
+}
+
+function addAnimationToAttribute(animation) {
+  return function (attribute) {
+    return {
+      model: attribute.model,
+      animations: attribute.animations.concat([animation])
+    };
+  };
+}
+
+function mergeAttributes(target) {
+  return function (source) {
+    return {
+      model: target.model,
+      animations: source.animations.concat(target.animations)
+    };
+  };
+}
+
+function stepAttribute(timescale) {
+  return function (attribute) {
+    return babelHelpers.extends({}, attribute, {
+      animations: attribute.animations.map(stepAnimation(timescale)).filter(function (anim) {
+        return anim;
+      })
+    });
+  };
+}
+
+function loopAttribute(chainOptions) {
+  return function (attribute) {
+    return babelHelpers.extends({}, attribute, {
+      animations: attribute.animations.map(loopAnimation(chainOptions))
+    });
+  };
+}
+
+function calculateAttributeDisplayValue(attribute) {
+  return String(attribute.model + calculateAnimationValue(attribute.animations));
+}
+
+function Attribute (model) {
+  return {
+    model: model,
+    animations: []
+  };
+}
 
 function entries(obj) {
   var output = [];
@@ -186,9 +215,9 @@ function entries(obj) {
 
   try {
     for (var _iterator = Object.keys(obj)[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-      var key = _step.value;
+      var _key = _step.value;
 
-      output.push([key, obj[key]]);
+      output.push([_key, obj[_key]]);
     }
   } catch (err) {
     _didIteratorError = true;
@@ -209,14 +238,14 @@ function entries(obj) {
 }
 
 function reduce(obj) {
-  return function (callback, previousValue) {
+  return function (callback, initialValue) {
     return entries(obj).reduce(function (output, _ref) {
-      var _ref2 = slicedToArray(_ref, 2);
+      var _ref2 = babelHelpers.slicedToArray(_ref, 2);
 
       var key = _ref2[0];
       var value = _ref2[1];
       return callback(output, value, key);
-    }, previousValue);
+    }, initialValue);
   };
 }
 
@@ -231,15 +260,15 @@ function map(obj) {
 
 function addAttributeToElement(name, attribute) {
   return function (element) {
-    return Object.assign({}, element, {
-      attributes: Object.assign({}, element.attributes, defineProperty({}, name, attribute))
-    });
+    return {
+      attributes: babelHelpers.extends({}, element.attributes, babelHelpers.defineProperty({}, name, attribute))
+    };
   };
 }
 
 function mergeElements(target) {
   return function (source) {
-    return Object.assign({}, source, {
+    return {
       attributes: reduce(target.attributes)(function (output, targetAttr, attrName) {
         var existingAttr = output[attrName];
         if (existingAttr != null) {
@@ -249,23 +278,23 @@ function mergeElements(target) {
         }
         return output;
       }, source.attributes)
-    });
+    };
   };
 }
 
 function stepElement(timescale) {
   return function (element) {
-    return Object.assign({}, element, {
+    return {
       attributes: map(element.attributes)(stepAttribute(timescale))
-    });
+    };
   };
 }
 
 function loopElement(chainOptions) {
   return function (element) {
-    return Object.assign({}, element, {
+    return {
       attributes: map(element.attributes)(loopAttribute(chainOptions))
-    });
+    };
   };
 }
 
@@ -277,13 +306,13 @@ function Element () {
 
 var HOOK_DEFAULTS = {
   looping: false,
-  wait: 0,
-  called: false
+  called: false,
+  wait: 0
 };
 
 function stepHook(timescale) {
   return function (hook) {
-    var output = Object.assign({}, hook);
+    var output = babelHelpers.extends({}, hook);
 
     if (output.currentIteration <= output.wait) {
       output.currentIteration = output.currentIteration + timescale;
@@ -303,7 +332,7 @@ function stepHook(timescale) {
 
 function loopHook(chainOptions) {
   return function (hook) {
-    return Object.assign({}, hook, {
+    return babelHelpers.extends({}, hook, {
       looping: true,
       wait: chainOptions.totalDuration - hook.delay
     });
@@ -311,75 +340,85 @@ function loopHook(chainOptions) {
 }
 
 function Hook (hook, currentIteration, delay) {
-  return Object.assign({}, HOOK_DEFAULTS, {
+  return babelHelpers.extends({}, HOOK_DEFAULTS, {
     hook: hook, currentIteration: currentIteration, delay: delay
   });
 }
 
-var RegistryPrototype = {
-  addRenderPlugin: function addRenderPlugin(_ref) {
-    var _this = this;
+var PluginRegistry = function () {
+  function PluginRegistry() {
+    babelHelpers.classCallCheck(this, PluginRegistry);
 
-    var name = _ref.name;
-    var attributes = _ref.attributes;
-    var render = _ref.render;
-
-    this.renderRegistry[name] = render;
-    attributes.forEach(function (attribute) {
-      if (_this.attributePluginMapping[attribute] == null) _this.attributePluginMapping[attribute] = [];
-      _this.attributePluginMapping[attribute].push(name);
-    });
-  },
-  callRenderPlugins: function callRenderPlugins(target, element) {
-    var _this2 = this;
-
-    var renderValues = reduce(element.attributes)(function (output, attr, name) {
-      var mappings = _this2.attributePluginMapping[name];
-
-      if (mappings == null) return output;
-
-      mappings.forEach(function (mapping) {
-        if (output[mapping] == null) output[mapping] = {};
-        output[mapping][name] = calculateAttributeDisplayValue(attr);
-      });
-
-      return output;
-    }, {});
-
-    entries(renderValues).forEach(function (_ref2) {
-      var _ref3 = slicedToArray(_ref2, 2);
-
-      var pluginName = _ref3[0];
-      var attrValues = _ref3[1];
-
-      _this2.renderRegistry[pluginName](target, attrValues);
-    });
-  },
-  addTimingPlugin: function addTimingPlugin(tickMethod) {
-    if (this.tickMethod !== null) {
-      console.warn('WARNING: A timing plugin was already installed, overriding...');
-    }
-    this.tickMethod = tickMethod;
-  },
-  addPreset: function addPreset(_ref4) {
-    var _ref4$renderPlugins = _ref4.renderPlugins;
-    var renderPlugins = _ref4$renderPlugins === undefined ? [] : _ref4$renderPlugins;
-    var timingPlugin = _ref4.timingPlugin;
-
-    renderPlugins.forEach(this.addRenderPlugin.bind(this));
-    if (timingPlugin != null) {
-      this.addTimingPlugin(timingPlugin);
-    }
+    this.renderRegistry = {};
+    this.attributePluginMapping = {};
+    this.timingPlugin = null;
   }
-};
 
-function PluginRegistry () {
-  return Object.assign(Object.create(RegistryPrototype), {
-    renderRegistry: {},
-    attributePluginMapping: {},
-    tickMethod: null
-  });
-}
+  babelHelpers.createClass(PluginRegistry, [{
+    key: 'addRenderPlugin',
+    value: function addRenderPlugin(_ref) {
+      var _this = this;
+
+      var name = _ref.name;
+      var attributes = _ref.attributes;
+      var render = _ref.render;
+
+      this.renderRegistry[name] = render;
+      attributes.forEach(function (attribute) {
+        if (_this.attributePluginMapping[attribute] == null) _this.attributePluginMapping[attribute] = [];
+        _this.attributePluginMapping[attribute].push(name);
+      });
+    }
+  }, {
+    key: 'callRenderPlugins',
+    value: function callRenderPlugins(target, element) {
+      var _this2 = this;
+
+      var renderValues = reduce(element.attributes)(function (output, attr, name) {
+        var mappings = _this2.attributePluginMapping[name];
+
+        if (mappings == null) return output;
+
+        mappings.forEach(function (mapping) {
+          if (output[mapping] == null) output[mapping] = {};
+          output[mapping][name] = calculateAttributeDisplayValue(attr);
+        });
+
+        return output;
+      }, {});
+
+      entries(renderValues).forEach(function (_ref2) {
+        var _ref3 = babelHelpers.slicedToArray(_ref2, 2);
+
+        var pluginName = _ref3[0];
+        var attrValues = _ref3[1];
+
+        _this2.renderRegistry[pluginName](target, attrValues);
+      });
+    }
+  }, {
+    key: 'addTimingPlugin',
+    value: function addTimingPlugin(timingPlugin) {
+      if (this.tickMethod !== null) {
+        console.warn('WARNING: A timing plugin was already installed, overriding...');
+      }
+      this.timingPlugin = timingPlugin;
+    }
+  }, {
+    key: 'addPreset',
+    value: function addPreset(_ref4) {
+      var _ref4$renderPlugins = _ref4.renderPlugins;
+      var renderPlugins = _ref4$renderPlugins === undefined ? [] : _ref4$renderPlugins;
+      var timingPlugin = _ref4.timingPlugin;
+
+      renderPlugins.forEach(this.addRenderPlugin.bind(this));
+      if (timingPlugin != null) {
+        this.addTimingPlugin(timingPlugin);
+      }
+    }
+  }]);
+  return PluginRegistry;
+}();
 
 // ========== CONSTANTS ==========
 
@@ -400,8 +439,7 @@ var initialChainOptions = function initialChainOptions() {
 var EMPTY_ANIMATION_OPTIONS = {
   delay: null,
   easingFunction: null,
-  duration: null,
-  loop: null
+  duration: null
 };
 
 var TARGET_FRAME_DELAY = 16.67;
@@ -420,217 +458,253 @@ function resolveConstructorOptions() {
   return { defaultDelay: defaultDelay, defaultEase: defaultEase, defaultDuration: defaultDuration };
 }
 
-// ========== PROTOTYPE ==========
+// ========== TYPES ==========
 
-var AnimarPrototype = {
-  addAnimationToChain: function addAnimationToChain(start, destination, options, chainOptions, attrName, element, currentChain) {
-    start -= destination;
-    var newAnimation = Animation(0 - (options.delay - chainOptions.delay), start, 0 - start, options.duration, options.easingFunction, 0);
+// ========== CLASS ==========
 
-    var newAttribute = addAnimationToAttribute(newAnimation)(Attribute(destination));
-    var newElement = addAttributeToElement(attrName, newAttribute)(Element());
-    var tempEMap = new Map();
-    tempEMap.set(element, newElement);
+var Animar = function () {
+  function Animar(constructorOptions) {
+    babelHelpers.classCallCheck(this, Animar);
 
-    return this.mergeElementMaps(tempEMap)(currentChain);
-  },
-  mergeElementMaps: function mergeElementMaps(target) {
-    return function (source) {
-      var result = new Map(source.entries());
-      target.forEach(function (element, key) {
-        if (result.has(key)) {
-          result.set(key, mergeElements(element)(result.get(key)));
-        } else {
-          result.set(key, element);
-        }
-      });
-      return result;
-    };
-  },
-  resolveAnimationOptions: function resolveAnimationOptions(options) {
-    return {
-      delay: options.delay == null ? this.defaults.delay : options.delay,
-      easingFunction: options.easingFunction == null ? this.defaults.easingFunction : options.easingFunction,
-      duration: options.duration == null ? this.defaults.duration : options.duration
-    };
-  },
-  add: function add(element, attributes) {
-    var options = arguments.length <= 2 || arguments[2] === undefined ? EMPTY_ANIMATION_OPTIONS : arguments[2];
+    var _resolveConstructorOp = resolveConstructorOptions(constructorOptions);
 
-    return this._add(element, attributes, options, initialChainOptions(), new Map(), []);
-  },
-  _add: function _add(element, attributes, options, chainOptions, currentChain, hooks) {
-    var _this = this;
+    var defaultDelay = _resolveConstructorOp.defaultDelay;
+    var defaultEase = _resolveConstructorOp.defaultEase;
+    var defaultDuration = _resolveConstructorOp.defaultDuration;
 
-    var resolvedOptions = this.resolveAnimationOptions(options);
-    Object.keys(attributes).forEach(function (attrName) {
-      var attrValue = attributes[attrName];
 
-      var start = attrValue[0],
-          dest = attrValue[1];
+    this.ticking = false;
+    this.elementMap = new Map();
+    this.defaults = { delay: defaultDelay, easingFunction: defaultEase, duration: defaultDuration };
+    this.hooks = [];
+    this.firstFrame = true;
+    this.previousTime = 0;
+    this.registry = new PluginRegistry();
+  }
 
-      currentChain = _this.addAnimationToChain(start, dest, resolvedOptions, chainOptions, attrName, element, currentChain);
-    });
-    chainOptions.currentDuration = Math.max(chainOptions.currentDuration, resolvedOptions.delay + resolvedOptions.duration);
-    return this.fullChainObjectFactory(chainOptions, currentChain, hooks);
-  },
-  addHook: function addHook(hook, chainOptions, chain, hooks) {
-    var newHook = Hook(hook, 0 - chainOptions.delay, chainOptions.delay);
-    return this.fullChainObjectFactory(chainOptions, chain, hooks.concat([newHook]));
-  },
-  fullChainObjectFactory: function fullChainObjectFactory(chainOptions, chain, hooks) {
-    return {
-      start: this.startChainFunctionFactory(chain, hooks),
-      loop: this.loopChainFunctionFactory(chainOptions, chain, hooks),
-      add: this.addChainFunctionFactory(chainOptions, chain, hooks),
-      then: this.thenChainFunctionFactory(chainOptions, chain, hooks),
-      hook: this.hookChainFunctionFactory(chainOptions, chain, hooks)
-    };
-  },
-  thenChainFunctionFactory: function thenChainFunctionFactory(chainOptions, chain, hooks) {
-    var _this2 = this;
+  babelHelpers.createClass(Animar, [{
+    key: 'addAnimationToChain',
+    value: function addAnimationToChain(start, destination, options, chainOptions, attrName, element, currentChain) {
+      start -= destination;
+      var newAnimation = Animation(0 - (options.delay - chainOptions.delay), start, 0 - start, options.duration, options.easingFunction, 0);
 
-    return function () {
-      var wait = arguments.length <= 0 || arguments[0] === undefined ? 0 : arguments[0];
+      var newAttribute = addAnimationToAttribute(newAnimation)(Attribute(destination));
+      var newElement = addAttributeToElement(attrName, newAttribute)(Element());
+      var tempEMap = new Map();
+      tempEMap.set(element, newElement);
 
-      var newTotalDuration = chainOptions.totalDuration + chainOptions.currentDuration + wait;
-      var newChainOptions = {
-        totalDuration: newTotalDuration,
-        currentDuration: 0,
-        delay: newTotalDuration
+      return this.mergeElementMaps(tempEMap)(currentChain);
+    }
+  }, {
+    key: 'mergeElementMaps',
+    value: function mergeElementMaps(target) {
+      return function (source) {
+        var result = new Map(source.entries());
+        target.forEach(function (element, key) {
+          if (result.has(key)) {
+            result.set(key, mergeElements(element)(result.get(key)));
+          } else {
+            result.set(key, element);
+          }
+        });
+        return result;
       };
+    }
+  }, {
+    key: 'resolveAnimationOptions',
+    value: function resolveAnimationOptions(options) {
       return {
-        add: _this2.addChainFunctionFactory(newChainOptions, chain, hooks),
-        hook: _this2.hookChainFunctionFactory(newChainOptions, chain, hooks)
+        delay: options.delay == null ? this.defaults.delay : options.delay,
+        easingFunction: options.easingFunction == null ? this.defaults.easingFunction : options.easingFunction,
+        duration: options.duration == null ? this.defaults.duration : options.duration
       };
-    };
-  },
-  addChainFunctionFactory: function addChainFunctionFactory(chainOptions, chain, hooks) {
-    var _this3 = this;
-
-    return function (element, attributes) {
+    }
+  }, {
+    key: 'add',
+    value: function add(element, attributes) {
       var options = arguments.length <= 2 || arguments[2] === undefined ? EMPTY_ANIMATION_OPTIONS : arguments[2];
-      return _this3._add(element, attributes, options, chainOptions, chain, hooks);
-    };
-  },
-  loopChainFunctionFactory: function loopChainFunctionFactory(chainOptions, chain, hooks) {
-    var _this4 = this;
 
-    return function () {
-      var newChainOptions = Object.assign(chainOptions, { totalDuration: chainOptions.totalDuration + chainOptions.currentDuration });
+      return this._add(element, attributes, options, initialChainOptions(), new Map(), []);
+    }
+  }, {
+    key: '_add',
+    value: function _add(element, attributes, options, chainOptions, currentChain, hooks) {
+      var _this = this;
 
-      var loopedChain = [].concat(toConsumableArray(chain.entries())).reduce(function (output, _ref) {
-        var _ref2 = slicedToArray(_ref, 2);
+      var resolvedOptions = this.resolveAnimationOptions(options);
+      Object.keys(attributes).forEach(function (attrName) {
+        var attrValue = attributes[attrName];
 
-        var key = _ref2[0];
-        var value = _ref2[1];
+        var start = attrValue[0],
+            dest = attrValue[1];
 
-        output.set(key, loopElement(newChainOptions)(value));
+        currentChain = _this.addAnimationToChain(start, dest, resolvedOptions, chainOptions, attrName, element, currentChain);
+      });
+      chainOptions.currentDuration = Math.max(chainOptions.currentDuration, resolvedOptions.delay + resolvedOptions.duration);
+      return this.fullChainObjectFactory(chainOptions, currentChain, hooks);
+    }
+  }, {
+    key: 'addHook',
+    value: function addHook(hook, chainOptions, chain, hooks) {
+      var newHook = Hook(hook, 0 - chainOptions.delay, chainOptions.delay);
+      return this.fullChainObjectFactory(chainOptions, chain, hooks.concat([newHook]));
+    }
+  }, {
+    key: 'fullChainObjectFactory',
+    value: function fullChainObjectFactory(chainOptions, chain, hooks) {
+      return {
+        start: this.startChainFunctionFactory(chain, hooks),
+        loop: this.loopChainFunctionFactory(chainOptions, chain, hooks),
+        add: this.addChainFunctionFactory(chainOptions, chain, hooks),
+        then: this.thenChainFunctionFactory(chainOptions, chain, hooks),
+        hook: this.hookChainFunctionFactory(chainOptions, chain, hooks)
+      };
+    }
+  }, {
+    key: 'thenChainFunctionFactory',
+    value: function thenChainFunctionFactory(chainOptions, chain, hooks) {
+      var _this2 = this;
+
+      return function () {
+        var wait = arguments.length <= 0 || arguments[0] === undefined ? 0 : arguments[0];
+
+        var newTotalDuration = chainOptions.totalDuration + chainOptions.currentDuration + wait;
+        var newChainOptions = {
+          totalDuration: newTotalDuration,
+          delay: newTotalDuration,
+          currentDuration: 0
+        };
+        return {
+          add: _this2.addChainFunctionFactory(newChainOptions, chain, hooks),
+          hook: _this2.hookChainFunctionFactory(newChainOptions, chain, hooks)
+        };
+      };
+    }
+  }, {
+    key: 'addChainFunctionFactory',
+    value: function addChainFunctionFactory(chainOptions, chain, hooks) {
+      var _this3 = this;
+
+      return function (element, attributes) {
+        var options = arguments.length <= 2 || arguments[2] === undefined ? EMPTY_ANIMATION_OPTIONS : arguments[2];
+        return _this3._add(element, attributes, options, chainOptions, chain, hooks);
+      };
+    }
+  }, {
+    key: 'loopChainFunctionFactory',
+    value: function loopChainFunctionFactory(chainOptions, chain, hooks) {
+      var _this4 = this;
+
+      return function () {
+        var newChainOptions = Object.assign(chainOptions, { totalDuration: chainOptions.totalDuration + chainOptions.currentDuration });
+        var loopedChain = Array.from(chain.entries()).reduce(function (output, _ref) {
+          var _ref2 = babelHelpers.slicedToArray(_ref, 2);
+
+          var key = _ref2[0];
+          var value = _ref2[1];
+
+          output.set(key, loopElement(newChainOptions)(value));
+          return output;
+        }, new Map());
+
+        var loopedHooks = hooks.map(loopHook(newChainOptions));
+
+        return { start: _this4.startChainFunctionFactory(loopedChain, loopedHooks) };
+      };
+    }
+  }, {
+    key: 'startChainFunctionFactory',
+    value: function startChainFunctionFactory(chain, hooks) {
+      var _this5 = this;
+
+      return function () {
+        _this5.elementMap = _this5.mergeElementMaps(chain)(_this5.elementMap);
+        _this5.hooks = _this5.hooks.concat(hooks);
+        _this5.requestTick();
+      };
+    }
+  }, {
+    key: 'hookChainFunctionFactory',
+    value: function hookChainFunctionFactory(chainOptions, chain, hooks) {
+      var _this6 = this;
+
+      return function (hook) {
+        return _this6.addHook(hook, chainOptions, chain, hooks);
+      };
+    }
+  }, {
+    key: 'requestTick',
+    value: function requestTick() {
+      if (!this.ticking) {
+        var timingPlugin = this.registry.timingPlugin;
+
+        if (timingPlugin != null) {
+          timingPlugin(this.update.bind(this));
+        } else {
+          throw new Error('Attempted to animate without providing a Timing Plugin');
+        }
+
+        this.ticking = true;
+      }
+    }
+  }, {
+    key: 'update',
+    value: function update(timestamp) {
+      var changeInTime = timestamp - this.previousTime;
+      if (this.firstFrame) {
+        changeInTime = TARGET_FRAME_DELAY;
+        this.firstFrame = false;
+      }
+      var timescale = changeInTime / TARGET_FRAME_DELAY;
+      this.previousTime = timestamp;
+
+      this.ticking = false;
+
+      var _step = this.step(timescale, this.elementMap, this.hooks);
+
+      var _step2 = babelHelpers.slicedToArray(_step, 2);
+
+      var steppedElementMap = _step2[0];
+      var steppedHooks = _step2[1];
+
+      // TODO: determine if nothing has changed to conditionally continue animating
+
+      this.hooks = steppedHooks;
+      this.elementMap = steppedElementMap;
+      this.render();
+
+      this.requestTick();
+    }
+  }, {
+    key: 'render',
+    value: function render() {
+      var _this7 = this;
+
+      this.elementMap.forEach(function (element, target) {
+        _this7.registry.callRenderPlugins(target, element);
+      });
+    }
+  }, {
+    key: 'step',
+    value: function step(timescale, elementMap, hooks) {
+      var steppedHooks = hooks.map(stepHook(timescale)).filter(function (hook, index) {
+        return hook !== hooks[index];
+      });
+
+      var steppedElementMap = Array.from(elementMap.entries()).reduce(function (output, _ref3) {
+        var _ref4 = babelHelpers.slicedToArray(_ref3, 2);
+
+        var domRef = _ref4[0];
+        var element = _ref4[1];
+
+        output.set(domRef, stepElement(timescale)(element));
         return output;
       }, new Map());
 
-      var loopedHooks = hooks.map(loopHook(newChainOptions));
-
-      return { start: _this4.startChainFunctionFactory(loopedChain, loopedHooks) };
-    };
-  },
-  startChainFunctionFactory: function startChainFunctionFactory(chain, hooks) {
-    var _this5 = this;
-
-    return function () {
-      _this5.elementMap = _this5.mergeElementMaps(chain)(_this5.elementMap);
-      _this5.hooks = _this5.hooks.concat(hooks);
-      _this5.requestTick();
-    };
-  },
-  hookChainFunctionFactory: function hookChainFunctionFactory(chainOptions, chain, hooks) {
-    var _this6 = this;
-
-    return function (hook) {
-      return _this6.addHook(hook, chainOptions, chain, hooks);
-    };
-  },
-  requestTick: function requestTick() {
-    if (!this.ticking) {
-      this.registry.tickMethod(this.update.bind(this));
-      this.ticking = true;
+      return [steppedElementMap, steppedHooks];
     }
-  },
-  update: function update(timestamp) {
-    var changeInTime = timestamp - this.previousTime;
-    if (this.firstFrame) {
-      changeInTime = TARGET_FRAME_DELAY;
-      this.firstFrame = false;
-    }
-    var timescale = changeInTime / TARGET_FRAME_DELAY;
-    this.previousTime = timestamp;
+  }]);
+  return Animar;
+}();
 
-    this.ticking = false;
-
-    var _step = this.step(timescale, this.elementMap, this.hooks);
-
-    var _step2 = slicedToArray(_step, 2);
-
-    var steppedElementMap = _step2[0];
-    var steppedHooks = _step2[1];
-
-    // TODO: determine if nothing has changed to conditionally continue animating
-
-    this.hooks = steppedHooks;
-    this.elementMap = steppedElementMap;
-    this.render();
-
-    this.requestTick();
-  },
-  render: function render() {
-    var _this7 = this;
-
-    this.elementMap.forEach(function (element, target) {
-      _this7.registry.callRenderPlugins(target, element);
-    });
-  },
-  step: function step(timescale, elementMap, hooks) {
-    var steppedHooks = hooks.map(stepHook(timescale)).filter(function (hook, index) {
-      return hook !== hooks.get(index);
-    });
-
-    var steppedElementMap = [].concat(toConsumableArray(elementMap.entries())).reduce(function (output, _ref3) {
-      var _ref4 = slicedToArray(_ref3, 2);
-
-      var domRef = _ref4[0];
-      var element = _ref4[1];
-
-      output.set(domRef, stepElement(timescale)(element));
-      return output;
-    }, new Map());
-
-    return [steppedElementMap, steppedHooks];
-  }
-};
-
-// ========== FACTORY ==========
-
-function animar (constructorOptions) {
-  var _resolveConstructorOp = resolveConstructorOptions(constructorOptions);
-
-  var defaultDelay = _resolveConstructorOp.defaultDelay;
-  var defaultEase = _resolveConstructorOp.defaultEase;
-  var defaultDuration = _resolveConstructorOp.defaultDuration;
-
-
-  return Object.assign(Object.create(AnimarPrototype), {
-    ticking: false,
-    elementMap: new Map(),
-    defaults: {
-      delay: defaultDelay,
-      easingFunction: defaultEase,
-      duration: defaultDuration
-    },
-    hooks: [],
-    firstFrame: true,
-    previousTime: 0,
-    registry: PluginRegistry()
-  });
-}
-
-export { DEFAULT_EASING_FUNCTION, DEFAULT_DELAY, DEFAULT_DURATION, initialChainOptions, EMPTY_ANIMATION_OPTIONS };export default animar;
+export default Animar;

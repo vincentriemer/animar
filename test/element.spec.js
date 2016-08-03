@@ -2,6 +2,8 @@ import Element, {addAttributeToElement, mergeElements, stepElement, loopElement}
 import Attribute, {addAnimationToAttribute} from '../src/attribute';
 import Animation from '../src/animation';
 
+const assert = chai.assert;
+
 describe('Element', () => {
   describe('#Element', () => {
    it('should return a map with an attributes property initialized to a new map', () => {

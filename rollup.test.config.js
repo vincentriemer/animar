@@ -10,8 +10,13 @@ export default {
   external: ['describe', 'it', 'chai', 'sinon'],
   sourceMap: true,
   plugins: [
-    multiEntry(['test-scripts/browser-test.spec.js', 'test/*.spec.js']),
-    babel({ babelrc: false, presets: ['es2015-rollup'] }),
+    multiEntry(['test-scripts/browser-test.js', 'test/*.spec.js']),
+    babel({
+      babelrc: false,
+      runtimeHelpers: true,
+      presets: ['es2015-rollup', 'stage-0'],
+      plugins: ['syntax-flow', 'transform-flow-strip-types', 'transform-class-properties']
+    }),
     commonjs({ exclude: ['test/*.spec.js'] }),
     nodeResolve({ jsnext: true, main: true })
   ],

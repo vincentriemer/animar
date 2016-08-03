@@ -1,12 +1,16 @@
+/* @flow */
+
+import { ChainOptions, Hook, HookFunction } from './types';
+
 const HOOK_DEFAULTS = {
   looping: false,
-  wait: 0,
-  called: false
+  called:  false,
+  wait:    0
 };
 
-export function stepHook(timescale) {
-  return (hook) => {
-    let output = Object.assign({}, hook);
+export function stepHook(timescale: number) {
+  return (hook: Hook): Hook => {
+    let output = { ...hook };
 
     if (output.currentIteration <= output.wait) {
       output.currentIteration = output.currentIteration + timescale;
@@ -15,8 +19,7 @@ export function stepHook(timescale) {
     if (output.currentIteration > 0 && !output.called) {
       output.hook();
       output.called = true;
-    } else if ( output.currentIteration === hook.currentIteration &&
-        output.looping) {
+    } else if ( output.currentIteration === hook.currentIteration && output.looping) {
       output.currentIteration = 0 - output.delay;
       output.called = false;
     }
@@ -25,15 +28,17 @@ export function stepHook(timescale) {
   };
 }
 
-export function loopHook(chainOptions) {
-  return hook => Object.assign({}, hook, {
+export function loopHook(chainOptions: ChainOptions) {
+  return (hook: Hook): Hook => ({
+    ...hook,
     looping: true,
     wait: chainOptions.totalDuration - hook.delay
   });
 }
 
-export default function(hook, currentIteration, delay) {
-  return Object.assign({}, HOOK_DEFAULTS, {
+export default function(hook: HookFunction, currentIteration: number, delay: number): Hook {
+  return {
+    ...HOOK_DEFAULTS,
     hook, currentIteration, delay
-  });
+  };
 }

@@ -1,4 +1,4 @@
-framework: mocha
+framework: mocha+chai
 ignore_missing_launchers: true
 before_tests: npm run build:test
 src_files:
@@ -9,6 +9,7 @@ port: 7000
 on_start: ./sauce-scripts/saucie-connect.js
 on_exit: ./sauce-scripts/saucie-disconnect.js
 serve_files:
+  - node_modules/core-js/client/core.js
   - node_modules/chai/chai.js
   - node_modules/sinon/pkg/sinon.js
   - browser-test/index.js
@@ -18,7 +19,7 @@ launchers:
     args:
       - --browserNameSL=chrome
       - --platformSL=Linux
-      - --versionSL=46.0
+      - --versionSL=48.0
       - --no-ct
       - --at
       - -u
@@ -28,7 +29,7 @@ launchers:
     args:
       - --browserNameSL=firefox
       - --platformSL=Linux
-      - --versionSL=42.0
+      - --versionSL=45.0
       - --no-ct
       - --at
       - -u
@@ -43,80 +44,12 @@ launchers:
       - --at
       - -u
     protocol: browser
-  SL_Safari_Last:
-    exe: ./node_modules/.bin/saucie
-    args:
-      - --browserNameSL=safari
-      - --platformSL=OS X 10.10
-      - --versionSL=8.0
-      - --no-ct
-      - --at
-      - -u
-    protocol: browser
   SL_MS_Edge:
     exe: ./node_modules/.bin/saucie
     args:
       - --browserNameSL=microsoftedge
       - --platformSL=Windows 10
-      - --versionSL=20.10240
-      - --no-ct
-      - --at
-      - -u
-    protocol: browser
-  SL_IE_11:
-    exe: ./node_modules/.bin/saucie
-    args:
-      - --browserNameSL=internet explorer
-      - --platformSL=Windows 7
-      - --versionSL=11.0
-      - --no-ct
-      - --at
-      - -u
-    protocol: browser
-  SL_iOS_Current:
-    exe: ./node_modules/.bin/saucie
-    args:
-      - --browserNameSL=iphone
-      - --platformSL=OS X 10.10
-      - --versionSL=9.1
-      - --deviceNameSL=iPhone 6
-      - --deviceOrientationSL=portrait
-      - --no-ct
-      - --at
-      - -u
-    protocol: browser
-  SL_iOS_Last:
-    exe: ./node_modules/.bin/saucie
-    args:
-      - --browserNameSL=iphone
-      - --platformSL=OS X 10.10
-      - --versionSL=8.4
-      - --deviceNameSL=iPhone 6
-      - --deviceOrientationSL=portrait
-      - --no-ct
-      - --at
-      - -u
-    protocol: browser
-  SL_Android_5:
-    exe: ./node_modules/.bin/saucie
-    args:
-      - --browserNameSL=android
-      - --platformSL=Linux
-      - --versionSL=5.1
-      - --deviceNameSL=Android Emulator
-      - --deviceOrientationSL=portrait
-      - --no-ct
-      - --at
-      - -u
-    protocol: browser
-  SL_Android_4:
-    exe: ./node_modules/.bin/saucie
-    args:
-      - --browserNameSL=android
-      - --platformSL=Linux
-      - --versionSL=4.4
-      - --deviceNameSL=Android Emulator
-      - --deviceOrientationSL=portrait
+      - --versionSL=13.10586
       - --no-ct
       - --at
       - -u
@@ -141,9 +74,4 @@ launch_in_ci:
   - SL_Safari_Current
   - SL_Safari_Last
   - SL_MS_Edge
-  - SL_IE_11
-  - SL_iOS_Current
-  - SL_iOS_Last
-  - SL_Android_5
-  - SL_Android_4
   - SL_Opera_Current

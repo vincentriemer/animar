@@ -1,14 +1,13 @@
 import Animar,
   { DEFAULT_EASING_FUNCTION, DEFAULT_DELAY, DEFAULT_DURATION, EMPTY_ANIMATION_OPTIONS, initialChainOptions }
-from '../src/animar';
+from '../src/Animar';
 
-import * as Element from '../src/element';
-import * as Hook from '../src/hook';
+const assert = chai.assert;
 
-describe('Animar', () => {
-  describe('#Animar', () => {
-    it('should properly initialize an animar object when given no arguments', () => {
-      const actual = Animar();
+describe('new Animar', () => {
+  describe('#new Animar', () => {
+    it('should properly initialize an Animar object when given no arguments', () => {
+      const actual = new Animar();
       assert.equal(actual.ticking, false);
       assert.deepEqual(actual.elementMap, new Map());
       assert.deepEqual(actual.defaults, {
@@ -23,26 +22,26 @@ describe('Animar', () => {
 
     it('should set the default delay value if provided as an argument', () => {
       const expected = 10;
-      const { defaults: { delay: actual } } = Animar({ defaults: { delay: expected }});
+      const { defaults: { delay: actual } } = new Animar({ defaults: { delay: expected }});
       assert.equal(actual, expected);
     });
 
     it('should set the default easing function if provided as an argument', () => {
       const expected = () => {};
-      const { defaults: { easingFunction: actual } } = Animar({ defaults: { easingFunction: expected } });
+      const { defaults: { easingFunction: actual } } = new Animar({ defaults: { easingFunction: expected } });
       assert.equal(actual, expected);
     });
 
     it('should set the default duration value if provided as an argument', () => {
       const expected = 69;
-      const { defaults: { duration: actual } } = Animar({ defaults: { duration: expected } });
+      const { defaults: { duration: actual } } = new Animar({ defaults: { duration: expected } });
       assert.equal(actual, expected);
     });
   });
 
   describe('#resolveConstructorOptions', () => {
     it('should use the instance\'s default values when not provided', () => {
-      const animar = Animar();
+      const animar = new Animar();
       const expected = {
         delay: DEFAULT_DELAY,
         easingFunction: DEFAULT_EASING_FUNCTION,
@@ -53,23 +52,23 @@ describe('Animar', () => {
     });
 
     it('should use the values in the options object if they are provided', () => {
-      const animar = Animar();
+      const animar = new Animar();
       const expected = {
         delay: 13,
         easingFunction: ()=>{},
         duration: 69
       };
-      const actual = animar.resolveAnimationOptions(expected);
+      const actual = new animar.resolveAnimationOptions(expected);
       assert.deepEqual(actual, expected);
     });
   });
 
   describe('#add', () => {
     it('should correctly call the private _add function', () => {
-      const animar = Animar();
+      const animar = new Animar();
       const stub = sinon.stub(animar, '_add');
       const args = [{}, { translateX: [0, 10] }, { delay: 4, easingFunction: ()=>{}, duration: 60}];
-      animar.add.apply(animar, args);
+      animar.add(...args);
 
       const calledArgs = stub.firstCall.args;
 
@@ -82,10 +81,10 @@ describe('Animar', () => {
     });
 
     it('should use EMPTY_ANIMATION_OPTIONS if the animation options argument is not provided', () => {
-      const animar = Animar();
+      const animar = new Animar();
       const stub = sinon.stub(animar, '_add');
       const args = [{}, { translateX: [0, 10] }];
-      animar.add.apply(animar, args);
+      animar.add(...args);
 
       const calledArgs = stub.firstCall.args;
 
@@ -95,7 +94,7 @@ describe('Animar', () => {
 
   describe('#_add', () => {
     it('should add the new animation to the current chain and update the chainOptions', () => {
-      const animar = Animar();
+      const animar = new Animar();
       const stub = sinon.stub(animar, 'fullChainObjectFactory').returns('boosh');
       const element = { foo: 'bar' };
       const easingFunction = () => {};
@@ -114,7 +113,7 @@ describe('Animar', () => {
         []
       ];
 
-      const result = animar._add.apply(animar, args);
+      const result = animar._add(...args);
 
       const [actualChainOptions, actualCurrentChain] = stub.firstCall.args;
       assert.equal(result, 'boosh');
@@ -158,7 +157,7 @@ describe('Animar', () => {
 
   describe('#addHook', () => {
     it('should return the full chain object with the new hook added', () => {
-      const animar = Animar();
+      const animar = new Animar();
       const stub = sinon.stub(animar, 'fullChainObjectFactory').returns('boosh');
       const testHook = () => {};
 
@@ -184,7 +183,7 @@ describe('Animar', () => {
 
   describe('#fullChainObjectFactory', () => {
     it('should return an object with all the possible chain functions', () => {
-      const animar = Animar();
+      const animar = new Animar();
 
       // stub out all function factories
       const startStub = sinon.stub(animar, 'startChainFunctionFactory').returns('start');
@@ -217,14 +216,14 @@ describe('Animar', () => {
 
   describe('#thenChainFunctionFactory', () => {
     it('should return a function', () => {
-      const animar = Animar();
+      const animar = new Animar();
       const actual = animar.thenChainFunctionFactory();
       assert.typeOf(actual, 'function');
     });
 
     describe('returned function', () => {
       function thenTestSetup(chainOptions) {
-        const animar = Animar();
+        const animar = new Animar();
         const addStub = sinon.stub(animar, 'addChainFunctionFactory').returns('add');
         const hookStub = sinon.stub(animar, 'hookChainFunctionFactory').returns('hook');
         const returnedFunction = animar.thenChainFunctionFactory(chainOptions, new Map(), []);
@@ -282,14 +281,14 @@ describe('Animar', () => {
 
   describe('#addChainFunctionFactory', () => {
     it('should return a function', () => {
-      const animar = Animar();
+      const animar = new Animar();
       const result = animar.addChainFunctionFactory();
       assert.typeOf(result, 'function');
     });
 
     describe('returned function', () => {
       function addChainTestSetup(chainOptions, chain, hooks) {
-        const animar = Animar();
+        const animar = new Animar();
         const addStub = sinon.stub(animar, '_add').returns('add');
         const returnedFunction = animar.addChainFunctionFactory(chainOptions, chain, hooks);
 
@@ -331,110 +330,16 @@ describe('Animar', () => {
     });
   });
 
-  describe('#loopChainFunctionFactory', () => {
-    it('should return a function', () => {
-      const animar = Animar();
-      const result = animar.loopChainFunctionFactory();
-      assert.typeOf(result, 'function');
-    });
-
-    describe('returned function', () => {
-      function loopChainTestSetup(chainOptions, chain, hooks) {
-        const animar = Animar();
-
-        const curriedLoopElemStub = sinon.stub().returns('looped');
-        const loopElemStub = sinon.stub(Element, 'loopElement').returns(curriedLoopElemStub);
-
-        const curriedLoopHookSpy = sinon.stub().returns('looped');
-        const loopHookStub = sinon.stub(Hook, 'loopHook').returns(curriedLoopHookSpy);
-
-        const startStub = sinon.stub(animar, 'startChainFunctionFactory').returns('start');
-        const returnedFunction = animar.loopChainFunctionFactory(chainOptions, chain, hooks);
-
-        return [returnedFunction, curriedLoopElemStub, loopElemStub, curriedLoopHookSpy, loopHookStub, startStub];
-      }
-
-      function cleanUp(loopElemStub, loopHookStub) {
-        loopElemStub.restore();
-        loopHookStub.restore();
-      }
-
-      it('should add the chainOptions\' currentDuration to the totalDuration', () => {
-        const chainOptions = {
-          currentDuration: 60,
-          totalDuration: 40,
-          delay: 0
-        };
-        const [returnedFunction, , loopElemStub, , loopHookStub] =
-          loopChainTestSetup(chainOptions, new Map([['foo', 'bar']]), ['hook']);
-
-        returnedFunction();
-
-        assert.deepEqual(loopElemStub.firstCall.args[0], {
-          currentDuration: 60,
-          totalDuration: 100,
-          delay: 0
-        });
-        assert.deepEqual(loopHookStub.firstCall.args[0], {
-          currentDuration: 60,
-          totalDuration: 100,
-          delay: 0
-        });
-
-        cleanUp(loopElemStub, loopHookStub);
-      });
-
-      it('should call the respective curried loop function on every chain element and hook', () => {
-        const chain = new Map([['foo', 'test'], ['bar', 'test']]);
-        const hooks = ['foo', 'foo'];
-        const chainOptions = {
-          currentDuration: 60,
-          totalDuration: 40,
-          delay: 0
-        };
-        const [returnedFunction, cLoopElemStub, loopElemStub, cLoopHookStub, loopHookStub] =
-          loopChainTestSetup(chainOptions, chain, hooks);
-
-        returnedFunction();
-
-        assert.equal(cLoopElemStub.callCount, 2);
-        assert.equal(cLoopHookStub.callCount, 2);
-        sinon.assert.alwaysCalledWith(cLoopElemStub, 'test');
-        sinon.assert.alwaysCalledWith(cLoopHookStub, 'foo');
-
-        cleanUp(loopElemStub, loopHookStub);
-      });
-
-      it('should return an object with only the start function which has been passed all the processed args', () => {
-        const chain = new Map([['foo', 'test'], ['bar', 'test']]);
-        const hooks = ['foo', 'foo'];
-        const [returnedFunction, , loopElemStub, , loopHookStub, startStub] =
-          loopChainTestSetup({}, chain, hooks);
-
-        const result = returnedFunction();
-
-        assert.deepEqual(result, { start: 'start' });
-        assert.deepEqual([...startStub.firstCall.args[0].entries()], [
-          ['foo', 'looped'],
-          ['bar', 'looped']
-        ]);
-        assert.deepEqual(startStub.firstCall.args[1], ['looped', 'looped']);
-
-        cleanUp(loopElemStub, loopHookStub);
-      });
-    });
-  });
-
   describe('#startChainFunctionFactory', () => {
     it('should return a function', () => {
-      const animar = Animar();
+      const animar = new Animar();
       const result = animar.startChainFunctionFactory();
       assert.typeOf(result, 'function');
     });
 
     describe('returned function', () => {
       function startChainTestSetup(chain, hooks) {
-        const animar = Animar();
+        const animar = new Animar();
         const curriedMergeStub = sinon.stub().returns('merged');
         const mergeStub = sinon.stub(animar, 'mergeElementMaps').returns(curriedMergeStub);
         const requestStub = sinon.stub(animar, 'requestTick');

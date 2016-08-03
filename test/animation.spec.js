@@ -1,5 +1,7 @@
 import Animation, { stepAnimation, loopAnimation, calculateAnimationValue } from '../src/animation';
 
+const assert = chai.assert;
+
 describe('Animation', () => {
   describe('#Animation', () => {
     it('should return an object with all the properties set from it\'s given arguments', () => {

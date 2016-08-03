@@ -6,6 +6,8 @@ import Attribute, {
 } from '../src/attribute';
 import Animation from '../src/animation';
 
+const assert = chai.assert;
+
 describe('Attribute', () => {
   describe('#Attribute', () => {
     it('should return an object with correct properties set from arguments', () => {

@@ -6,7 +6,7 @@
     "BROWSER": true,
     "jsdom": true,
     "sinon": true,
-    "assert": true
+    "chai": true
   },
   "rules": {
     "no-continue": [0]

@@ -5,7 +5,7 @@ import path from 'path';
 global.BROWSER = false;
 global.__DEV__ = true;
 global.sinon = require('sinon');
-global.assert = require('chai').assert;
+global.chai = require('chai');
 
 const testDir = 'test';
 

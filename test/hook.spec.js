@@ -1,5 +1,7 @@
 import Hook, { stepHook, loopHook } from '../src/hook';
 
+const assert = chai.assert;
+
 describe('Hook', () => {
   describe('#Hook', () => {
     it('should return an Immutable Map with the arguments properly set', () => {

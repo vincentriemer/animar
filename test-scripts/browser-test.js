@@ -1,5 +1,4 @@
-import * as es6Map from 'core-js/es6/map';
-import * as es6Object from 'core-js/es6/object';
+import 'core-js';
 
 window.__DEV__ = true;
 window.BROWSER = true;
