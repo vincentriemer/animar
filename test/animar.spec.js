@@ -1,6 +1,6 @@
 import Animar,
   { DEFAULT_EASING_FUNCTION, DEFAULT_DELAY, DEFAULT_DURATION, EMPTY_ANIMATION_OPTIONS, initialChainOptions }
-from '../src/Animar';
+from '../src/animar';
 
 const assert = chai.assert;
 

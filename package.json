@@ -41,7 +41,6 @@
     "test:browser:ci": "testem ci",
     "pretest": "npm run clean:coverage && npm run lint",
     "prepublish": "npm run clean:dist && npm run build",
-    "commit": "git-cz",
     "commit:artifacts": "git add dist",
     "semantic-release": "semantic-release pre && npm publish && semantic-release post"
   },
@@ -82,7 +81,7 @@
   },
   "config": {
     "commitizen": {
-      "path": "node_modules/cz-conventional-changelog"
+      "path": "./node_modules/cz-conventional-changelog"
     },
     "ghooks": {
       "pre-commit": "npm run build && npm run test && npm run check-coverage",
