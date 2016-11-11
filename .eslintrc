@@ -7,6 +7,10 @@
     "es6": true
   },
 
+  "plugins": [
+    "flowtype"
+  ],
+
   "ecmaFeatures": {
     "arrowFunctions": true,
     "binaryLiterals": true,

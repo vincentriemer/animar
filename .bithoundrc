@@ -11,7 +11,8 @@
     "webpack/**",
     "index.js",
     "lib/**",
-    "rollup.*"
+    "rollup.*",
+    "flow-typed/**"
   ],
   "test": [
     "test/*.js"

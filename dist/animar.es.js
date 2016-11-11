@@ -1,7 +1,10 @@
-var __commonjs_global = typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : this;
-function __commonjs(fn, module) { return module = { exports: {} }, fn(module, module.exports, __commonjs_global), module.exports; }
+var commonjsGlobal = typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
 
-var seamlessImmutable = __commonjs(function (module, exports, global) {
+function createCommonjsModule(fn, module) {
+	return module = { exports: {} }, fn(module, module.exports), module.exports;
+}
+
+var seamlessImmutable = createCommonjsModule(function (module, exports) {
 (function() {
   "use strict";
 
@@ -665,13 +668,11 @@ var seamlessImmutable = __commonjs(function (module, exports, global) {
     exports.Immutable = Immutable;
   } else if (typeof window === "object") {
     window.Immutable = Immutable;
-  } else if (typeof global === "object") {
-    global.Immutable = Immutable;
+  } else if (typeof commonjsGlobal === "object") {
+    commonjsGlobal.Immutable = Immutable;
   }
 })();
 });
-
-var Immutable = (seamlessImmutable && typeof seamlessImmutable === 'object' && 'default' in seamlessImmutable ? seamlessImmutable['default'] : seamlessImmutable);
 
 var ANIMATION_DEFAULTS = {
   looping: false,
@@ -732,7 +733,7 @@ function loopAnimation(chainOptions) {
 }
 
 function Animation (currentIteration, startValue, changeInValue, totalIterations, easingFunction, delay) {
-  return Immutable.from({
+  return seamlessImmutable.from({
     currentIteration: currentIteration,
     startValue: startValue,
     changeInValue: changeInValue,
@@ -784,9 +785,9 @@ function calculateAttributeDisplayValue(attribute) {
 }
 
 function Attribute (model) {
-  return Immutable.from({
+  return seamlessImmutable.from({
     model: model,
-    animations: Immutable.from([])
+    animations: seamlessImmutable.from([])
   });
 }
 
@@ -1043,7 +1044,7 @@ function map(obj) {
   return function (callback) {
     return reduce(obj)(function (output, value, key) {
       return output.merge(defineProperty({}, key, callback(value)));
-    }, Immutable.from({}));
+    }, seamlessImmutable.from({}));
   };
 }
 
@@ -1087,8 +1088,8 @@ function loopElement(chainOptions) {
 }
 
 function Element () {
-  return Immutable.from({
-    attributes: Immutable.from({})
+  return seamlessImmutable.from({
+    attributes: seamlessImmutable.from({})
   });
 }
 
@@ -1114,7 +1115,7 @@ function stepHook(timescale) {
       output.called = false;
     }
 
-    return Immutable.from(output);
+    return seamlessImmutable.from(output);
   };
 }
 
@@ -1128,7 +1129,7 @@ function loopHook(chainOptions) {
 }
 
 function Hook (hook, currentIteration, delay) {
-  return Immutable.from(_extends({}, HOOK_DEFAULTS, {
+  return seamlessImmutable.from(_extends({}, HOOK_DEFAULTS, {
     hook: hook, currentIteration: currentIteration, delay: delay
   }));
 }
