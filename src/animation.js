@@ -2,6 +2,8 @@
 
 import { Animation, EasingFunction, ChainOptions } from './types';
 
+import Immutable from 'seamless-immutable';
+
 const ANIMATION_DEFAULTS = {
   looping: false,
   wait:    0
@@ -28,9 +30,13 @@ export function stepAnimation(timescale: number) {
     let { currentIteration, totalIterations, wait, delay, looping } = animation;
 
     if (currentIteration < (totalIterations + wait)) {
-      return { ...animation, currentIteration: currentIteration + timescale };
+      return animation.merge({
+        currentIteration: currentIteration + timescale
+      });
     } else if (looping) {
-      return { ...animation, currentIteration: 0 - delay };
+      return animation.merge({
+        currentIteration: 0 - delay
+      });
     } else {
       return null;
     }
@@ -38,8 +44,7 @@ export function stepAnimation(timescale: number) {
 }
 
 export function loopAnimation(chainOptions: ChainOptions): (animation: Animation) => Animation {
-  return animation => ({
-    ...animation,
+  return animation => animation.merge({
     looping: true,
     wait: chainOptions.totalDuration - animation.delay - animation.totalIterations
   });
@@ -53,7 +58,7 @@ export default function(
     easingFunction:   EasingFunction,
     delay:            number
     ): Animation {
-  return {
+  return Immutable.from({
     currentIteration,
     startValue,
     changeInValue,
@@ -62,5 +67,5 @@ export default function(
     delay,
     looping: ANIMATION_DEFAULTS.looping,
     wait: ANIMATION_DEFAULTS.wait
-  };
+  });
 }

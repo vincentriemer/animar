@@ -2,7 +2,7 @@ import Element, {addAttributeToElement, mergeElements, stepElement, loopElement}
 import Attribute, {addAnimationToAttribute} from '../src/attribute';
 import Animation from '../src/animation';
 
-const assert = chai.assert;
+import { assert } from 'chai';
 
 describe('Element', () => {
   describe('#Element', () => {

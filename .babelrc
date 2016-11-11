@@ -7,5 +7,15 @@
     "syntax-flow",
     "transform-flow-strip-types",
     "transform-class-properties"
-  ]
+  ],
+  "env": {
+    "test": {
+      "plugins": [
+        "syntax-flow",
+        "transform-flow-strip-types",
+        "transform-class-properties",
+        "istanbul"
+      ]
+    }
+  }
 }

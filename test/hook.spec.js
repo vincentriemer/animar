@@ -1,6 +1,7 @@
 import Hook, { stepHook, loopHook } from '../src/hook';
 
-const assert = chai.assert;
+import { assert } from 'chai';
+import sinon from 'sinon';
 
 describe('Hook', () => {
   describe('#Hook', () => {
@@ -57,7 +58,8 @@ describe('Hook', () => {
     it('should run the hook function if currentIteration is greater than 0 and it hasn\'t been called before', () => {
       const hookSpy = sinon.spy();
       let testHook = Hook(hookSpy, 0, 0);
-      testHook.wait = 40;
+      testHook = testHook.merge({ wait: 40 });
+
       const result = stepHook(0.5)(testHook);
 
       sinon.assert.calledOnce(hookSpy);
@@ -67,8 +69,9 @@ describe('Hook', () => {
     it('should not run the hook function if it has been called before', () => {
       const hookSpy = sinon.spy();
       let testHook = Hook(hookSpy, 0, 0);
-      testHook.wait = 40;
-      testHook.called = true;
+      testHook = testHook.merge({
+        wait: 40, called: true
+      });
 
       sinon.assert.notCalled(hookSpy);
     });
@@ -77,9 +80,9 @@ describe('Hook', () => {
       'looping is set to true', () => {
       const hookSpy = sinon.spy();
       let testHook = Hook(hookSpy, 41, 20);
-      testHook.wait = 40;
-      testHook.called = true;
-      testHook.looping = true;
+      testHook = testHook.merge({
+        wait: 40, called: true, looping: true
+      });
 
       const {
         currentIteration,

@@ -1,5 +1,6 @@
 /* @flow */
 
+import Immutable from 'seamless-immutable';
 import { ChainOptions, Hook, HookFunction } from './types';
 
 const HOOK_DEFAULTS = {
@@ -10,7 +11,7 @@ const HOOK_DEFAULTS = {
 
 export function stepHook(timescale: number) {
   return (hook: Hook): Hook => {
-    let output = { ...hook };
+    let output = hook.asMutable();
 
     if (output.currentIteration <= output.wait) {
       output.currentIteration = output.currentIteration + timescale;
@@ -24,21 +25,20 @@ export function stepHook(timescale: number) {
       output.called = false;
     }
 
-    return output;
+    return Immutable.from(output);
   };
 }
 
 export function loopHook(chainOptions: ChainOptions) {
-  return (hook: Hook): Hook => ({
-    ...hook,
+  return (hook: Hook): Hook => hook.merge({
     looping: true,
     wait: chainOptions.totalDuration - hook.delay
   });
 }
 
 export default function(hook: HookFunction, currentIteration: number, delay: number): Hook {
-  return {
+  return Immutable.from({
     ...HOOK_DEFAULTS,
     hook, currentIteration, delay
-  };
+  });
 }

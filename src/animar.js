@@ -6,6 +6,7 @@ import Attribute, {addAnimationToAttribute} from './attribute';
 import Element, {addAttributeToElement, mergeElements, loopElement, stepElement} from './element';
 import Hook, {loopHook, stepHook} from './hook';
 import PluginRegistry from './pluginRegistry';
+import { reduce } from './objUtils';
 
 // ========== CONSTANTS ==========
 
@@ -29,9 +30,7 @@ const TARGET_FRAME_DELAY = 16.67;
 
 // ========== STATIC FUNCTIONS ==========
 
-function resolveConstructorOptions (options = {}) : { defaultDelay: number, defaultEase: EasingFunction, defaultDuration: number } {
-  const defaults = options.defaults || {};
-
+function resolveConstructorOptions (defaults = {}) : { defaultDelay: number, defaultEase: EasingFunction, defaultDuration: number } {
   const defaultDelay = defaults.delay == null ?
     DEFAULT_DELAY : defaults.delay;
   const defaultEase = defaults.easingFunction == null ?
@@ -43,7 +42,6 @@ function resolveConstructorOptions (options = {}) : { defaultDelay: number, defa
 }
 
 // ========== TYPES ==========
-
 type ElementMap = Map<any, Element>;
 
 type AnimationOptions = {
@@ -58,38 +56,34 @@ type ResolvedAnimationOptions = {
   duration:       number
 };
 
+type AttributeOptions = { [attributeName: string]: number };
 
-type AttributeOptions = { [attributeName: string]: [number, number] };
-
-// ========== CLASS ==========
-
-class Animar {
-  ticking:      boolean;
-  elementMap:   ElementMap;
-  hooks:        Array<Hook>;
-  firstFrame:   boolean;
-  previousTime: number;
-  registry:     PluginRegistry;
+type AnimarState = {
+  ticking:      boolean,
+  elementMap:   ElementMap,
+  hooks:        Array<Hook>,
+  firstFrame:   boolean,
+  previousTime: number,
+  registry:     PluginRegistry,
   defaults: {
     delay:          number,
     easingFunction: EasingFunction,
     duration:       number
-  };
-
-  constructor(constructorOptions: ConstructorOptions) {
-    const {defaultDelay, defaultEase, defaultDuration} =
-      resolveConstructorOptions(constructorOptions);
-
-    this.ticking      = false;
-    this.elementMap   = new Map();
-    this.defaults     = { delay: defaultDelay, easingFunction: defaultEase, duration: defaultDuration };
-    this.hooks        = [];
-    this.firstFrame   = true;
-    this.previousTime = 0;
-    this.registry     = new PluginRegistry();
   }
+};
 
-  addAnimationToChain (
+type FactoryOutput = {
+  add: Function,
+  set: Function,
+  addPreset: Function,
+  addRenderPlugin: Function,
+  addTimingPlugin: Function,
+  state?: Object
+};
+
+// ========== STATIC FUNCTIONS ==========
+
+function addAnimationToChain (
     start:        number,
     destination:  number,
     options:      ResolvedAnimationOptions,
@@ -97,86 +91,141 @@ class Animar {
     attrName:     string,
     element:      any,
     currentChain: ElementMap
-  ): ElementMap {
-    start -= destination;
-    const newAnimation = Animation(
-      0 - (options.delay - chainOptions.delay),
-      start,
-      0 - start,
-      options.duration,
-      options.easingFunction,
-      0
-    );
+): ElementMap {
+  start -= destination;
+  const newAnimation = Animation(
+    0 - (options.delay + chainOptions.delay),
+    start,
+    0 - start,
+    options.duration,
+    options.easingFunction,
+    options.delay + chainOptions.delay
+  );
 
-    const newAttribute = addAnimationToAttribute(newAnimation)(Attribute(destination));
-    const newElement = addAttributeToElement(attrName, newAttribute)(Element());
-    const tempEMap = new Map();
-    tempEMap.set(element, newElement);
+  const newAttribute = addAnimationToAttribute(newAnimation)(Attribute(destination));
+  const newElement = addAttributeToElement(attrName, newAttribute)(Element());
+  const tempEMap = new Map();
+  tempEMap.set(element, newElement);
 
-    return this.mergeElementMaps(tempEMap)(currentChain);
-  }
+  return mergeElementMaps(tempEMap)(currentChain);
+}
 
-  mergeElementMaps (target: ElementMap) {
-    return (source: ElementMap): ElementMap => {
-      const result = new Map(source.entries());
-      target.forEach((element, key) => {
-        if (result.has(key)) {
-          result.set(key, mergeElements(element)(result.get(key)));
-        } else {
-          result.set(key, element);
-        }
-      });
-      return result;
-    };
-  }
+function mergeElementMaps (target: ElementMap) {
+  return (source: ElementMap): ElementMap => {
+    const result = new Map(source.entries());
+    target.forEach((element, key) => {
+      if (result.has(key)) {
+        result.set(key, mergeElements(element)(result.get(key)));
+      } else {
+        result.set(key, element);
+      }
+    });
+    return result;
+  };
+}
 
-  resolveAnimationOptions (options: AnimationOptions): ResolvedAnimationOptions {
+// ========== FACTORY ==========
+
+export default function Animar(constructorOptions: ConstructorOptions) {
+  const {defaultDelay, defaultEase, defaultDuration} = resolveConstructorOptions(constructorOptions);
+
+  const state: AnimarState = {
+    ticking: false,
+    firstFrame: true,
+    previousTime: 0,
+    elementMap: new Map(),
+    defaults: { delay: defaultDelay, easingFunction: defaultEase, duration: defaultDuration },
+    hooks: [],
+    registry: new PluginRegistry()
+  };
+
+  // ========== MEMBER FUNCTIONS ==========
+
+  function resolveAnimationOptions (options: AnimationOptions): ResolvedAnimationOptions {
     return {
       delay: options.delay == null ?
-        this.defaults.delay : options.delay,
+        state.defaults.delay : options.delay,
       easingFunction: options.easingFunction == null ?
-        this.defaults.easingFunction : options.easingFunction,
+        state.defaults.easingFunction : options.easingFunction,
       duration: options.duration == null ?
-        this.defaults.duration : options.duration
+        state.defaults.duration : options.duration
     };
   }
 
-  add (element: any, attributes: AttributeOptions, options: AnimationOptions = EMPTY_ANIMATION_OPTIONS) {
-    return this._add(element, attributes, options, initialChainOptions(), new Map(), []);
+  function set(element: any, attributes: AttributeOptions) {
+    const tempEMap = new Map();
+
+    const addedElement = reduce(attributes)((output, model, attrName) =>
+      addAttributeToElement(attrName, Attribute(model))(output),
+    Element());
+
+    tempEMap.set(element, addedElement);
+    state.elementMap = mergeElementMaps(tempEMap)(state.elementMap);
+
+    return { add: add, set: set };
   }
 
-  _add(element: any, attributes: AttributeOptions, options: AnimationOptions, chainOptions: ChainOptions, currentChain: ElementMap, hooks: Array<Hook>) {
-    const resolvedOptions = this.resolveAnimationOptions(options);
+  function add (element: any, attributes: AttributeOptions, options: AnimationOptions = EMPTY_ANIMATION_OPTIONS) {
+    return _add(element, attributes, options, initialChainOptions(), new Map(), []);
+  }
+
+  function _add(element: any, attributes: AttributeOptions, options: AnimationOptions, chainOptions: ChainOptions, currentChain: ElementMap, hooks: Array<Hook>) {
+    const resolvedOptions = resolveAnimationOptions(options);
     Object.keys(attributes).forEach(attrName => {
-      const attrValue = attributes[attrName];
+      const destination = attributes[attrName];
 
-      const start = attrValue[0],
-        dest = attrValue[1];
+      const start = getStartValue(element, attrName, currentChain);
 
-      currentChain = this.addAnimationToChain(start, dest, resolvedOptions, chainOptions, attrName, element, currentChain);
+      if (start != null) {
+        currentChain = addAnimationToChain(start, destination, resolvedOptions, chainOptions, attrName, element, currentChain);
+      }
     });
+
     chainOptions.currentDuration = Math.max(chainOptions.currentDuration,
       resolvedOptions.delay + resolvedOptions.duration
     );
-    return this.fullChainObjectFactory(chainOptions, currentChain, hooks);
+    return fullChainObjectFactory(chainOptions, currentChain, hooks);
   }
 
-  addHook (hook: HookFunction, chainOptions: ChainOptions, chain: ElementMap, hooks: Array<Hook>) {
+  function getStartValue(element: any, attrName: string, currentChain: ElementMap): ?number {
+    const currentChainElement = currentChain.get(element);
+    const stateElement = state.elementMap.get(element);
+
+    if (currentChainElement != null &&
+        currentChainElement.attributes != null &&
+        currentChainElement.attributes[attrName] != null) {
+      const currentChainAttribute = currentChainElement.attributes[attrName];
+      if (currentChainAttribute != null) {
+        return currentChainAttribute.model;
+      }
+    } else if (stateElement != null &&
+               stateElement.attributes != null &&
+               stateElement.attributes[attrName] != null) {
+      const stateAttribute = stateElement.attributes[attrName];
+      if (stateAttribute != null) {
+        return stateAttribute.model;
+      }
+    } else {
+      throw new Error(`${element} does not have ${attrName} set`);
+    }
+  }
+
+  function addHook (hook: HookFunction, chainOptions: ChainOptions, chain: ElementMap, hooks: Array<Hook>) {
     const newHook = Hook(hook, 0 - chainOptions.delay, chainOptions.delay);
-    return this.fullChainObjectFactory(chainOptions, chain, hooks.concat([newHook]));
+    return fullChainObjectFactory(chainOptions, chain, hooks.concat([newHook]));
   }
 
-  fullChainObjectFactory (chainOptions: ChainOptions, chain: ElementMap, hooks: Array<Hook>) {
+  function fullChainObjectFactory (chainOptions: ChainOptions, chain: ElementMap, hooks: Array<Hook>) {
     return {
-      start: this.startChainFunctionFactory(chain, hooks),
-      loop:  this.loopChainFunctionFactory(chainOptions, chain, hooks),
-      add:   this.addChainFunctionFactory(chainOptions, chain, hooks),
-      then:  this.thenChainFunctionFactory(chainOptions, chain, hooks),
-      hook:  this.hookChainFunctionFactory(chainOptions, chain, hooks)
+      start: startChainFunctionFactory(chain, hooks),
+      loop:  loopChainFunctionFactory(chainOptions, chain, hooks),
+      add:   addChainFunctionFactory(chainOptions, chain, hooks),
+      then:  thenChainFunctionFactory(chainOptions, chain, hooks),
+      hook:  hookChainFunctionFactory(chainOptions, chain, hooks)
     };
   }
 
-  thenChainFunctionFactory (chainOptions: ChainOptions, chain: ElementMap, hooks: Array<Hook>) {
+  function thenChainFunctionFactory (chainOptions: ChainOptions, chain: ElementMap, hooks: Array<Hook>) {
     return (wait : number = 0) => {
       const newTotalDuration = chainOptions.totalDuration + chainOptions.currentDuration + wait;
       const newChainOptions = {
@@ -185,18 +234,18 @@ class Animar {
         currentDuration: 0
       };
       return {
-        add:  this.addChainFunctionFactory(newChainOptions, chain, hooks),
-        hook: this.hookChainFunctionFactory(newChainOptions, chain, hooks)
+        add:  addChainFunctionFactory(newChainOptions, chain, hooks),
+        hook: hookChainFunctionFactory(newChainOptions, chain, hooks)
       };
     };
   }
 
-  addChainFunctionFactory (chainOptions: ChainOptions, chain: ElementMap, hooks: Array<Hook>) {
+  function addChainFunctionFactory (chainOptions: ChainOptions, chain: ElementMap, hooks: Array<Hook>) {
     return (element: ElementType, attributes: AttributeOptions, options : AnimationOptions = EMPTY_ANIMATION_OPTIONS) =>
-      this._add(element, attributes, options, chainOptions, chain, hooks);
+      _add(element, attributes, options, chainOptions, chain, hooks);
   }
 
-  loopChainFunctionFactory (chainOptions: ChainOptions, chain: ElementMap, hooks: Array<Hook>) {
+  function loopChainFunctionFactory (chainOptions: ChainOptions, chain: ElementMap, hooks: Array<Hook>) {
     return () => {
       const newChainOptions = Object.assign(chainOptions,
         { totalDuration: chainOptions.totalDuration + chainOptions.currentDuration }
@@ -208,63 +257,63 @@ class Animar {
 
       const loopedHooks = hooks.map(loopHook(newChainOptions));
 
-      return { start: this.startChainFunctionFactory(loopedChain, loopedHooks) };
+      return { start: startChainFunctionFactory(loopedChain, loopedHooks) };
     };
   }
 
-  startChainFunctionFactory (chain: ChainOptions, hooks: Array<Hook>) {
+  function hookChainFunctionFactory (chainOptions: ChainOptions, chain: ElementMap, hooks: Array<Hook>) {
+    return (hook: HookFunction) => addHook(hook, chainOptions, chain, hooks);
+  }
+
+  function startChainFunctionFactory (chain: ChainOptions, hooks: Array<Hook>) {
     return () => {
-      this.elementMap = this.mergeElementMaps(chain)(this.elementMap);
-      this.hooks = this.hooks.concat(hooks);
-      this.requestTick();
+      state.elementMap = mergeElementMaps(chain)(state.elementMap);
+      state.hooks = state.hooks.concat(hooks);
+      requestTick();
     };
   }
 
-  hookChainFunctionFactory (chainOptions: ChainOptions, chain: ElementMap, hooks: Array<Hook>) {
-    return (hook: HookFunction) => this.addHook(hook, chainOptions, chain, hooks);
+  function update(timestamp: number): void {
+    let changeInTime = timestamp - state.previousTime;
+    if (state.firstFrame) {
+      changeInTime = TARGET_FRAME_DELAY;
+      state.firstFrame = false;
+    }
+    const timescale = changeInTime / TARGET_FRAME_DELAY;
+    state.previousTime = timestamp;
+
+    state.ticking = false;
+    const [steppedElementMap, steppedHooks] = step(timescale, state.elementMap, state.hooks);
+
+    // TODO: determine if nothing has changed to conditionally continue animating
+    state.hooks = steppedHooks;
+    state.elementMap = steppedElementMap;
+
+    render();
+    requestTick();
   }
 
-  requestTick(): void {
-    if (!this.ticking) {
-      const timingPlugin = this.registry.timingPlugin;
+  function render(): void {
+    state.elementMap.forEach((element, target) => {
+      state.registry.callRenderPlugins(target, element);
+    });
+  }
+
+  function requestTick(): void {
+    if (!state.ticking) {
+      const timingPlugin = state.registry.timingPlugin;
 
       if (timingPlugin != null) {
-        timingPlugin(this.update.bind(this));
+        timingPlugin(update);
       } else {
         throw new Error('Attempted to animate without providing a Timing Plugin');
       }
 
-      this.ticking = true;
+      state.ticking = true;
     }
   }
 
-  update(timestamp: number): void {
-    let changeInTime = timestamp - this.previousTime;
-    if (this.firstFrame) {
-      changeInTime = TARGET_FRAME_DELAY;
-      this.firstFrame = false;
-    }
-    const timescale = changeInTime / TARGET_FRAME_DELAY;
-    this.previousTime = timestamp;
-
-    this.ticking = false;
-    const [steppedElementMap, steppedHooks] = this.step(timescale, this.elementMap, this.hooks);
-
-    // TODO: determine if nothing has changed to conditionally continue animating
-    this.hooks = steppedHooks;
-    this.elementMap = steppedElementMap;
-    this.render();
-
-    this.requestTick();
-  }
-
-  render(): void {
-    this.elementMap.forEach((element, target) => {
-      this.registry.callRenderPlugins(target, element);
-    });
-  }
-
-  step(timescale: number, elementMap: ElementMap, hooks: Array<Hook>) {
+  function step(timescale: number, elementMap: ElementMap, hooks: Array<Hook>) {
     const steppedHooks: Array<Hook> = hooks.map(stepHook(timescale))
       .filter((hook, index) =>
         hook !== hooks[index]
@@ -277,6 +326,20 @@ class Animar {
 
     return [steppedElementMap, steppedHooks];
   }
-}
 
-export default Animar;
+  // expose public functions
+  const factoryOutput: FactoryOutput = {
+    add: add,
+    set: set,
+    addPreset: state.registry.addPreset.bind(state.registry),
+    addRenderPlugin: state.registry.addRenderPlugin.bind(state.registry),
+    addTimingPlugin: state.registry.addTimingPlugin.bind(state.registry)
+  };
+
+  // expose the state for testing
+  if (process.env.NODE_ENV === 'test') {
+    factoryOutput.state = state;
+  }
+
+  return factoryOutput;
+}

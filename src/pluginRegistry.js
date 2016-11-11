@@ -1,6 +1,6 @@
 /* @flow */
 
-import {Element} from './types';
+import { Element } from './types';
 import { calculateAttributeDisplayValue } from './attribute';
 import { entries, reduce } from './objUtils';
 
@@ -43,7 +43,6 @@ class PluginRegistry {
       const mappings = this.attributePluginMapping[name];
 
       if (mappings == null) return output;
-
       mappings.forEach(mapping => {
         if (output[mapping] == null) output[mapping] = {};
         output[mapping][name] = calculateAttributeDisplayValue(attr);
@@ -58,14 +57,16 @@ class PluginRegistry {
   }
 
   addTimingPlugin(timingPlugin: TimingPlugin): void {
-    if (this.tickMethod !== null) {
-      console.warn('WARNING: A timing plugin was already installed, overriding...');
+    if (this.timingPlugin != null) {
+      throw new Error('A timing plugin was already installed');
     }
     this.timingPlugin = timingPlugin;
   }
 
   addPreset({ renderPlugins = [], timingPlugin }: Preset): void {
-    renderPlugins.forEach(this.addRenderPlugin.bind(this));
+    renderPlugins.forEach((renderPlugin) => {
+      this.addRenderPlugin(renderPlugin);
+    });
     if (timingPlugin != null) {
       this.addTimingPlugin(timingPlugin);
     }

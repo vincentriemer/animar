@@ -18,5 +18,3 @@ script:
 after_success:
   - codecov
   - npm run semantic-release
-after_script:
-  - npm run test:browser:ci

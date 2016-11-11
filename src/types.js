@@ -6,7 +6,7 @@ export type ChainOptions = {
 
 export type EasingFunction = (currentIteration: number, beginningValue: number, changeInValue: number, duration: number) => number;
 
-export type AnimationType = {
+export type AnimationType = Immutable<{
   currentIteration: number,
   startValue:       number,
   changeInValue:    number,
@@ -15,27 +15,27 @@ export type AnimationType = {
   delay:            number,
   looping:          boolean,
   wait:             number
-};
+}>;
 
-export type AttributeType = {
+export type AttributeType = Immutable<{
   model:      number,
   animations: Array<Animation>
-};
+}>;
 
-export type ElementType = {
+export type ElementType = Immutable<{
   attributes: { [attributeName: string]: Attribute }
-};
+}>;
 
 export type HookFunction = () => void;
 
-export type HookType = {
+export type HookType = Immutable<{
   hook:             HookFunction,
   currentIteration: number,
   delay:            number,
   looping:          boolean,
   wait:             number,
   called:           boolean
-};
+}>;
 
 export type ConstructorOptions = {
   delay:          number,

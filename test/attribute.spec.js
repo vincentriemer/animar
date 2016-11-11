@@ -1,12 +1,14 @@
+import {DEFAULT_EASING_FUNCTION} from '../src/animar';
 import Attribute, {
   addAnimationToAttribute,
   mergeAttributes,
   stepAttribute,
-  loopAttribute
+  loopAttribute,
+  calculateAttributeDisplayValue
 } from '../src/attribute';
 import Animation from '../src/animation';
 
-const assert = chai.assert;
+import { assert } from 'chai';
 
 describe('Attribute', () => {
   describe('#Attribute', () => {
@@ -78,8 +80,7 @@ describe('Attribute', () => {
       const testAnimation1 = Animation(0, -20, 20, 30, () => {}, false, 0, 0);
       const testAnimation2 = Animation(0, -20, 20, 30, () => {}, false, 0, 0);
 
-      const testAttribute =
-        addAnimationToAttribute(testAnimation2)(addAnimationToAttribute(testAnimation1)(Attribute(0)));
+      const testAttribute = addAnimationToAttribute(testAnimation2)(addAnimationToAttribute(testAnimation1)(Attribute(0)));
 
       const result = loopAttribute({ totalDuration: 100 })(testAttribute);
 
@@ -87,6 +88,18 @@ describe('Attribute', () => {
         assert.equal(animation.looping, true);
         assert.equal(animation.wait, 70);
       });
+    });
+  });
+
+  describe('#calculateAttributeDisplayValue', () => {
+    it('should return the current display value of the attribute', () => {
+      const testAnimation1 = Animation(6, -20, 20, 30, DEFAULT_EASING_FUNCTION, false, 0, 0);
+      const testAnimation2 = Animation(6, 20, -10, 30, DEFAULT_EASING_FUNCTION, false, 0, 0);
+      const testAttribute = addAnimationToAttribute(testAnimation2)(addAnimationToAttribute(testAnimation1)(Attribute(0)));
+
+      const result = calculateAttributeDisplayValue(testAttribute);
+
+      assert.strictEqual(result, 2);
     });
   });
 

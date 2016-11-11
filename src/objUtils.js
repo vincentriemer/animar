@@ -1,6 +1,9 @@
 /* @flow */
 
-type InputObject<T> = { [key: string]: T };
+import Immutable from 'seamless-immutable';
+
+// type InputObject<T> = { [key: string]: T };
+type InputObject<T> = any;
 
 export function entries<T> (obj: InputObject<T>): Array<[string, T]> {
   const output = [];
@@ -15,7 +18,7 @@ type ReduceCallback<T, U> = (previousValue: U, value: T, key: string) => U;
 export function reduce<T, U> (obj: InputObject<T>): (callback: ReduceCallback<T, U>, initialValue: U) => U {
   return function (callback: ReduceCallback<T, U>, initialValue: U): U {
     return entries(obj).reduce((output: U, [key, value]: [string, T]): U =>
-      callback(output, value, key), initialValue);
+        callback(output, value, key), initialValue);
   };
 }
 
@@ -24,8 +27,7 @@ type MapCallback<T, U> = (value: T) => U
 export function map<T, U> (obj: InputObject<T>) {
   return function<U> (callback: MapCallback<T, U>): InputObject<U> {
     return reduce(obj)((output: InputObject<U>, value: T, key: string) => {
-      output[key] = callback(value);
-      return output;
-    }, {});
+      return output.merge({ [key]: callback(value) });
+    }, Immutable.from({}));
   };
 }

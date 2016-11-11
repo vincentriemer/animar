@@ -1,6 +1,7 @@
 import Animation, { stepAnimation, loopAnimation, calculateAnimationValue } from '../src/animation';
 
-const assert = chai.assert;
+import { assert } from 'chai';
+import sinon from 'sinon';
 
 describe('Animation', () => {
   describe('#Animation', () => {
@@ -43,7 +44,7 @@ describe('Animation', () => {
       'inverse of the animation\'s delay value if looping is enabled and the currentIteration is greater than or' +
       'equal to the totalIterations', () => {
       let testAnimation = Animation(60, -20, 20, 60, () => {}, 10);
-      testAnimation.looping = true;
+      testAnimation = testAnimation.set('looping', true);
 
       let result = stepAnimation(1)(testAnimation);
       assert.equal(result.currentIteration, -10);
@@ -52,7 +53,7 @@ describe('Animation', () => {
     it('should return a function which continues iterating after totalIterations if the input animation has a wait' +
       'value', () => {
       let testAnimation = Animation(60, -20, 20, 60, () => {}, 0);
-      testAnimation.wait = 10;
+      testAnimation = testAnimation.set('wait', 10);
 
       let result = stepAnimation(1)(testAnimation);
 

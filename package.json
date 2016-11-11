@@ -26,7 +26,7 @@
   "scripts": {
     "clean": "npm run clean:dist && npm run clean:coverage && npm run clean:lib",
     "clean:dist": "rimraf dist",
-    "clean:coverage": "rimraf coverage",
+    "clean:coverage": "rimraf coverage && rimraf .nyc_output",
     "build": "npm run build:umd && npm run build:es6 && npm run build:production",
     "build:umd": "rollup -c rollup.umd.config.js",
     "build:es6": "rollup -c rollup.es.config.js",
@@ -35,11 +35,10 @@
     "prebuild": "npm run clean:dist",
     "postbuild": "codeweight && npm run commit:artifacts",
     "lint": "eslint src/** test/**",
-    "check-coverage": "istanbul check-coverage --statements 50 --branches 50 --functions 50 --lines 50",
-    "test": "NODE_ENV=test babel-node ./node_modules/.bin/isparta cover test-scripts/node-test.js",
-    "test:browser": "testem",
-    "test:browser:ci": "testem ci",
+    "check-coverage": "nyc check-coverage --statements 50 --branches 50 --functions 50 --lines 50",
     "pretest": "npm run clean:coverage && npm run lint && npm run typecheck",
+    "test": "NODE_ENV=test nyc mocha",
+    "posttest": "nyc report --reporter=html --reporter=lcov",
     "prepublish": "npm run clean:dist && npm run build",
     "commit:artifacts": "git add dist",
     "semantic-release": "semantic-release pre && npm publish && semantic-release post",
@@ -49,6 +48,7 @@
     "babel-cli": "^6.2.0",
     "babel-core": "^6.2.1",
     "babel-eslint": "^5.0.0",
+    "babel-plugin-istanbul": "^2.0.3",
     "babel-plugin-syntax-flow": "^6.8.0",
     "babel-plugin-syntax-object-rest-spread": "^6.5.0",
     "babel-plugin-transform-class-properties": "^6.11.5",
@@ -67,13 +67,17 @@
     "flow-bin": "^0.30.0",
     "ghooks": "^1.0.3",
     "isparta": "^4.0.0",
+    "istanbul": "0.4.4",
     "mocha": "^2.3.4",
+    "nyc": "^8.4.0",
     "rimraf": "^2.3.1",
     "rollup": "^0.34.3",
     "rollup-plugin-babel": "^2.3.8",
     "rollup-plugin-commonjs": "^2.1.0",
     "rollup-plugin-multi-entry": "^1.0.1",
+    "rollup-plugin-node-globals": "^1.0.9",
     "rollup-plugin-node-resolve": "^1.4.0",
+    "rollup-plugin-replace": "^1.1.1",
     "rollup-plugin-uglify": "^0.2.0",
     "saucie": "^1.4.0",
     "semantic-release": "^6.3.0",
@@ -107,5 +111,8 @@
         }
       ]
     }
+  },
+  "dependencies": {
+    "seamless-immutable": "^6.3.0"
   }
 }
